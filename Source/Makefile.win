@@ -1,0 +1,183 @@
+# Project: JohanEngine
+# Makefile created by Dev-C++ 5.4.3 RC3
+
+CPP      = g++.exe
+CC       = gcc.exe
+WINDRES  = windres.exe
+RES      = obj/JohanEngine_private.res
+OBJ      = obj/Console.o obj/Scene.o obj/main.o obj/Object.o obj/Options.o obj/Renderer.o obj/resource.o obj/Heightmap.o obj/Texture.o obj/Model.o obj/FXShader.o obj/Component.o obj/Button.o obj/Window.o obj/Label.o obj/Edit.o obj/Bevel.o obj/Dropdown.o obj/Camera.o obj/State.o obj/Dirlight.o obj/Pointlight.o obj/Spotlight.o obj/Clock.o obj/FXVariable.o obj/FXHandle.o obj/Messagebox.o obj/Models.o obj/Textures.o obj/Objects.o obj/Lights.o obj/Curve.o obj/Path.o obj/Parser.o obj/Variable.o obj/Interface.o obj/float3.o obj/Key.o obj/float2.o obj/float4.o obj/float4x4.o obj/Timer.o obj/Timers.o obj/Material.o obj/Skybox.o obj/Animation.o obj/Animations.o obj/Benchmark.o obj/TimeEvent.o obj/RenderTarget.o $(RES)
+LINKOBJ  = obj/Console.o obj/Scene.o obj/main.o obj/Object.o obj/Options.o obj/Renderer.o obj/resource.o obj/Heightmap.o obj/Texture.o obj/Model.o obj/FXShader.o obj/Component.o obj/Button.o obj/Window.o obj/Label.o obj/Edit.o obj/Bevel.o obj/Dropdown.o obj/Camera.o obj/State.o obj/Dirlight.o obj/Pointlight.o obj/Spotlight.o obj/Clock.o obj/FXVariable.o obj/FXHandle.o obj/Messagebox.o obj/Models.o obj/Textures.o obj/Objects.o obj/Lights.o obj/Curve.o obj/Path.o obj/Parser.o obj/Variable.o obj/Interface.o obj/float3.o obj/Key.o obj/float2.o obj/float4.o obj/float4x4.o obj/Timer.o obj/Timers.o obj/Material.o obj/Skybox.o obj/Animation.o obj/Animations.o obj/Benchmark.o obj/TimeEvent.o obj/RenderTarget.o $(RES)
+LIBS     = -L"C:/Program Files (x86)/Dev-Cpp/MinGW64/x86_64-w64-mingw32/lib" -static-libgcc lib/x64/libd3d9.a lib/x64/libd3dcompiler_43.a lib/x64/libd3dx9_43.a --no-export-all-symbols --add-stdcall-alias  -mwindows -s
+INCS     = -I"C:/Program Files (x86)/Dev-Cpp/MinGW64/x86_64-w64-mingw32/include"
+CXXINCS  = -I"C:/Program Files (x86)/Dev-Cpp/MinGW64/x86_64-w64-mingw32/include"
+BIN      = ../JohanEngine.dll
+CXXFLAGS = $(CXXINCS) -O3 -std=gnu++11 -Wall -Wextra -pedantic -mwindows -pipe -DBUILDING_DLL=1 -Wno-unused-parameter -Wno-missing-field-initializers
+CFLAGS   = $(INCS) -O3 -std=gnu++11 -Wall -Wextra -pedantic -mwindows -pipe -DBUILDING_DLL=1 -Wno-unused-parameter -Wno-missing-field-initializers
+RM       = rm -f
+
+.PHONY: all all-before all-after clean clean-custom
+
+all: all-before $(BIN) all-after
+
+clean: clean-custom
+	${RM} $(OBJ) $(BIN)
+
+DLLWRAP   = dllwrap.exe
+DEFFILE   = ../libJohanEngine.def
+STATICLIB = ../libJohanEngine.a
+
+$(BIN): $(LINKOBJ)
+	$(DLLWRAP) --output-def $(DEFFILE) --driver-name c++ --implib $(STATICLIB) $(LINKOBJ) $(LIBS) -o $(BIN)
+
+obj/Console.o: Console.cpp
+	$(CPP) -c Console.cpp -o obj/Console.o $(CXXFLAGS)
+
+obj/Scene.o: Scene.cpp
+	$(CPP) -c Scene.cpp -o obj/Scene.o $(CXXFLAGS)
+
+obj/main.o: main.cpp
+	$(CPP) -c main.cpp -o obj/main.o $(CXXFLAGS)
+
+obj/Object.o: Object.cpp
+	$(CPP) -c Object.cpp -o obj/Object.o $(CXXFLAGS)
+
+obj/Options.o: Options.cpp
+	$(CPP) -c Options.cpp -o obj/Options.o $(CXXFLAGS)
+
+obj/Renderer.o: Renderer.cpp
+	$(CPP) -c Renderer.cpp -o obj/Renderer.o $(CXXFLAGS)
+
+obj/resource.o: resource.cpp
+	$(CPP) -c resource.cpp -o obj/resource.o $(CXXFLAGS)
+
+obj/Heightmap.o: Heightmap.cpp
+	$(CPP) -c Heightmap.cpp -o obj/Heightmap.o $(CXXFLAGS)
+
+obj/Texture.o: Texture.cpp
+	$(CPP) -c Texture.cpp -o obj/Texture.o $(CXXFLAGS)
+
+obj/Model.o: Model.cpp
+	$(CPP) -c Model.cpp -o obj/Model.o $(CXXFLAGS)
+
+obj/FXShader.o: FXShader.cpp
+	$(CPP) -c FXShader.cpp -o obj/FXShader.o $(CXXFLAGS)
+
+obj/Component.o: Component.cpp
+	$(CPP) -c Component.cpp -o obj/Component.o $(CXXFLAGS)
+
+obj/Button.o: Button.cpp
+	$(CPP) -c Button.cpp -o obj/Button.o $(CXXFLAGS)
+
+obj/Window.o: Window.cpp
+	$(CPP) -c Window.cpp -o obj/Window.o $(CXXFLAGS)
+
+obj/Label.o: Label.cpp
+	$(CPP) -c Label.cpp -o obj/Label.o $(CXXFLAGS)
+
+obj/Edit.o: Edit.cpp
+	$(CPP) -c Edit.cpp -o obj/Edit.o $(CXXFLAGS)
+
+obj/Bevel.o: Bevel.cpp
+	$(CPP) -c Bevel.cpp -o obj/Bevel.o $(CXXFLAGS)
+
+obj/Dropdown.o: Dropdown.cpp
+	$(CPP) -c Dropdown.cpp -o obj/Dropdown.o $(CXXFLAGS)
+
+obj/Camera.o: Camera.cpp
+	$(CPP) -c Camera.cpp -o obj/Camera.o $(CXXFLAGS)
+
+obj/State.o: State.cpp
+	$(CPP) -c State.cpp -o obj/State.o $(CXXFLAGS)
+
+obj/Dirlight.o: Dirlight.cpp
+	$(CPP) -c Dirlight.cpp -o obj/Dirlight.o $(CXXFLAGS)
+
+obj/Pointlight.o: Pointlight.cpp
+	$(CPP) -c Pointlight.cpp -o obj/Pointlight.o $(CXXFLAGS)
+
+obj/Spotlight.o: Spotlight.cpp
+	$(CPP) -c Spotlight.cpp -o obj/Spotlight.o $(CXXFLAGS)
+
+obj/Clock.o: Clock.cpp
+	$(CPP) -c Clock.cpp -o obj/Clock.o $(CXXFLAGS)
+
+obj/FXVariable.o: FXVariable.cpp
+	$(CPP) -c FXVariable.cpp -o obj/FXVariable.o $(CXXFLAGS)
+
+obj/FXHandle.o: FXHandle.cpp
+	$(CPP) -c FXHandle.cpp -o obj/FXHandle.o $(CXXFLAGS)
+
+obj/Messagebox.o: Messagebox.cpp
+	$(CPP) -c Messagebox.cpp -o obj/Messagebox.o $(CXXFLAGS)
+
+obj/Models.o: Models.cpp
+	$(CPP) -c Models.cpp -o obj/Models.o $(CXXFLAGS)
+
+obj/Textures.o: Textures.cpp
+	$(CPP) -c Textures.cpp -o obj/Textures.o $(CXXFLAGS)
+
+obj/Objects.o: Objects.cpp
+	$(CPP) -c Objects.cpp -o obj/Objects.o $(CXXFLAGS)
+
+obj/Lights.o: Lights.cpp
+	$(CPP) -c Lights.cpp -o obj/Lights.o $(CXXFLAGS)
+
+obj/Curve.o: Curve.cpp
+	$(CPP) -c Curve.cpp -o obj/Curve.o $(CXXFLAGS)
+
+obj/Path.o: Path.cpp
+	$(CPP) -c Path.cpp -o obj/Path.o $(CXXFLAGS)
+
+obj/Parser.o: Parser.cpp
+	$(CPP) -c Parser.cpp -o obj/Parser.o $(CXXFLAGS)
+
+obj/Variable.o: Variable.cpp
+	$(CPP) -c Variable.cpp -o obj/Variable.o $(CXXFLAGS)
+
+obj/Interface.o: Interface.cpp
+	$(CPP) -c Interface.cpp -o obj/Interface.o $(CXXFLAGS)
+
+obj/float3.o: float3.cpp
+	$(CPP) -c float3.cpp -o obj/float3.o $(CXXFLAGS)
+
+obj/Key.o: Key.cpp
+	$(CPP) -c Key.cpp -o obj/Key.o $(CXXFLAGS)
+
+obj/float2.o: float2.cpp
+	$(CPP) -c float2.cpp -o obj/float2.o $(CXXFLAGS)
+
+obj/float4.o: float4.cpp
+	$(CPP) -c float4.cpp -o obj/float4.o $(CXXFLAGS)
+
+obj/float4x4.o: float4x4.cpp
+	$(CPP) -c float4x4.cpp -o obj/float4x4.o $(CXXFLAGS)
+
+obj/Timer.o: Timer.cpp
+	$(CPP) -c Timer.cpp -o obj/Timer.o $(CXXFLAGS)
+
+obj/Timers.o: Timers.cpp
+	$(CPP) -c Timers.cpp -o obj/Timers.o $(CXXFLAGS)
+
+obj/Material.o: Material.cpp
+	$(CPP) -c Material.cpp -o obj/Material.o $(CXXFLAGS)
+
+obj/Skybox.o: Skybox.cpp
+	$(CPP) -c Skybox.cpp -o obj/Skybox.o $(CXXFLAGS)
+
+obj/Animation.o: Animation.cpp
+	$(CPP) -c Animation.cpp -o obj/Animation.o $(CXXFLAGS)
+
+obj/Animations.o: Animations.cpp
+	$(CPP) -c Animations.cpp -o obj/Animations.o $(CXXFLAGS)
+
+obj/Benchmark.o: Benchmark.cpp
+	$(CPP) -c Benchmark.cpp -o obj/Benchmark.o $(CXXFLAGS)
+
+obj/TimeEvent.o: TimeEvent.cpp
+	$(CPP) -c TimeEvent.cpp -o obj/TimeEvent.o $(CXXFLAGS)
+
+obj/RenderTarget.o: RenderTarget.cpp
+	$(CPP) -c RenderTarget.cpp -o obj/RenderTarget.o $(CXXFLAGS)
+
+obj/JohanEngine_private.res: JohanEngine_private.rc 
+	$(WINDRES) -i JohanEngine_private.rc --input-format=rc -o obj/JohanEngine_private.res -O coff 

@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Texture</title>
+<link rel="stylesheet" type="text/css" href="style.css">
+</head>
+
+<body>
+	<!-- List of related items -->
+	Related items:
+	<a href="index.html">main</a> |
+	<a href="Textures.html">Textures</a>
+	<hr>
+	<h1>class Texture</h1>
+	<h2>Description</h2>
+	<p>Stores a single texture in LPDIRECT3DTEXTURE9 format. Create one by calling Textures::Add().</p>
+	<h2>Functions</h2>
+	<ul>
+		<li>
+			<span class="code">Constructor(const char* fullpath)</span>
+			<p>Not to be used. Please call Textures::Add().</p>
+		</li>
+		<li>
+			<span class="code">Destructor()</span>
+			<p>Not to be used. Please call Textures::Delete().</p>
+		</li>
+		<li>
+			<span class="code">bool GetInfo(D3DSURFACE_DESC* result)</span>
+			<p>Returns information about texture in D3DSURFACE_DESC struct. Returns false on failure.</p>
+		</li>
+		<li>
+			<span class="code">int GetWidth()</span>
+			<p>Returns width of texture in pixels, or -1 on failure.</p>
+		</li>
+		<li>
+			<span class="code">int GetHeight()</span>
+			<p>Returns height of texture in pixels, or -1 on failure.</p>
+		</li>
+	</ul>
+	<h2>Members</h2>
+	<ul>
+		<li>
+			<span class="code">std::list&lt;Texture*&gt;::iterator bufferlocation</span>
+			<p>Contains location of texture in list of Texture singleton.</p>
+		</li>
+		<li>
+			<span class="code">LPDIRECT3DTEXTURE9 pointer</span>
+			<p>Pointer to Direct3D texture object.</p>
+		</li>
+		<li>
+			<span class="code">char* fullpath</span>
+			<p>Pointer to full path to texture file.</p>
+		</li>
+		<li>
+			<span class="code">char* filename</span>
+			<p>Pointer to file name of texture file.</p>
+		</li>
+	</ul>
+</body>
+
+</html>

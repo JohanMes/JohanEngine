@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Models</title>
+<link rel="stylesheet" type="text/css" href="style.css">
+</head>
+
+<body>
+	<!-- List of related items -->
+	Related items:
+	<a href="index.html">main</a> |
+	<a href="Texture.html">Model</a>
+	<hr>
+	<h1>class Models</h1>
+	<h2>Description</h2>
+	<p>A singleton that creates and destroys models.</p>
+	<h2>Functions</h2>
+	<ul>
+		<li>
+			<span class="code">Constructor()</span>
+			<p>Called once by InitEngine.</p>
+		</li>
+		<li>
+			<span class="code">Destructor()</span>
+			<p>Called once by DeleteEngine.</p>
+		</li>
+		<li>
+			<span class="code">Model* AddFromBuffer(VERTEX* vb,unsigned int* ib,unsigned int numvertices,unsigned int numindices,unsigned int numfaces)</span>
+			<p>Creates model from provides arrays by copying them. Also generates bounding sphere and sends buffer to GPU.</p>
+		</li>
+		<li>
+			<span class="code">Model* AddLocalFromOBJ(const char* path,bool optimize);</span>
+			<p>Creates local model from Wavefront OBJ file. Removes duplicate VERTEX entries when optimize is true. Local models are not sent to the GPU by Model::CreateBuffers.</p>
+		</li>
+		<li>
+			<span class="code">void Delete(Texture* thistexture)</span>
+			<p>Deletes textures by pointer. Ignores NULL input.</p>
+		</li>
+		<li>
+			<span class="code">void Clear()</span>
+			<p>Clears whole database and frees all valid pointers.</p>
+		</li>
+	</ul>
+	<h2>Members</h2>
+	<ul>
+		<li>
+			<span class="code">std::list&lt;Texture*&gt; list</span>
+			<p>Linked list of all textures.</p>
+		</li>
+	</ul>
+</body>
+
+</html>

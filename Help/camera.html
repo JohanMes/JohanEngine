@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Camera</title>
+<link rel="stylesheet" type="text/css" href="style.css">
+</head>
+
+<body>
+	<!-- List of related items -->
+	Related items:
+	<a href="index.html">main</a>
+	<hr>
+	<h1>class Camera</h1>
+	<h2>Description</h2>
+	<p>Camera object that can be assigned to Renderer::Camera to determine visibility</p>
+	<h2>Functions</h2>
+	<ul>
+		<li>
+			<span class="code">Constructor()</span>
+			<p>-</p>
+		</li>
+		<li>
+			<span class="code">Destructor()</span>
+			<p>-</p>
+		</li>
+		<li>
+			<span class="code">void Move(float3 dir)</span>
+			<p>Moves camera position and view target by dir.</p>
+		</li>
+		<li>
+			<span class="code">void SetAngle(float angleH,float angleV)</span>
+			<p>Set direction of view direction to angleH and angleV (both in radians).</p>
+		</li>
+	</ul>
+	<h2>Members</h2>
+	<ul>
+		<li>
+			<span class="code">std::list&lt;Texture*&gt;::iterator bufferlocation</span>
+			<p>Contains location of texture in list of Texture singleton.</p>
+		</li>
+		<li>
+			<span class="code">LPDIRECT3DTEXTURE9 pointer</span>
+			<p>Pointer to Direct3D texture object.</p>
+		</li>
+		<li>
+			<span class="code">char* fullpath</span>
+			<p>Pointer to full path to texture file.</p>
+		</li>
+	</ul>
+</body>
+
+</html>
