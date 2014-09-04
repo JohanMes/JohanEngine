@@ -666,7 +666,7 @@ void Renderer::DrawTexture(LPDIRECT3DTEXTURE9 texture,float left,float top,float
 	quad->SendToGPU();
 
 	// Zet deze texture voorop de Camera
-	FXDiffusetex->SetTexture(texture);
+	FXScreentex1->SetTexture(texture);
 
 	// En teken het vierkant recht voor de Camera
 	BeginTechnique(TechStock->handle);
@@ -678,7 +678,7 @@ void Renderer::DrawTexture(LPDIRECT3DTEXTURE9 texture,float left,float top,float
 void Renderer::DrawTextureFullScreen(LPDIRECT3DTEXTURE9 texture) {
 	
 	// Zet deze texture voorop de Camera
-	FXDiffusetex->SetTexture(texture);
+	FXScreentex1->SetTexture(texture);
 
 	// En teken het vierkant recht voor de Camera
 	BeginTechnique(TechStock);

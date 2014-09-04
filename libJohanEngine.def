@@ -1,4 +1,4 @@
-; dlltool --base-file C:\Users\Johan\AppData\Local\Temp\cca02172.base --output-exp JohanEngine.exp --dllname JohanEngine.dll --output-def ../libJohanEngine.def --no-export-all-symbols --add-stdcall-alias --exclude-symbol=DllMainCRTStartup --def C:\Users\Johan\AppData\Local\Temp\cca02172.def --output-lib ../libJohanEngine.a
+; dlltool --base-file C:\Users\Johan\AppData\Local\Temp\cca01796.base --output-exp JohanEngine.exp --dllname JohanEngine.dll --output-def ../libJohanEngine.def --no-export-all-symbols --add-stdcall-alias --exclude-symbol=DllMainCRTStartup --def C:\Users\Johan\AppData\Local\Temp\cca01796.def --output-lib ../libJohanEngine.a
 EXPORTS
 	FX @ 1 DATA
 ;	FileExists(char const*)
