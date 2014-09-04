@@ -22,6 +22,7 @@ void Material::Clear() {
 	shininess = 0.0f;
 	tiling = 1.0f;
 	mixer = float3(0,0,0);
+	color = float4(1,1,1,1);
 	
 	cullmode = D3DCULL_CCW;
 	fillmode = D3DFILL_SOLID;
@@ -109,6 +110,10 @@ void Material::LoadFromFile(const char* materialpath) {
 				} else {
 					console->Write("Error reading line:\r\n%s\r\n",currentregel);
 				}
+			} else if(!strcmp(word1,"color")) {
+				if(sscanf(currentregel,"color %f %f %f %f",&color.x,&color.y,&color.z,&color.w) != 4) {
+					console->Write("Error reading line:\r\n%s\r\n",currentregel);
+				}				
 			} else if(!strcmp(word1,"shader")) {
 				if(sscanf(currentregel,"shader %s",word2) == 1) {
 					for(int i = 0;i < (int)renderer->shaders.size();i++) {
@@ -123,7 +128,9 @@ void Material::LoadFromFile(const char* materialpath) {
 					console->Write("Error reading line:\r\n%s\r\n",currentregel);
 				}
 			} else if(!strcmp(word1,"tiling")) {
-				sscanf(currentregel,"tiling %f",&tiling);
+				if(sscanf(currentregel,"tiling %f",&tiling) != 1) {
+					console->Write("Error reading line:\r\n%s\r\n",currentregel);
+				}
 			} else if(!strcmp(word1,"cullmode")) {
 				if(sscanf(currentregel,"cullmode %s",word2) == 1) {
 					if(!strcmp(word2,"none")) {

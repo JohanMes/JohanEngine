@@ -150,7 +150,7 @@ void Benchmark::Save() {
 	
 	// Teken alleen het eigen venster
 	renderer->Begin(true);
-	renderer->BeginTechnique(renderer->TechInterface->handle);
+	renderer->BeginTechnique(renderer->shaders[1]); // TODO: remove hardcoded 1
 	renderer->DrawComponent(this);
 	renderer->EndTechnique();
 	renderer->EndScene();

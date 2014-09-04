@@ -92,7 +92,7 @@ class DLLIMPORT Renderer {
 	FXVariable* FXInvheight;
 	
 	FXVariable* FXTimevar;
-	FXVariable* FXInterfacecolor;
+	FXVariable* FXPurecolor;
 	
 	// Texturepointers naar GPU
 	FXVariable* FXScreentex1;
@@ -126,13 +126,13 @@ class DLLIMPORT Renderer {
 
 	// Misc.
 	void UpdateTime();
-	
+	void SaveBuffers();
+			
 	public:
 		Renderer();
 		~Renderer();
 		
 		// Vaste shaders
-		FXShader* TechInterface;
 		FXShader* TechShadowMap;
 		FXShader* TechAmbientMap; // saves normal in view coords
 		FXShader* TechSSAOFactor; // computes SSAO coeff
@@ -215,8 +215,7 @@ class DLLIMPORT Renderer {
 		void OnResetDevice();
 			
 		// Save render targets to HDD
-		void ScheduleSaveBuffers();
-		void SaveBuffers();
+		void ScheduleSaveBuffers(); // save when we've finished next frame
 		
 		// Misc.
 		float2 GetBufferSize();

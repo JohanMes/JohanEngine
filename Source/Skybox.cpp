@@ -66,10 +66,10 @@ void Skybox::OnUpdateTime(double dt) {
 		-sin((2.0f*pi/(60.0f * 60 * 24))*renderer->GetTime())));
 	
 	// roteer plane zonobject naar camera
-	sunobject->matWorld = camera->matViewInverse; 
+	sunobject->matWorld = camera->GetMatViewInverse();
 	
 	// Behoud translate
-	float3 worldpos = 0.95f*sunlight->GetDirection()*skyboxradius + camera->pos;
+	float3 worldpos = 0.95f*sunlight->GetDirection()*skyboxradius + camera->GetPos();
 	sunobject->matWorld._41 = worldpos.x;
 	sunobject->matWorld._42 = worldpos.y;
 	sunobject->matWorld._43 = worldpos.z;
@@ -79,7 +79,7 @@ void Skybox::OnUpdateTime(double dt) {
 	
 	// Skybox centreren op camerapos
 	if(skybox) {
-		skybox->SetTranslation(camera->pos);
+		skybox->SetTranslation(camera->GetPos());
 	}
 	
 	// Update mixing between day time and nighttime texture

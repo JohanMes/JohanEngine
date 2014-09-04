@@ -91,7 +91,7 @@ void Dirlight::GetProjection() {
 			continue;
 		}
 		
-		float3 modeldirvector = object->worldcenter - camera->pos;
+		float3 modeldirvector = object->worldcenter - camera->GetPos();
 		float modeldirlength = std::max(0.0f,modeldirvector.Length() - object->worldr);
 		
 		// Also don't stretch frustum to fit these

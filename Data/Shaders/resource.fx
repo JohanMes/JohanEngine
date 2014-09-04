@@ -113,7 +113,7 @@ uniform extern float fogcolor;
 uniform extern float3 camerapos;
 uniform extern float minviewdistance;
 uniform extern float maxviewdistance;
-uniform extern float4 interfacecolor;
+uniform extern float4 purecolor;
 uniform extern float lightambient;
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Locals

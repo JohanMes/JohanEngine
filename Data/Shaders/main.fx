@@ -9,7 +9,6 @@
 #include "EdgeDetect.fx"
 #include "GaussFilter.fx"
 #include "Inverse.fx"
-#include "Interface.fx"
 #include "Sepia.fx"
 #include "Sharpen.fx"
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -30,6 +29,7 @@
 	Per vertex
 */
 #include "PerVertex.fx"
+#include "PureColor.fx" // alleen kleur
 #include "PureTexture.fx" // alleen textures, niets
 #include "PureTextureMultitexConst.fx" // alleen 3 textures, niets
 #include "NoShade.fx" // textures met schaduwen
@@ -38,6 +38,7 @@
 	Per pixel
 */
 #include "PerPixel.fx"
+#include "PerPixelColor.fx"
 #include "PerPixelSpecular.fx"
 #include "PerPixelGooch.fx"
 #include "PerPixelMinnaert.fx"

@@ -2,6 +2,7 @@
 #define MATERIAL_H
 
 #include "Texture.h"
+#include "float4.h"
 
 #if BUILDING_DLL
 #define DLLIMPORT __declspec(dllexport)
@@ -25,6 +26,7 @@ class DLLIMPORT Material {
 		float shininess;
 		float tiling;
 		float3 mixer; // for constant mixing, use this
+		float4 color; // color, replaces all other color properties
 		
 		int cullmode;
 		int fillmode;

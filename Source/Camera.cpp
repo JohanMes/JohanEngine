@@ -38,6 +38,60 @@ bool Camera::IsVisible(Object* object) {
 	}
 	return true;
 }
+float4x4& Camera::GetMatView() {
+	return matView;
+}
+float4x4& Camera::GetMatViewInverse() {
+	return matViewInverse;
+}
+float4x4& Camera::GetMatProj() {
+	return matProj;
+}
+float4x4& Camera::GetMatProjInverse() {
+	return matProjInverse;
+}
+float4x4& Camera::GetMatViewProj() {
+	return matViewProj;
+}
+float3 Camera::GetExactRight() {
+	return exactright;
+}
+float3 Camera::GetRight() {
+	return right;
+}
+float3 Camera::GetExactUp() {
+	return exactup;
+}
+float3 Camera::GetUp() {
+	return up;
+}
+float3 Camera::GetDir() {
+	return dir;
+}
+float3 Camera::GetLookAt() {
+	return lookat;
+}
+float3 Camera::GetPos() {
+	return pos;
+}
+float Camera::GetMinViewDistance() {
+	return minviewdistance;
+}
+float Camera::GetMaxViewDistance() {
+	return maxviewdistance;
+}
+float Camera::GetAngleH() {
+	return angleH;
+}
+float Camera::GetAngleV() {
+	return angleV;
+}
+float Camera::GetRatio() {
+	return ratio;
+}
+float Camera::GetFOV() {
+	return fov;
+}
 void Camera::SetPos(float3 pos) {
 	BeginUpdate();
 	this->pos = pos;

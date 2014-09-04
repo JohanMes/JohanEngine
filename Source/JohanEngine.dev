@@ -1,7 +1,7 @@
 [Project]
 FileName=JohanEngine.dev
 Name=JohanEngine
-UnitCount=138
+UnitCount=139
 Type=3
 Ver=2
 ObjFiles=
@@ -10,7 +10,7 @@ Libs=
 PrivateResource=JohanEngine_private.rc
 ResourceIncludes=
 MakeIncludes=
-Compiler=-DBUILDING_DLL=1_@@_-Wno-unused-parameter_@@_-Wno-missing-field-initializers_@@_
+Compiler=
 CppCompiler=-DBUILDING_DLL=1_@@_-Wno-unused-parameter_@@_-Wno-missing-field-initializers_@@_
 Linker=lib/x64/libd3d9.a_@@_lib/x64/libd3dcompiler_43.a_@@_lib/x64/libd3dx9_43.a_@@_--no-export-all-symbols --add-stdcall-alias_@@_
 IsCpp=1
@@ -35,18 +35,18 @@ LogOutputEnabled=0
 Major=1
 Minor=4
 Release=3
-Build=22320
+Build=22643
 LanguageID=1033
 CharsetID=1252
 CompanyName=
-FileVersion=1.4.3.22320
+FileVersion=1.4.3.22643
 FileDescription=JohanEngine
 InternalName=
 LegalCopyright=Kopijregt © 2011 Dhr. J.C. Mes
 LegalTrademarks=
 OriginalFilename=
 ProductName=
-ProductVersion=1.4.3.22320
+ProductVersion=1.4.3.22643
 AutoIncBuildNr=1
 SyncProduct=1
 
@@ -530,16 +530,6 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit58]
-FileName=..\Data\Shaders\Interface.fx
-CompileCpp=1
-Folder=FX/Screenspace
-Compile=0
-Link=0
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
 [Unit57]
 FileName=..\Data\Shaders\ToneMap.fx
 CompileCpp=1
@@ -561,15 +551,6 @@ BuildCmd=
 CompileCpp=1
 
 [Unit59]
-FileName=..\Data\Shaders\PerPixelMinnaert.fx
-Folder=FX
-Compile=0
-Link=0
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit60]
 FileName=Camera.cpp
 Folder=Camera
 Compile=1
@@ -579,7 +560,7 @@ OverrideBuildCmd=0
 BuildCmd=
 CompileCpp=1
 
-[Unit61]
+[Unit60]
 FileName=Camera.h
 Folder=Camera
 Compile=1
@@ -587,6 +568,16 @@ Link=1
 Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
+CompileCpp=1
+
+[Unit61]
+FileName=..\Data\Shaders\PerPixelOrenNayar.fx
+Folder=FX
+Compile=0
+Link=0
+Priority=1000
+OverrideBuildCmd=1
+BuildCmd=<override this command>
 CompileCpp=1
 
 [Unit34]
@@ -600,26 +591,6 @@ BuildCmd=
 CompileCpp=1
 
 [Unit62]
-FileName=..\Data\Shaders\PerPixelOrenNayar.fx
-Folder=FX
-Compile=0
-Link=0
-Priority=1000
-OverrideBuildCmd=1
-BuildCmd=<override this command>
-CompileCpp=1
-
-[Unit64]
-FileName=State.h
-Folder=State
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-CompileCpp=1
-
-[Unit63]
 FileName=State.cpp
 Folder=State
 Compile=1
@@ -629,7 +600,7 @@ OverrideBuildCmd=0
 BuildCmd=
 CompileCpp=1
 
-[Unit65]
+[Unit64]
 FileName=Dirlight.cpp
 Folder=Lights/Types/Dirlight
 Compile=1
@@ -639,7 +610,17 @@ OverrideBuildCmd=0
 BuildCmd=
 CompileCpp=1
 
-[Unit66]
+[Unit63]
+FileName=State.h
+Folder=State
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+CompileCpp=1
+
+[Unit65]
 FileName=Dirlight.h
 Folder=Lights/Types/Dirlight
 Compile=1
@@ -649,7 +630,7 @@ OverrideBuildCmd=0
 BuildCmd=
 CompileCpp=1
 
-[Unit67]
+[Unit66]
 FileName=Pointlight.cpp
 Folder=Lights/Types/Pointlight
 Compile=1
@@ -659,7 +640,7 @@ OverrideBuildCmd=0
 BuildCmd=
 CompileCpp=1
 
-[Unit68]
+[Unit67]
 FileName=Pointlight.h
 Folder=Lights/Types/Pointlight
 Compile=1
@@ -669,7 +650,7 @@ OverrideBuildCmd=0
 BuildCmd=
 CompileCpp=1
 
-[Unit69]
+[Unit68]
 FileName=Spotlight.cpp
 Folder=Lights/Types/Spotlight
 Compile=1
@@ -679,7 +660,7 @@ OverrideBuildCmd=0
 BuildCmd=
 CompileCpp=1
 
-[Unit70]
+[Unit69]
 FileName=Spotlight.h
 Folder=Lights/Types/Spotlight
 Compile=1
@@ -689,8 +670,18 @@ OverrideBuildCmd=0
 BuildCmd=
 CompileCpp=1
 
-[Unit71]
+[Unit70]
 FileName=Clock.cpp
+Folder=Clock
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+CompileCpp=1
+
+[Unit71]
+FileName=Clock.h
 Folder=Clock
 Compile=1
 Link=1
@@ -710,16 +701,6 @@ BuildCmd=
 CompileCpp=1
 
 [Unit75]
-FileName=FXVariable.cpp
-CompileCpp=1
-Folder=Handles/FXVariable
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit76]
 FileName=FXHandle.h
 CompileCpp=1
 Folder=Handles/FXHandle
@@ -729,7 +710,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit77]
+[Unit76]
 FileName=FXHandle.cpp
 CompileCpp=1
 Folder=Handles/FXHandle
@@ -739,7 +720,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit78]
+[Unit77]
 FileName=Handles.h
 CompileCpp=1
 Folder=Handles
@@ -749,7 +730,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit79]
+[Unit78]
 FileName=Messagebox.h
 CompileCpp=1
 Folder=Dialogs/Messagebox
@@ -759,7 +740,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit80]
+[Unit79]
 FileName=Messagebox.cpp
 CompileCpp=1
 Folder=Dialogs/Messagebox
@@ -769,7 +750,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit81]
+[Unit80]
 FileName=Models.cpp
 CompileCpp=1
 Folder=Models
@@ -779,7 +760,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit82]
+[Unit81]
 FileName=Models.h
 CompileCpp=1
 Folder=Models
@@ -789,8 +770,8 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit84]
-FileName=Textures.cpp
+[Unit82]
+FileName=Textures.h
 CompileCpp=1
 Folder=Textures
 Compile=1
@@ -799,8 +780,18 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
+[Unit84]
+FileName=Objects.h
+CompileCpp=1
+Folder=Objects
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
 [Unit83]
-FileName=Textures.h
+FileName=Textures.cpp
 CompileCpp=1
 Folder=Textures
 Compile=1
@@ -820,16 +811,6 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit85]
-FileName=Objects.h
-CompileCpp=1
-Folder=Objects
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit86]
 FileName=Objects.cpp
 CompileCpp=1
 Folder=Objects
@@ -839,17 +820,17 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit89]
-FileName=Components.h
+[Unit86]
+FileName=Lights.h
 CompileCpp=1
-Folder=Interface/Components
+Folder=Lights
 Compile=1
 Link=1
 Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit90]
+[Unit89]
 FileName=..\Data\Shaders\PerPixelGooch.fx
 CompileCpp=1
 Folder=FX
@@ -859,18 +840,28 @@ Priority=1000
 OverrideBuildCmd=1
 BuildCmd=<override this command>
 
-[Unit93]
-FileName=..\Data\Shaders\AmbientMap.fx
+[Unit90]
+FileName=..\Data\Shaders\PerPixelNormalParallax.fx
 CompileCpp=1
-Folder=FX/Specials
+Folder=FX
 Compile=0
 Link=0
 Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
+[Unit93]
+FileName=Curve.h
+CompileCpp=1
+Folder=Bezier/Curve
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
 [Unit92]
-FileName=..\Data\Shaders\ShadowMap.fx
+FileName=..\Data\Shaders\AmbientMap.fx
 CompileCpp=1
 Folder=FX/Specials
 Compile=0
@@ -890,76 +881,6 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit95]
-FileName=Curve.cpp
-CompileCpp=1
-Folder=Bezier/Curve
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit94]
-FileName=Curve.h
-CompileCpp=1
-Folder=Bezier/Curve
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit87]
-FileName=Lights.h
-CompileCpp=1
-Folder=Lights
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit88]
-FileName=Lights.cpp
-CompileCpp=1
-Folder=Lights
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit99]
-FileName=Parser.h
-CompileCpp=1
-Folder=Script/Parser
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit98]
-FileName=Bezier.h
-CompileCpp=1
-Folder=Bezier
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit74]
-FileName=FXVariable.h
-CompileCpp=1
-Folder=Handles/FXVariable
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit96]
 FileName=Path.cpp
 CompileCpp=1
 Folder=Bezier/Path
@@ -969,17 +890,37 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit97]
-FileName=Path.h
+[Unit94]
+FileName=Curve.cpp
 CompileCpp=1
-Folder=Bezier/Path
+Folder=Bezier/Curve
 Compile=1
 Link=1
 Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit100]
+[Unit87]
+FileName=Lights.cpp
+CompileCpp=1
+Folder=Lights
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit88]
+FileName=Components.h
+CompileCpp=1
+Folder=Interface/Components
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit99]
 FileName=Parser.cpp
 CompileCpp=1
 Folder=Script/Parser
@@ -989,17 +930,47 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit102]
-FileName=Variable.h
+[Unit98]
+FileName=Parser.h
 CompileCpp=1
-Folder=Script/Variable
+Folder=Script/Parser
 Compile=1
 Link=1
 Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit101]
+[Unit74]
+FileName=FXVariable.cpp
+CompileCpp=1
+Folder=Handles/FXVariable
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit96]
+FileName=Path.h
+CompileCpp=1
+Folder=Bezier/Path
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit97]
+FileName=Bezier.h
+CompileCpp=1
+Folder=Bezier
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit100]
 FileName=Variable.cpp
 CompileCpp=1
 Folder=Script/Variable
@@ -1009,7 +980,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit103]
+[Unit102]
 FileName=Interface.h
 CompileCpp=1
 Folder=Interface
@@ -1019,7 +990,17 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit104]
+[Unit101]
+FileName=Variable.h
+CompileCpp=1
+Folder=Script/Variable
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit103]
 FileName=Interface.cpp
 CompileCpp=1
 Folder=Interface
@@ -1029,7 +1010,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit105]
+[Unit104]
 FileName=float3.h
 CompileCpp=1
 Folder=float3
@@ -1039,18 +1020,18 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit106]
+[Unit105]
 FileName=float3.cpp
+CompileCpp=1
 Folder=float3
 Compile=1
 Link=1
 Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
-CompileCpp=1
 
-[Unit108]
-FileName=Key.cpp
+[Unit106]
+FileName=Key.h
 Folder=Key
 Compile=1
 Link=1
@@ -1059,7 +1040,7 @@ OverrideBuildCmd=0
 BuildCmd=
 CompileCpp=1
 
-[Unit109]
+[Unit108]
 FileName=float2.h
 Folder=float2
 Compile=1
@@ -1069,27 +1050,17 @@ OverrideBuildCmd=0
 BuildCmd=
 CompileCpp=1
 
-[Unit111]
-FileName=float4.h
-CompileCpp=1
-Folder=float4
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit110]
+[Unit109]
 FileName=float2.cpp
-CompileCpp=1
 Folder=float2
 Compile=1
 Link=1
 Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
+CompileCpp=1
 
-[Unit112]
+[Unit111]
 FileName=float4.cpp
 CompileCpp=1
 Folder=float4
@@ -1099,7 +1070,17 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit113]
+[Unit110]
+FileName=float4.h
+CompileCpp=1
+Folder=float4
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit112]
 FileName=float4x4.h
 CompileCpp=1
 Folder=float4x4
@@ -1109,7 +1090,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit114]
+[Unit113]
 FileName=float4x4.cpp
 CompileCpp=1
 Folder=float4x4
@@ -1119,7 +1100,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit115]
+[Unit114]
 FileName=Timer.h
 CompileCpp=1
 Folder=Timer
@@ -1129,7 +1110,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit116]
+[Unit115]
 FileName=Timer.cpp
 CompileCpp=1
 Folder=Timer
@@ -1139,7 +1120,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit117]
+[Unit116]
 FileName=Timers.h
 CompileCpp=1
 Folder=Timers
@@ -1149,7 +1130,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit118]
+[Unit117]
 FileName=Timers.cpp
 CompileCpp=1
 Folder=Timers
@@ -1159,8 +1140,18 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit119]
+[Unit118]
 FileName=Material.h
+CompileCpp=1
+Folder=Material
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit119]
+FileName=Material.cpp
 Folder=Material
 Compile=1
 Link=1
@@ -1170,16 +1161,6 @@ BuildCmd=
 CompileCpp=1
 
 [Unit122]
-FileName=Skybox.cpp
-CompileCpp=1
-Folder=Skybox
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit123]
 FileName=..\Data\Shaders\PerPixelMultitexConst.fx
 CompileCpp=1
 Folder=FX
@@ -1189,7 +1170,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit124]
+[Unit123]
 FileName=..\Data\Shaders\PureTextureMultitexConst.fx
 CompileCpp=1
 Folder=FX
@@ -1199,7 +1180,7 @@ Priority=1000
 OverrideBuildCmd=1
 BuildCmd=<override this command>
 
-[Unit125]
+[Unit124]
 FileName=Animation.h
 CompileCpp=1
 Folder=Animation
@@ -1209,7 +1190,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit126]
+[Unit125]
 FileName=Animation.cpp
 CompileCpp=1
 Folder=Animation
@@ -1219,7 +1200,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit127]
+[Unit126]
 FileName=Animations.cpp
 CompileCpp=1
 Folder=Animations
@@ -1229,9 +1210,19 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
+[Unit127]
+FileName=Animations.h
+CompileCpp=1
+Folder=Animations
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
 [Unit132]
-FileName=Benchmark.cpp
-Folder=Dialogs/Benchmark
+FileName=TimeEvent.h
+Folder=Events/TimeEvent
 Compile=1
 Link=1
 Priority=1000
@@ -1240,16 +1231,6 @@ BuildCmd=
 CompileCpp=1
 
 [Unit133]
-FileName=TimeEvent.h
-CompileCpp=1
-Folder=Events/TimeEvent
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit134]
 FileName=TimeEvent.cpp
 CompileCpp=1
 Folder=Events/TimeEvent
@@ -1259,7 +1240,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit135]
+[Unit134]
 FileName=RenderTarget.h
 CompileCpp=1
 Folder=Renderer/RenderTarget
@@ -1269,7 +1250,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit136]
+[Unit135]
 FileName=RenderTarget.cpp
 CompileCpp=1
 Folder=Renderer/RenderTarget
@@ -1279,8 +1260,18 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit137]
+[Unit136]
 FileName=..\Data\Shaders\SSAOBlur.fx
+CompileCpp=1
+Folder=FX/Screenspace/SSAO
+Compile=0
+Link=0
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit137]
+FileName=..\Data\Shaders\SSAOFactor.fx
 CompileCpp=1
 Folder=FX/Screenspace/SSAO
 Compile=0
@@ -1300,9 +1291,9 @@ BuildCmd=
 CompileCpp=1
 
 [Unit91]
-FileName=..\Data\Shaders\PerPixelNormalParallax.fx
+FileName=..\Data\Shaders\ShadowMap.fx
 CompileCpp=1
-Folder=FX
+Folder=FX/Specials
 Compile=0
 Link=0
 Priority=1000
@@ -1310,9 +1301,9 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit120]
-FileName=Material.cpp
+FileName=Skybox.h
 CompileCpp=1
-Folder=Material
+Folder=Skybox
 Compile=1
 Link=1
 Priority=1000
@@ -1320,7 +1311,7 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit121]
-FileName=Skybox.h
+FileName=Skybox.cpp
 CompileCpp=1
 Folder=Skybox
 Compile=1
@@ -1348,7 +1339,7 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit107]
-FileName=Key.h
+FileName=Key.cpp
 CompileCpp=1
 Folder=Key
 Compile=1
@@ -1358,16 +1349,6 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit72]
-FileName=Clock.h
-CompileCpp=1
-Folder=Clock
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit73]
 FileName=..\Data\Shaders\PerPixelCookTorrance.fx
 CompileCpp=1
 Folder=FX
@@ -1377,17 +1358,17 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit128]
-FileName=Animations.h
+[Unit73]
+FileName=FXVariable.h
 CompileCpp=1
-Folder=Animations
+Folder=Handles/FXVariable
 Compile=1
 Link=1
 Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit129]
+[Unit128]
 FileName=..\Data\Shaders\BrightPass.fx
 CompileCpp=1
 Folder=FX/Screenspace/HDR
@@ -1397,8 +1378,9 @@ Priority=1000
 OverrideBuildCmd=1
 BuildCmd=<override this command>
 
-[Unit130]
+[Unit129]
 FileName=..\Data\Shaders\BrightBlur.fx
+CompileCpp=1
 Folder=FX/Screenspace/HDR
 Compile=0
 Link=0
@@ -1406,7 +1388,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit131]
+[Unit130]
 FileName=Benchmark.h
 Folder=Dialogs/Benchmark
 Compile=1
@@ -1416,9 +1398,37 @@ OverrideBuildCmd=0
 BuildCmd=
 CompileCpp=1
 
+[Unit131]
+FileName=Benchmark.cpp
+Folder=Dialogs/Benchmark
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+CompileCpp=1
+
 [Unit138]
-FileName=..\Data\Shaders\SSAOFactor.fx
-Folder=FX/Screenspace/SSAO
+FileName=..\Data\Shaders\PureColor.fx
+Folder=FX
+Compile=0
+Link=0
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit58]
+FileName=..\Data\Shaders\PerPixelMinnaert.fx
+Folder=FX
+Compile=0
+Link=0
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit139]
+FileName=..\Data\Shaders\PerPixelColor.fx
+Folder=FX
 Compile=0
 Link=0
 Priority=1000

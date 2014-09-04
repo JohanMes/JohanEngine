@@ -1,4 +1,5 @@
 #include <windows.h>
+#include "float3.h"
 
 BOOL WINAPI DllMain(HINSTANCE hinstDLL,DWORD fdwReason,LPVOID lpvReserved)
 {

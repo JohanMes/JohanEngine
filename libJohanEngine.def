@@ -1,4 +1,4 @@
-; dlltool --base-file C:\Users\Johan\AppData\Local\Temp\cca01796.base --output-exp JohanEngine.exp --dllname JohanEngine.dll --output-def ../libJohanEngine.def --no-export-all-symbols --add-stdcall-alias --exclude-symbol=DllMainCRTStartup --def C:\Users\Johan\AppData\Local\Temp\cca01796.def --output-lib ../libJohanEngine.a
+; dlltool --base-file C:\Users\Johan\AppData\Local\Temp\cca02344.base --output-exp JohanEngine.exp --dllname JohanEngine.dll --output-def ../libJohanEngine.def --no-export-all-symbols --add-stdcall-alias --exclude-symbol=DllMainCRTStartup --def C:\Users\Johan\AppData\Local\Temp\cca02344.def --output-lib ../libJohanEngine.a
 EXPORTS
 	FX @ 1 DATA
 ;	FileExists(char const*)
@@ -301,886 +301,922 @@ EXPORTS
 	_ZN6ButtonD1Ev @ 150
 ;	Button::~Button()
 	_ZN6ButtonD2Ev @ 151
+;	Camera::GetExactUp()
+	_ZN6Camera10GetExactUpEv @ 152
+;	Camera::GetMatProj()
+	_ZN6Camera10GetMatProjEv @ 153
+;	Camera::GetMatView()
+	_ZN6Camera10GetMatViewEv @ 154
 ;	Camera::BeginUpdate()
-	_ZN6Camera11BeginUpdateEv @ 152
+	_ZN6Camera11BeginUpdateEv @ 155
 ;	Camera::UpdateAngles()
-	_ZN6Camera12UpdateAnglesEv @ 153
+	_ZN6Camera12UpdateAnglesEv @ 156
+;	Camera::GetExactRight()
+	_ZN6Camera13GetExactRightEv @ 157
 ;	Camera::UpdateVectors()
-	_ZN6Camera13UpdateVectorsEv @ 154
+	_ZN6Camera13UpdateVectorsEv @ 158
+;	Camera::GetMatViewProj()
+	_ZN6Camera14GetMatViewProjEv @ 159
 ;	Camera::UpdateMatrices()
-	_ZN6Camera14UpdateMatricesEv @ 155
+	_ZN6Camera14UpdateMatricesEv @ 160
 ;	Camera::SetFrustumPlane(PLANE*, float3&, float3&, float3&)
-	_ZN6Camera15SetFrustumPlaneEP5PLANER6float3S3_S3_ @ 156
+	_ZN6Camera15SetFrustumPlaneEP5PLANER6float3S3_S3_ @ 161
+;	Camera::GetMatProjInverse()
+	_ZN6Camera17GetMatProjInverseEv @ 162
+;	Camera::GetMatViewInverse()
+	_ZN6Camera17GetMatViewInverseEv @ 163
+;	Camera::GetMaxViewDistance()
+	_ZN6Camera18GetMaxViewDistanceEv @ 164
+;	Camera::GetMinViewDistance()
+	_ZN6Camera18GetMinViewDistanceEv @ 165
 ;	Camera::SetMaxViewDistance(float)
-	_ZN6Camera18SetMaxViewDistanceEf @ 157
+	_ZN6Camera18SetMaxViewDistanceEf @ 166
 ;	Camera::SetMinViewDistance(float)
-	_ZN6Camera18SetMinViewDistanceEf @ 158
+	_ZN6Camera18SetMinViewDistanceEf @ 167
 ;	Camera::UpdateFrustumPlanes()
-	_ZN6Camera19UpdateFrustumPlanesEv @ 159
+	_ZN6Camera19UpdateFrustumPlanesEv @ 168
 ;	Camera::Move(float3)
-	_ZN6Camera4MoveE6float3 @ 160
+	_ZN6Camera4MoveE6float3 @ 169
+;	Camera::GetUp()
+	_ZN6Camera5GetUpEv @ 170
 ;	Camera::Print()
-	_ZN6Camera5PrintEv @ 161
+	_ZN6Camera5PrintEv @ 171
+;	Camera::GetDir()
+	_ZN6Camera6GetDirEv @ 172
+;	Camera::GetFOV()
+	_ZN6Camera6GetFOVEv @ 173
+;	Camera::GetPos()
+	_ZN6Camera6GetPosEv @ 174
 ;	Camera::SetDir(float3)
-	_ZN6Camera6SetDirE6float3 @ 162
+	_ZN6Camera6SetDirE6float3 @ 175
 ;	Camera::SetFOV(float)
-	_ZN6Camera6SetFOVEf @ 163
+	_ZN6Camera6SetFOVEf @ 176
 ;	Camera::SetPos(float3)
-	_ZN6Camera6SetPosE6float3 @ 164
+	_ZN6Camera6SetPosE6float3 @ 177
 ;	Camera::Update()
-	_ZN6Camera6UpdateEv @ 165
+	_ZN6Camera6UpdateEv @ 178
+;	Camera::GetRatio()
+	_ZN6Camera8GetRatioEv @ 179
+;	Camera::GetRight()
+	_ZN6Camera8GetRightEv @ 180
 ;	Camera::SetRatio(float)
-	_ZN6Camera8SetRatioEf @ 166
+	_ZN6Camera8SetRatioEf @ 181
 ;	Camera::EndUpdate()
-	_ZN6Camera9EndUpdateEv @ 167
+	_ZN6Camera9EndUpdateEv @ 182
+;	Camera::GetAngleH()
+	_ZN6Camera9GetAngleHEv @ 183
+;	Camera::GetAngleV()
+	_ZN6Camera9GetAngleVEv @ 184
+;	Camera::GetLookAt()
+	_ZN6Camera9GetLookAtEv @ 185
 ;	Camera::IsVisible(Object*)
-	_ZN6Camera9IsVisibleEP6Object @ 168
+	_ZN6Camera9IsVisibleEP6Object @ 186
 ;	Camera::SetLookAt(float3)
-	_ZN6Camera9SetLookAtE6float3 @ 169
+	_ZN6Camera9SetLookAtE6float3 @ 187
 ;	Camera::Camera()
-	_ZN6CameraC1Ev @ 170
+	_ZN6CameraC1Ev @ 188
 ;	Camera::Camera()
-	_ZN6CameraC2Ev @ 171
+	_ZN6CameraC2Ev @ 189
 ;	Camera::~Camera()
-	_ZN6CameraD1Ev @ 172
+	_ZN6CameraD1Ev @ 190
 ;	Camera::~Camera()
-	_ZN6CameraD2Ev @ 173
+	_ZN6CameraD2Ev @ 191
 ;	Lights::AddDirlight(Dirlight*)
-	_ZN6Lights11AddDirlightEP8Dirlight @ 174
+	_ZN6Lights11AddDirlightEP8Dirlight @ 192
 ;	Lights::BeginUpdate()
-	_ZN6Lights11BeginUpdateEv @ 175
+	_ZN6Lights11BeginUpdateEv @ 193
 ;	Lights::AddSpotlight(Spotlight*)
-	_ZN6Lights12AddSpotlightEP9Spotlight @ 176
+	_ZN6Lights12AddSpotlightEP9Spotlight @ 194
 ;	Lights::OnLostDevice()
-	_ZN6Lights12OnLostDeviceEv @ 177
+	_ZN6Lights12OnLostDeviceEv @ 195
 ;	Lights::OnUpdateTime(float)
-	_ZN6Lights12OnUpdateTimeEf @ 178
+	_ZN6Lights12OnUpdateTimeEf @ 196
 ;	Lights::AddPointlight(float3, float3, bool)
-	_ZN6Lights13AddPointlightE6float3S0_b @ 179
+	_ZN6Lights13AddPointlightE6float3S0_b @ 197
 ;	Lights::OnResetDevice()
-	_ZN6Lights13OnResetDeviceEv @ 180
+	_ZN6Lights13OnResetDeviceEv @ 198
 ;	Lights::DeleteDirlight(Dirlight*)
-	_ZN6Lights14DeleteDirlightEP8Dirlight @ 181
+	_ZN6Lights14DeleteDirlightEP8Dirlight @ 199
 ;	Lights::DeleteSpotlight(Spotlight*)
-	_ZN6Lights15DeleteSpotlightEP9Spotlight @ 182
+	_ZN6Lights15DeleteSpotlightEP9Spotlight @ 200
 ;	Lights::SetAmbientlight(float)
-	_ZN6Lights15SetAmbientlightEf @ 183
+	_ZN6Lights15SetAmbientlightEf @ 201
 ;	Lights::DeletePointlight(Pointlight*)
-	_ZN6Lights16DeletePointlightEP10Pointlight @ 184
+	_ZN6Lights16DeletePointlightEP10Pointlight @ 202
 ;	Lights::StaticOnUpdateTime(void*, double)
-	_ZN6Lights18StaticOnUpdateTimeEPvd @ 185
+	_ZN6Lights18StaticOnUpdateTimeEPvd @ 203
 ;	Lights::Clear()
-	_ZN6Lights5ClearEv @ 186
+	_ZN6Lights5ClearEv @ 204
 ;	Lights::Print()
-	_ZN6Lights5PrintEv @ 187
+	_ZN6Lights5PrintEv @ 205
 ;	Lights::Update()
-	_ZN6Lights6UpdateEv @ 188
+	_ZN6Lights6UpdateEv @ 206
 ;	Lights::EndUpdate()
-	_ZN6Lights9EndUpdateEv @ 189
+	_ZN6Lights9EndUpdateEv @ 207
 ;	Lights::Lights()
-	_ZN6LightsC1Ev @ 190
+	_ZN6LightsC1Ev @ 208
 ;	Lights::Lights()
-	_ZN6LightsC2Ev @ 191
+	_ZN6LightsC2Ev @ 209
 ;	Lights::~Lights()
-	_ZN6LightsD1Ev @ 192
+	_ZN6LightsD1Ev @ 210
 ;	Lights::~Lights()
-	_ZN6LightsD2Ev @ 193
+	_ZN6LightsD2Ev @ 211
 ;	Models::GetByFileName(char const*)
-	_ZN6Models13GetByFileNameEPKc @ 194
+	_ZN6Models13GetByFileNameEPKc @ 212
 ;	Models::GetByFullPath(char const*)
-	_ZN6Models13GetByFullPathEPKc @ 195
+	_ZN6Models13GetByFullPathEPKc @ 213
 ;	Models::Add(Model*)
-	_ZN6Models3AddEP5Model @ 196
+	_ZN6Models3AddEP5Model @ 214
 ;	Models::Add(char const*, bool)
-	_ZN6Models3AddEPKcb @ 197
+	_ZN6Models3AddEPKcb @ 215
 ;	Models::Add()
-	_ZN6Models3AddEv @ 198
+	_ZN6Models3AddEv @ 216
 ;	Models::Clear()
-	_ZN6Models5ClearEv @ 199
+	_ZN6Models5ClearEv @ 217
 ;	Models::Print()
-	_ZN6Models5PrintEv @ 200
+	_ZN6Models5PrintEv @ 218
 ;	Models::Delete(Model*)
-	_ZN6Models6DeleteEP5Model @ 201
+	_ZN6Models6DeleteEP5Model @ 219
 ;	Models::AddPlane(unsigned int, unsigned int, float, Heightmap*, bool)
-	_ZN6Models8AddPlaneEjjfP9Heightmapb @ 202
+	_ZN6Models8AddPlaneEjjfP9Heightmapb @ 220
 ;	Models::SaveToCSV()
-	_ZN6Models9SaveToCSVEv @ 203
+	_ZN6Models9SaveToCSVEv @ 221
 ;	Models::Models()
-	_ZN6ModelsC1Ev @ 204
+	_ZN6ModelsC1Ev @ 222
 ;	Models::Models()
-	_ZN6ModelsC2Ev @ 205
+	_ZN6ModelsC2Ev @ 223
 ;	Models::~Models()
-	_ZN6ModelsD1Ev @ 206
+	_ZN6ModelsD1Ev @ 224
 ;	Models::~Models()
-	_ZN6ModelsD2Ev @ 207
+	_ZN6ModelsD2Ev @ 225
 ;	Object::GetScaling()
-	_ZN6Object10GetScalingEv @ 208
+	_ZN6Object10GetScalingEv @ 226
 ;	Object::SetScaling(float)
-	_ZN6Object10SetScalingEf @ 209
+	_ZN6Object10SetScalingEf @ 227
 ;	Object::BeginUpdate()
-	_ZN6Object11BeginUpdateEv @ 210
+	_ZN6Object11BeginUpdateEv @ 228
 ;	Object::SetRotation(float3 const&)
-	_ZN6Object11SetRotationERK6float3 @ 211
+	_ZN6Object11SetRotationERK6float3 @ 229
 ;	Object::SetRotation(float4x4 const&)
-	_ZN6Object11SetRotationERK8float4x4 @ 212
+	_ZN6Object11SetRotationERK8float4x4 @ 230
 ;	Object::GetAnimation()
-	_ZN6Object12GetAnimationEv @ 213
+	_ZN6Object12GetAnimationEv @ 231
 ;	Object::LoadFromFile(char const*)
-	_ZN6Object12LoadFromFileEPKc @ 214
+	_ZN6Object12LoadFromFileEPKc @ 232
 ;	Object::SetAnimation(Animation*)
-	_ZN6Object12SetAnimationEP9Animation @ 215
+	_ZN6Object12SetAnimationEP9Animation @ 233
 ;	Object::AddDetailLevel(DetailLevel*)
-	_ZN6Object14AddDetailLevelEP11DetailLevel @ 216
+	_ZN6Object14AddDetailLevelEP11DetailLevel @ 234
 ;	Object::AddDetailLevel(Model*)
-	_ZN6Object14AddDetailLevelEP5Model @ 217
+	_ZN6Object14AddDetailLevelEP5Model @ 235
 ;	Object::AddDetailLevel(Model*, float)
-	_ZN6Object14AddDetailLevelEP5Modelf @ 218
+	_ZN6Object14AddDetailLevelEP5Modelf @ 236
 ;	Object::AddDetailLevel(char const*)
-	_ZN6Object14AddDetailLevelEPKc @ 219
+	_ZN6Object14AddDetailLevelEPKc @ 237
 ;	Object::GetDetailLevel(float)
-	_ZN6Object14GetDetailLevelEf @ 220
+	_ZN6Object14GetDetailLevelEf @ 238
 ;	Object::GetTranslation()
-	_ZN6Object14GetTranslationEv @ 221
+	_ZN6Object14GetTranslationEv @ 239
 ;	Object::IntersectModel(float3, float3)
-	_ZN6Object14IntersectModelE6float3S0_ @ 222
+	_ZN6Object14IntersectModelE6float3S0_ @ 240
 ;	Object::SetRotationDeg(float3 const&)
-	_ZN6Object14SetRotationDegERK6float3 @ 223
+	_ZN6Object14SetRotationDegERK6float3 @ 241
 ;	Object::SetTranslation(float3 const&)
-	_ZN6Object14SetTranslationERK6float3 @ 224
+	_ZN6Object14SetTranslationERK6float3 @ 242
 ;	Object::SetTranslation(float4x4 const&)
-	_ZN6Object14SetTranslationERK8float4x4 @ 225
+	_ZN6Object14SetTranslationERK8float4x4 @ 243
 ;	Object::IntersectSphere(float3, float3)
-	_ZN6Object15IntersectSphereE6float3S0_ @ 226
+	_ZN6Object15IntersectSphereE6float3S0_ @ 244
 ;	Object::GetBoundingModel()
-	_ZN6Object16GetBoundingModelEv @ 227
+	_ZN6Object16GetBoundingModelEv @ 245
 ;	Object::ClearDetailLevels()
-	_ZN6Object17ClearDetailLevelsEv @ 228
+	_ZN6Object17ClearDetailLevelsEv @ 246
 ;	Object::Move(float3 const&)
-	_ZN6Object4MoveERK6float3 @ 229
+	_ZN6Object4MoveERK6float3 @ 247
 ;	Object::Clear()
-	_ZN6Object5ClearEv @ 230
+	_ZN6Object5ClearEv @ 248
 ;	Object::Print()
-	_ZN6Object5PrintEv @ 231
+	_ZN6Object5PrintEv @ 249
 ;	Object::Update()
-	_ZN6Object6UpdateEv @ 232
+	_ZN6Object6UpdateEv @ 250
 ;	Object::GetName()
-	_ZN6Object7GetNameEv @ 233
+	_ZN6Object7GetNameEv @ 251
 ;	Object::SetName(char const*)
-	_ZN6Object7SetNameEPKc @ 234
+	_ZN6Object7SetNameEPKc @ 252
 ;	Object::EndUpdate()
-	_ZN6Object9EndUpdateEv @ 235
+	_ZN6Object9EndUpdateEv @ 253
 ;	Object::Object(char const*)
-	_ZN6ObjectC1EPKc @ 236
+	_ZN6ObjectC1EPKc @ 254
 ;	Object::Object(char const*, float3 const&, float4x4 const&, float)
-	_ZN6ObjectC1EPKcRK6float3RK8float4x4f @ 237
+	_ZN6ObjectC1EPKcRK6float3RK8float4x4f @ 255
 ;	Object::Object(char const*, float3 const&, float3 const&, float)
-	_ZN6ObjectC1EPKcRK6float3S4_f @ 238
+	_ZN6ObjectC1EPKcRK6float3S4_f @ 256
 ;	Object::Object(char const*, char const*, char const*, float3 const&, float4x4 const&, float)
-	_ZN6ObjectC1EPKcS1_S1_RK6float3RK8float4x4f @ 239
+	_ZN6ObjectC1EPKcS1_S1_RK6float3RK8float4x4f @ 257
 ;	Object::Object(char const*, char const*, char const*, float3 const&, float3 const&, float)
-	_ZN6ObjectC1EPKcS1_S1_RK6float3S4_f @ 240
+	_ZN6ObjectC1EPKcS1_S1_RK6float3S4_f @ 258
 ;	Object::Object(char const*)
-	_ZN6ObjectC2EPKc @ 241
+	_ZN6ObjectC2EPKc @ 259
 ;	Object::Object(char const*, float3 const&, float4x4 const&, float)
-	_ZN6ObjectC2EPKcRK6float3RK8float4x4f @ 242
+	_ZN6ObjectC2EPKcRK6float3RK8float4x4f @ 260
 ;	Object::Object(char const*, float3 const&, float3 const&, float)
-	_ZN6ObjectC2EPKcRK6float3S4_f @ 243
+	_ZN6ObjectC2EPKcRK6float3S4_f @ 261
 ;	Object::Object(char const*, char const*, char const*, float3 const&, float4x4 const&, float)
-	_ZN6ObjectC2EPKcS1_S1_RK6float3RK8float4x4f @ 244
+	_ZN6ObjectC2EPKcS1_S1_RK6float3RK8float4x4f @ 262
 ;	Object::Object(char const*, char const*, char const*, float3 const&, float3 const&, float)
-	_ZN6ObjectC2EPKcS1_S1_RK6float3S4_f @ 245
+	_ZN6ObjectC2EPKcS1_S1_RK6float3S4_f @ 263
 ;	Object::~Object()
-	_ZN6ObjectD1Ev @ 246
+	_ZN6ObjectD1Ev @ 264
 ;	Object::~Object()
-	_ZN6ObjectD2Ev @ 247
+	_ZN6ObjectD2Ev @ 265
 ;	Skybox::SetSunlight(char const*, char const*)
-	_ZN6Skybox11SetSunlightEPKcS1_ @ 248
+	_ZN6Skybox11SetSunlightEPKcS1_ @ 266
 ;	Skybox::OnLostDevice()
-	_ZN6Skybox12OnLostDeviceEv @ 249
+	_ZN6Skybox12OnLostDeviceEv @ 267
 ;	Skybox::OnUpdateTime(double)
-	_ZN6Skybox12OnUpdateTimeEd @ 250
+	_ZN6Skybox12OnUpdateTimeEd @ 268
 ;	Skybox::OnResetDevice()
-	_ZN6Skybox13OnResetDeviceEv @ 251
+	_ZN6Skybox13OnResetDeviceEv @ 269
 ;	Skybox::StaticOnUpdateTime(void*, double)
-	_ZN6Skybox18StaticOnUpdateTimeEPvd @ 252
+	_ZN6Skybox18StaticOnUpdateTimeEPvd @ 270
 ;	Skybox::Clear()
-	_ZN6Skybox5ClearEv @ 253
+	_ZN6Skybox5ClearEv @ 271
 ;	Skybox::SetSkybox(char const*, char const*)
-	_ZN6Skybox9SetSkyboxEPKcS1_ @ 254
+	_ZN6Skybox9SetSkyboxEPKcS1_ @ 272
 ;	Skybox::Skybox()
-	_ZN6SkyboxC1Ev @ 255
+	_ZN6SkyboxC1Ev @ 273
 ;	Skybox::Skybox()
-	_ZN6SkyboxC2Ev @ 256
+	_ZN6SkyboxC2Ev @ 274
 ;	Skybox::~Skybox()
-	_ZN6SkyboxD1Ev @ 257
+	_ZN6SkyboxD1Ev @ 275
 ;	Skybox::~Skybox()
-	_ZN6SkyboxD2Ev @ 258
+	_ZN6SkyboxD2Ev @ 276
 ;	Timers::OnUpdateTime(float)
-	_ZN6Timers12OnUpdateTimeEf @ 259
+	_ZN6Timers12OnUpdateTimeEf @ 277
 ;	Timers::StaticOnUpdateTime(void*, double)
-	_ZN6Timers18StaticOnUpdateTimeEPvd @ 260
+	_ZN6Timers18StaticOnUpdateTimeEPvd @ 278
 ;	Timers::Add(Timer*)
-	_ZN6Timers3AddEP5Timer @ 261
+	_ZN6Timers3AddEP5Timer @ 279
 ;	Timers::Clear()
-	_ZN6Timers5ClearEv @ 262
+	_ZN6Timers5ClearEv @ 280
 ;	Timers::Delete(Timer*)
-	_ZN6Timers6DeleteEP5Timer @ 263
+	_ZN6Timers6DeleteEP5Timer @ 281
 ;	Timers::SaveToCSV()
-	_ZN6Timers9SaveToCSVEv @ 264
+	_ZN6Timers9SaveToCSVEv @ 282
 ;	Timers::Timers()
-	_ZN6TimersC1Ev @ 265
+	_ZN6TimersC1Ev @ 283
 ;	Timers::Timers()
-	_ZN6TimersC2Ev @ 266
+	_ZN6TimersC2Ev @ 284
 ;	Timers::~Timers()
-	_ZN6TimersD1Ev @ 267
+	_ZN6TimersD1Ev @ 285
 ;	Timers::~Timers()
-	_ZN6TimersD2Ev @ 268
+	_ZN6TimersD2Ev @ 286
 ;	Window::DrawTextA(ID3DXFont*, ID3DXSprite*)
-	_ZN6Window9DrawTextAEP9ID3DXFontP11ID3DXSprite @ 269
+	_ZN6Window9DrawTextAEP9ID3DXFontP11ID3DXSprite @ 287
 ;	Window::Window(int, int, int, int, char const*)
-	_ZN6WindowC1EiiiiPKc @ 270
+	_ZN6WindowC1EiiiiPKc @ 288
 ;	Window::Window(int, int, int, int, char const*)
-	_ZN6WindowC2EiiiiPKc @ 271
+	_ZN6WindowC2EiiiiPKc @ 289
 ;	Window::~Window()
-	_ZN6WindowD1Ev @ 272
+	_ZN6WindowD1Ev @ 290
 ;	Window::~Window()
-	_ZN6WindowD2Ev @ 273
+	_ZN6WindowD2Ev @ 291
 ;	float2::Dot(float2 const&)
-	_ZN6float23DotERKS_ @ 274
+	_ZN6float23DotERKS_ @ 292
 ;	float2::Length()
-	_ZN6float26LengthEv @ 275
+	_ZN6float26LengthEv @ 293
 ;	float2::Normalize()
-	_ZN6float29NormalizeEv @ 276
+	_ZN6float29NormalizeEv @ 294
 ;	float2::SetLength(float)
-	_ZN6float29SetLengthEf @ 277
+	_ZN6float29SetLengthEf @ 295
 ;	float2::float2(D3DXVECTOR2 const&)
-	_ZN6float2C1ERK11D3DXVECTOR2 @ 278
+	_ZN6float2C1ERK11D3DXVECTOR2 @ 296
 ;	float2::float2(tagPOINT const&)
-	_ZN6float2C1ERK8tagPOINT @ 279
+	_ZN6float2C1ERK8tagPOINT @ 297
 ;	float2::float2(float, float)
-	_ZN6float2C1Eff @ 280
+	_ZN6float2C1Eff @ 298
 ;	float2::float2()
-	_ZN6float2C1Ev @ 281
+	_ZN6float2C1Ev @ 299
 ;	float2::float2(D3DXVECTOR2 const&)
-	_ZN6float2C2ERK11D3DXVECTOR2 @ 282
+	_ZN6float2C2ERK11D3DXVECTOR2 @ 300
 ;	float2::float2(tagPOINT const&)
-	_ZN6float2C2ERK8tagPOINT @ 283
+	_ZN6float2C2ERK8tagPOINT @ 301
 ;	float2::float2(float, float)
-	_ZN6float2C2Eff @ 284
+	_ZN6float2C2Eff @ 302
 ;	float2::float2()
-	_ZN6float2C2Ev @ 285
+	_ZN6float2C2Ev @ 303
 ;	float3::TransformCoord(D3DXMATRIX const&)
-	_ZN6float314TransformCoordERK10D3DXMATRIX @ 286
+	_ZN6float314TransformCoordERK10D3DXMATRIX @ 304
 ;	float3::TransformNormal(D3DXMATRIX const&)
-	_ZN6float315TransformNormalERK10D3DXMATRIX @ 287
+	_ZN6float315TransformNormalERK10D3DXMATRIX @ 305
 ;	float3::Dot(float3 const&)
-	_ZN6float33DotERKS_ @ 288
+	_ZN6float33DotERKS_ @ 306
 ;	float3::Max(float3 const&)
-	_ZN6float33MaxERKS_ @ 289
+	_ZN6float33MaxERKS_ @ 307
 ;	float3::Min(float3 const&)
-	_ZN6float33MinERKS_ @ 290
+	_ZN6float33MinERKS_ @ 308
 ;	float3::Cross(float3 const&)
-	_ZN6float35CrossERKS_ @ 291
+	_ZN6float35CrossERKS_ @ 309
 ;	float3::Length()
-	_ZN6float36LengthEv @ 292
+	_ZN6float36LengthEv @ 310
 ;	float3::Normalize()
-	_ZN6float39NormalizeEv @ 293
+	_ZN6float39NormalizeEv @ 311
 ;	float3::SetLength(float)
-	_ZN6float39SetLengthEf @ 294
+	_ZN6float39SetLengthEf @ 312
 ;	float3::Transform(D3DXMATRIX const&)
-	_ZN6float39TransformERK10D3DXMATRIX @ 295
+	_ZN6float39TransformERK10D3DXMATRIX @ 313
 ;	float3::float3(D3DXVECTOR3 const&)
-	_ZN6float3C1ERK11D3DXVECTOR3 @ 296
+	_ZN6float3C1ERK11D3DXVECTOR3 @ 314
 ;	float3::float3(float)
-	_ZN6float3C1Ef @ 297
+	_ZN6float3C1Ef @ 315
 ;	float3::float3(float, float, float)
-	_ZN6float3C1Efff @ 298
+	_ZN6float3C1Efff @ 316
 ;	float3::float3()
-	_ZN6float3C1Ev @ 299
+	_ZN6float3C1Ev @ 317
 ;	float3::float3(D3DXVECTOR3 const&)
-	_ZN6float3C2ERK11D3DXVECTOR3 @ 300
+	_ZN6float3C2ERK11D3DXVECTOR3 @ 318
 ;	float3::float3(float)
-	_ZN6float3C2Ef @ 301
+	_ZN6float3C2Ef @ 319
 ;	float3::float3(float, float, float)
-	_ZN6float3C2Efff @ 302
+	_ZN6float3C2Efff @ 320
 ;	float3::float3()
-	_ZN6float3C2Ev @ 303
+	_ZN6float3C2Ev @ 321
 ;	float4::Dot(float4 const&)
-	_ZN6float43DotERKS_ @ 304
+	_ZN6float43DotERKS_ @ 322
 ;	float4::Length()
-	_ZN6float46LengthEv @ 305
+	_ZN6float46LengthEv @ 323
 ;	float4::Normalize()
-	_ZN6float49NormalizeEv @ 306
+	_ZN6float49NormalizeEv @ 324
 ;	float4::SetLength(float)
-	_ZN6float49SetLengthEf @ 307
+	_ZN6float49SetLengthEf @ 325
 ;	float4::float4(D3DXVECTOR4 const&)
-	_ZN6float4C1ERK11D3DXVECTOR4 @ 308
+	_ZN6float4C1ERK11D3DXVECTOR4 @ 326
 ;	float4::float4(float, float, float, float)
-	_ZN6float4C1Effff @ 309
+	_ZN6float4C1Effff @ 327
 ;	float4::float4()
-	_ZN6float4C1Ev @ 310
+	_ZN6float4C1Ev @ 328
 ;	float4::float4(D3DXVECTOR4 const&)
-	_ZN6float4C2ERK11D3DXVECTOR4 @ 311
+	_ZN6float4C2ERK11D3DXVECTOR4 @ 329
 ;	float4::float4(float, float, float, float)
-	_ZN6float4C2Effff @ 312
+	_ZN6float4C2Effff @ 330
 ;	float4::float4()
-	_ZN6float4C2Ev @ 313
+	_ZN6float4C2Ev @ 331
 ;	Console::OnSaveClick(Component*)
-	_ZN7Console11OnSaveClickEP9Component @ 314
+	_ZN7Console11OnSaveClickEP9Component @ 332
 ;	Console::OnClearClick(Component*)
-	_ZN7Console12OnClearClickEP9Component @ 315
+	_ZN7Console12OnClearClickEP9Component @ 333
 ;	Console::OnReturnPress(Component*)
-	_ZN7Console13OnReturnPressEP9Component @ 316
+	_ZN7Console13OnReturnPressEP9Component @ 334
 ;	Console::ProcessString(char const*)
-	_ZN7Console13ProcessStringEPKc @ 317
+	_ZN7Console13ProcessStringEPKc @ 335
 ;	Console::WriteEndTimer(char const*)
-	_ZN7Console13WriteEndTimerEPKc @ 318
+	_ZN7Console13WriteEndTimerEPKc @ 336
 ;	Console::WriteBeginTimer(char const*)
-	_ZN7Console15WriteBeginTimerEPKc @ 319
+	_ZN7Console15WriteBeginTimerEPKc @ 337
 ;	Console::Write(char const*, ...)
-	_ZN7Console5WriteEPKcz @ 320
+	_ZN7Console5WriteEPKcz @ 338
 ;	Console::WriteVar(char const*, void*)
-	_ZN7Console8WriteVarEPKcPv @ 321
+	_ZN7Console8WriteVarEPKcPv @ 339
 ;	Console::WriteVar(char const*, float2 const&)
-	_ZN7Console8WriteVarEPKcRK6float2 @ 322
+	_ZN7Console8WriteVarEPKcRK6float2 @ 340
 ;	Console::WriteVar(char const*, float3 const&)
-	_ZN7Console8WriteVarEPKcRK6float3 @ 323
+	_ZN7Console8WriteVarEPKcRK6float3 @ 341
 ;	Console::WriteVar(char const*, float4 const&)
-	_ZN7Console8WriteVarEPKcRK6float4 @ 324
+	_ZN7Console8WriteVarEPKcRK6float4 @ 342
 ;	Console::WriteVar(char const*, float4x4 const&)
-	_ZN7Console8WriteVarEPKcRK8float4x4 @ 325
+	_ZN7Console8WriteVarEPKcRK8float4x4 @ 343
 ;	Console::WriteVar(char const*, char const*)
-	_ZN7Console8WriteVarEPKcS1_ @ 326
+	_ZN7Console8WriteVarEPKcS1_ @ 344
 ;	Console::WriteVar(char const*, bool)
-	_ZN7Console8WriteVarEPKcb @ 327
+	_ZN7Console8WriteVarEPKcb @ 345
 ;	Console::WriteVar(char const*, double)
-	_ZN7Console8WriteVarEPKcd @ 328
+	_ZN7Console8WriteVarEPKcd @ 346
 ;	Console::WriteVar(char const*, float)
-	_ZN7Console8WriteVarEPKcf @ 329
+	_ZN7Console8WriteVarEPKcf @ 347
 ;	Console::WriteVar(char const*, int)
-	_ZN7Console8WriteVarEPKci @ 330
+	_ZN7Console8WriteVarEPKci @ 348
 ;	Console::WriteVar(char const*, unsigned int)
-	_ZN7Console8WriteVarEPKcj @ 331
+	_ZN7Console8WriteVarEPKcj @ 349
 ;	Console::Console()
-	_ZN7ConsoleC1Ev @ 332
+	_ZN7ConsoleC1Ev @ 350
 ;	Console::Console()
-	_ZN7ConsoleC2Ev @ 333
+	_ZN7ConsoleC2Ev @ 351
 ;	Console::~Console()
-	_ZN7ConsoleD1Ev @ 334
+	_ZN7ConsoleD1Ev @ 352
 ;	Console::~Console()
-	_ZN7ConsoleD2Ev @ 335
+	_ZN7ConsoleD2Ev @ 353
 ;	Objects::BeginUpdate()
-	_ZN7Objects11BeginUpdateEv @ 336
+	_ZN7Objects11BeginUpdateEv @ 354
 ;	Objects::Add(Object*)
-	_ZN7Objects3AddEP6Object @ 337
+	_ZN7Objects3AddEP6Object @ 355
 ;	Objects::end()
-	_ZN7Objects3endEv @ 338
+	_ZN7Objects3endEv @ 356
 ;	Objects::size()
-	_ZN7Objects4sizeEv @ 339
+	_ZN7Objects4sizeEv @ 357
 ;	Objects::Clear()
-	_ZN7Objects5ClearEv @ 340
+	_ZN7Objects5ClearEv @ 358
 ;	Objects::Print()
-	_ZN7Objects5PrintEv @ 341
+	_ZN7Objects5PrintEv @ 359
 ;	Objects::begin()
-	_ZN7Objects5beginEv @ 342
+	_ZN7Objects5beginEv @ 360
 ;	Objects::Delete(Object*)
-	_ZN7Objects6DeleteEP6Object @ 343
+	_ZN7Objects6DeleteEP6Object @ 361
 ;	Objects::Update()
-	_ZN7Objects6UpdateEv @ 344
+	_ZN7Objects6UpdateEv @ 362
 ;	Objects::AddPlane(char const*, char const*, float3 const&, float3 const&, float, unsigned int, unsigned int, Heightmap*)
-	_ZN7Objects8AddPlaneEPKcS1_RK6float3S4_fjjP9Heightmap @ 345
+	_ZN7Objects8AddPlaneEPKcS1_RK6float3S4_fjjP9Heightmap @ 363
 ;	Objects::EndUpdate()
-	_ZN7Objects9EndUpdateEv @ 346
+	_ZN7Objects9EndUpdateEv @ 364
 ;	Objects::GetByName(char const*)
-	_ZN7Objects9GetByNameEPKc @ 347
+	_ZN7Objects9GetByNameEPKc @ 365
 ;	Objects::Objects()
-	_ZN7ObjectsC1Ev @ 348
+	_ZN7ObjectsC1Ev @ 366
 ;	Objects::Objects()
-	_ZN7ObjectsC2Ev @ 349
+	_ZN7ObjectsC2Ev @ 367
 ;	Objects::~Objects()
-	_ZN7ObjectsD1Ev @ 350
+	_ZN7ObjectsD1Ev @ 368
 ;	Objects::~Objects()
-	_ZN7ObjectsD2Ev @ 351
+	_ZN7ObjectsD2Ev @ 369
 ;	Options::LoadFromFile(char const*)
-	_ZN7Options12LoadFromFileEPKc @ 352
+	_ZN7Options12LoadFromFileEPKc @ 370
 ;	Options::OnApplyClick(Component*)
-	_ZN7Options12OnApplyClickEP9Component @ 353
+	_ZN7Options12OnApplyClickEP9Component @ 371
 ;	Options::OnShowDialog(Component*)
-	_ZN7Options12OnShowDialogEP9Component @ 354
+	_ZN7Options12OnShowDialogEP9Component @ 372
 ;	Options::LoadInterface()
-	_ZN7Options13LoadInterfaceEv @ 355
+	_ZN7Options13LoadInterfaceEv @ 373
 ;	Options::SaveInterface()
-	_ZN7Options13SaveInterfaceEv @ 356
+	_ZN7Options13SaveInterfaceEv @ 374
 ;	Options::SetToDefaults()
-	_ZN7Options13SetToDefaultsEv @ 357
+	_ZN7Options13SetToDefaultsEv @ 375
 ;	Options::FindMaxResolution()
-	_ZN7Options17FindMaxResolutionEv @ 358
+	_ZN7Options17FindMaxResolutionEv @ 376
 ;	Options::Options(char const*)
-	_ZN7OptionsC1EPKc @ 359
+	_ZN7OptionsC1EPKc @ 377
 ;	Options::Options(char const*)
-	_ZN7OptionsC2EPKc @ 360
+	_ZN7OptionsC2EPKc @ 378
 ;	Options::~Options()
-	_ZN7OptionsD1Ev @ 361
+	_ZN7OptionsD1Ev @ 379
 ;	Options::~Options()
-	_ZN7OptionsD2Ev @ 362
+	_ZN7OptionsD2Ev @ 380
 ;	Texture::Print()
-	_ZN7Texture5PrintEv @ 363
+	_ZN7Texture5PrintEv @ 381
 ;	Texture::GetInfo(_D3DSURFACE_DESC*)
-	_ZN7Texture7GetInfoEP16_D3DSURFACE_DESC @ 364
+	_ZN7Texture7GetInfoEP16_D3DSURFACE_DESC @ 382
 ;	Texture::GetSize()
-	_ZN7Texture7GetSizeEv @ 365
+	_ZN7Texture7GetSizeEv @ 383
 ;	Texture::GetWidth()
-	_ZN7Texture8GetWidthEv @ 366
+	_ZN7Texture8GetWidthEv @ 384
 ;	Texture::GetHeight()
-	_ZN7Texture9GetHeightEv @ 367
+	_ZN7Texture9GetHeightEv @ 385
 ;	Texture::Texture(char const*)
-	_ZN7TextureC1EPKc @ 368
+	_ZN7TextureC1EPKc @ 386
 ;	Texture::Texture()
-	_ZN7TextureC1Ev @ 369
+	_ZN7TextureC1Ev @ 387
 ;	Texture::Texture(char const*)
-	_ZN7TextureC2EPKc @ 370
+	_ZN7TextureC2EPKc @ 388
 ;	Texture::Texture()
-	_ZN7TextureC2Ev @ 371
+	_ZN7TextureC2Ev @ 389
 ;	Texture::~Texture()
-	_ZN7TextureD1Ev @ 372
+	_ZN7TextureD1Ev @ 390
 ;	Texture::~Texture()
-	_ZN7TextureD2Ev @ 373
+	_ZN7TextureD2Ev @ 391
 ;	Dirlight::GetEnabled()
-	_ZN8Dirlight10GetEnabledEv @ 374
+	_ZN8Dirlight10GetEnabledEv @ 392
 ;	Dirlight::SetEnabled(bool)
-	_ZN8Dirlight10SetEnabledEb @ 375
+	_ZN8Dirlight10SetEnabledEb @ 393
 ;	Dirlight::GetDirection()
-	_ZN8Dirlight12GetDirectionEv @ 376
+	_ZN8Dirlight12GetDirectionEv @ 394
 ;	Dirlight::SetDirection(float3)
-	_ZN8Dirlight12SetDirectionE6float3 @ 377
+	_ZN8Dirlight12SetDirectionE6float3 @ 395
 ;	Dirlight::GetProjection()
-	_ZN8Dirlight13GetProjectionEv @ 378
+	_ZN8Dirlight13GetProjectionEv @ 396
 ;	Dirlight::GetCastShadows()
-	_ZN8Dirlight14GetCastShadowsEv @ 379
+	_ZN8Dirlight14GetCastShadowsEv @ 397
 ;	Dirlight::SetCastShadows(bool)
-	_ZN8Dirlight14SetCastShadowsEb @ 380
+	_ZN8Dirlight14SetCastShadowsEb @ 398
 ;	Dirlight::GetUp()
-	_ZN8Dirlight5GetUpEv @ 381
+	_ZN8Dirlight5GetUpEv @ 399
 ;	Dirlight::Print()
-	_ZN8Dirlight5PrintEv @ 382
+	_ZN8Dirlight5PrintEv @ 400
 ;	Dirlight::GetColor()
-	_ZN8Dirlight8GetColorEv @ 383
+	_ZN8Dirlight8GetColorEv @ 401
 ;	Dirlight::SetColor(float3)
-	_ZN8Dirlight8SetColorE6float3 @ 384
+	_ZN8Dirlight8SetColorE6float3 @ 402
 ;	Dirlight::GetLookat()
-	_ZN8Dirlight9GetLookatEv @ 385
+	_ZN8Dirlight9GetLookatEv @ 403
 ;	Dirlight::Dirlight(float3, float3, bool)
-	_ZN8DirlightC1E6float3S0_b @ 386
+	_ZN8DirlightC1E6float3S0_b @ 404
 ;	Dirlight::Dirlight(float3, float3, bool)
-	_ZN8DirlightC2E6float3S0_b @ 387
+	_ZN8DirlightC2E6float3S0_b @ 405
 ;	Dirlight::~Dirlight()
-	_ZN8DirlightD1Ev @ 388
+	_ZN8DirlightD1Ev @ 406
 ;	Dirlight::~Dirlight()
-	_ZN8DirlightD2Ev @ 389
+	_ZN8DirlightD2Ev @ 407
 ;	Dropdown::GetItemCount()
-	_ZN8Dropdown12GetItemCountEv @ 390
+	_ZN8Dropdown12GetItemCountEv @ 408
 ;	Dropdown::GetSelection()
-	_ZN8Dropdown12GetSelectionEv @ 391
+	_ZN8Dropdown12GetSelectionEv @ 409
 ;	Dropdown::SetSelection(char const*)
-	_ZN8Dropdown12SetSelectionEPKc @ 392
+	_ZN8Dropdown12SetSelectionEPKc @ 410
 ;	Dropdown::Clear()
-	_ZN8Dropdown5ClearEv @ 393
+	_ZN8Dropdown5ClearEv @ 411
 ;	Dropdown::Toggle()
-	_ZN8Dropdown6ToggleEv @ 394
+	_ZN8Dropdown6ToggleEv @ 412
 ;	Dropdown::AddItem(char const*)
-	_ZN8Dropdown7AddItemEPKc @ 395
+	_ZN8Dropdown7AddItemEPKc @ 413
 ;	Dropdown::GetItem(unsigned int)
-	_ZN8Dropdown7GetItemEj @ 396
+	_ZN8Dropdown7GetItemEj @ 414
 ;	Dropdown::DrawTextA(ID3DXFont*, ID3DXSprite*)
-	_ZN8Dropdown9DrawTextAEP9ID3DXFontP11ID3DXSprite @ 397
+	_ZN8Dropdown9DrawTextAEP9ID3DXFontP11ID3DXSprite @ 415
 ;	Dropdown::Dropdown(int, int, int, int)
-	_ZN8DropdownC1Eiiii @ 398
+	_ZN8DropdownC1Eiiii @ 416
 ;	Dropdown::Dropdown(int, int, int, int)
-	_ZN8DropdownC2Eiiii @ 399
+	_ZN8DropdownC2Eiiii @ 417
 ;	Dropdown::~Dropdown()
-	_ZN8DropdownD1Ev @ 400
+	_ZN8DropdownD1Ev @ 418
 ;	Dropdown::~Dropdown()
-	_ZN8DropdownD2Ev @ 401
+	_ZN8DropdownD2Ev @ 419
 ;	Material::LoadFromFile(char const*)
-	_ZN8Material12LoadFromFileEPKc @ 402
+	_ZN8Material12LoadFromFileEPKc @ 420
 ;	Material::Clear()
-	_ZN8Material5ClearEv @ 403
+	_ZN8Material5ClearEv @ 421
 ;	Material::Print()
-	_ZN8Material5PrintEv @ 404
+	_ZN8Material5PrintEv @ 422
 ;	Material::Material()
-	_ZN8MaterialC1Ev @ 405
+	_ZN8MaterialC1Ev @ 423
 ;	Material::Material()
-	_ZN8MaterialC2Ev @ 406
+	_ZN8MaterialC2Ev @ 424
 ;	Material::~Material()
-	_ZN8MaterialD1Ev @ 407
+	_ZN8MaterialD1Ev @ 425
 ;	Material::~Material()
-	_ZN8MaterialD2Ev @ 408
+	_ZN8MaterialD2Ev @ 426
 ;	Renderer::PassEffect(FXShader*, IDirect3DSurface9*)
-	_ZN8Renderer10PassEffectEP8FXShaderP17IDirect3DSurface9 @ 409
+	_ZN8Renderer10PassEffectEP8FXShaderP17IDirect3DSurface9 @ 427
 ;	Renderer::PassShader(FXShader*)
-	_ZN8Renderer10PassShaderEP8FXShader @ 410
+	_ZN8Renderer10PassShaderEP8FXShader @ 428
 ;	Renderer::UpdateTime()
-	_ZN8Renderer10UpdateTimeEv @ 411
+	_ZN8Renderer10UpdateTimeEv @ 429
 ;	Renderer::DrawTexture(IDirect3DTexture9*, float, float, float, float)
-	_ZN8Renderer11DrawTextureEP17IDirect3DTexture9ffff @ 412
+	_ZN8Renderer11DrawTextureEP17IDirect3DTexture9ffff @ 430
 ;	Renderer::DrawTexture(Texture*, float, float, float, float)
-	_ZN8Renderer11DrawTextureEP7Textureffff @ 413
+	_ZN8Renderer11DrawTextureEP7Textureffff @ 431
 ;	Renderer::FlushFrames()
-	_ZN8Renderer11FlushFramesEv @ 414
+	_ZN8Renderer11FlushFramesEv @ 432
 ;	Renderer::SaveBuffers()
-	_ZN8Renderer11SaveBuffersEv @ 415
+	_ZN8Renderer11SaveBuffersEv @ 433
 ;	Renderer::SetMaterial(Object*)
-	_ZN8Renderer11SetMaterialEP6Object @ 416
+	_ZN8Renderer11SetMaterialEP6Object @ 434
 ;	Renderer::ShowTooltip(int)
-	_ZN8Renderer11ShowTooltipEi @ 417
+	_ZN8Renderer11ShowTooltipEi @ 435
 ;	Renderer::DrawTextLine(char const*, int, int)
-	_ZN8Renderer12DrawTextLineEPKcii @ 418
+	_ZN8Renderer12DrawTextLineEPKcii @ 436
 ;	Renderer::EndTechnique()
-	_ZN8Renderer12EndTechniqueEv @ 419
+	_ZN8Renderer12EndTechniqueEv @ 437
 ;	Renderer::GetTimeMulti()
-	_ZN8Renderer12GetTimeMultiEv @ 420
+	_ZN8Renderer12GetTimeMultiEv @ 438
 ;	Renderer::OnLostDevice()
-	_ZN8Renderer12OnLostDeviceEv @ 421
+	_ZN8Renderer12OnLostDeviceEv @ 439
 ;	Renderer::PrintTooltip()
-	_ZN8Renderer12PrintTooltipEv @ 422
+	_ZN8Renderer12PrintTooltipEv @ 440
 ;	Renderer::SetTimeMulti(int)
-	_ZN8Renderer12SetTimeMultiEi @ 423
+	_ZN8Renderer12SetTimeMultiEi @ 441
 ;	Renderer::DrawComponent(Component*)
-	_ZN8Renderer13DrawComponentEP9Component @ 424
+	_ZN8Renderer13DrawComponentEP9Component @ 442
 ;	Renderer::DrawInterface(Interface*)
-	_ZN8Renderer13DrawInterfaceEP9Interface @ 425
+	_ZN8Renderer13DrawInterfaceEP9Interface @ 443
 ;	Renderer::DrawTextBlock(char const*, int, int, int, int)
-	_ZN8Renderer13DrawTextBlockEPKciiii @ 426
+	_ZN8Renderer13DrawTextBlockEPKciiii @ 444
 ;	Renderer::GetBufferSize()
-	_ZN8Renderer13GetBufferSizeEv @ 427
+	_ZN8Renderer13GetBufferSizeEv @ 445
 ;	Renderer::OnResetDevice()
-	_ZN8Renderer13OnResetDeviceEv @ 428
+	_ZN8Renderer13OnResetDeviceEv @ 446
 ;	Renderer::SetFullScreen(bool)
-	_ZN8Renderer13SetFullScreenEb @ 429
+	_ZN8Renderer13SetFullScreenEb @ 447
 ;	Renderer::ToggleTooltip()
-	_ZN8Renderer13ToggleTooltipEv @ 430
+	_ZN8Renderer13ToggleTooltipEv @ 448
 ;	Renderer::BeginTechnique(FXShader*)
-	_ZN8Renderer14BeginTechniqueEP8FXShader @ 431
+	_ZN8Renderer14BeginTechniqueEP8FXShader @ 449
 ;	Renderer::BeginTechnique(char const*)
-	_ZN8Renderer14BeginTechniqueEPKc @ 432
+	_ZN8Renderer14BeginTechniqueEPKc @ 450
 ;	Renderer::GetResolutions(std::vector<_D3DDISPLAYMODE, std::allocator<_D3DDISPLAYMODE> >&)
-	_ZN8Renderer14GetResolutionsERSt6vectorI15_D3DDISPLAYMODESaIS1_EE @ 433
+	_ZN8Renderer14GetResolutionsERSt6vectorI15_D3DDISPLAYMODESaIS1_EE @ 451
 ;	Renderer::SaveFrameTimes()
-	_ZN8Renderer14SaveFrameTimesEv @ 434
+	_ZN8Renderer14SaveFrameTimesEv @ 452
 ;	Renderer::GetClockTimeSec()
-	_ZN8Renderer15GetClockTimeSecEv @ 435
+	_ZN8Renderer15GetClockTimeSecEv @ 453
 ;	Renderer::GetUITextExtent(char const*)
-	_ZN8Renderer15GetUITextExtentEPKc @ 436
+	_ZN8Renderer15GetUITextExtentEPKc @ 454
 ;	Renderer::GetClockTimeMins()
-	_ZN8Renderer16GetClockTimeMinsEv @ 437
+	_ZN8Renderer16GetClockTimeMinsEv @ 455
 ;	Renderer::GetPixelWorldRay(float2)
-	_ZN8Renderer16GetPixelWorldRayE6float2 @ 438
+	_ZN8Renderer16GetPixelWorldRayE6float2 @ 456
 ;	Renderer::ReleaseResources()
-	_ZN8Renderer16ReleaseResourcesEv @ 439
+	_ZN8Renderer16ReleaseResourcesEv @ 457
 ;	Renderer::SetSSAOVariables(Object*)
-	_ZN8Renderer16SetSSAOVariablesEP6Object @ 440
+	_ZN8Renderer16SetSSAOVariablesEP6Object @ 458
 ;	Renderer::ToggleFullScreen()
-	_ZN8Renderer16ToggleFullScreenEv @ 441
+	_ZN8Renderer16ToggleFullScreenEv @ 459
 ;	Renderer::UpdateBufferSize()
-	_ZN8Renderer16UpdateBufferSizeEv @ 442
+	_ZN8Renderer16UpdateBufferSizeEv @ 460
 ;	Renderer::GetClockTimeHours()
-	_ZN8Renderer17GetClockTimeHoursEv @ 443
+	_ZN8Renderer17GetClockTimeHoursEv @ 461
 ;	Renderer::GetCenteringCorner(float2)
-	_ZN8Renderer18GetCenteringCornerE6float2 @ 444
+	_ZN8Renderer18GetCenteringCornerE6float2 @ 462
 ;	Renderer::PixelsToProjection(float2)
-	_ZN8Renderer18PixelsToProjectionE6float2 @ 445
+	_ZN8Renderer18PixelsToProjectionE6float2 @ 463
 ;	Renderer::ProjectionToPixels(float2)
-	_ZN8Renderer18ProjectionToPixelsE6float2 @ 446
+	_ZN8Renderer18ProjectionToPixelsE6float2 @ 464
 ;	Renderer::SetLightTransforms(Object*, float4x4)
-	_ZN8Renderer18SetLightTransformsEP6Object8float4x4 @ 447
+	_ZN8Renderer18SetLightTransformsEP6Object8float4x4 @ 465
 ;	Renderer::ScheduleSaveBuffers()
-	_ZN8Renderer19ScheduleSaveBuffersEv @ 448
+	_ZN8Renderer19ScheduleSaveBuffersEv @ 466
 ;	Renderer::SetCameraTransforms(Object*)
-	_ZN8Renderer19SetCameraTransformsEP6Object @ 449
+	_ZN8Renderer19SetCameraTransformsEP6Object @ 467
 ;	Renderer::SetGenericVariables(Object*, float4x4)
-	_ZN8Renderer19SetGenericVariablesEP6Object8float4x4 @ 450
+	_ZN8Renderer19SetGenericVariablesEP6Object8float4x4 @ 468
 ;	Renderer::GetTooltipTextExtent(char const*)
-	_ZN8Renderer20GetTooltipTextExtentEPKc @ 451
+	_ZN8Renderer20GetTooltipTextExtentEPKc @ 469
 ;	Renderer::DrawTextureFullScreen(IDirect3DTexture9*)
-	_ZN8Renderer21DrawTextureFullScreenEP17IDirect3DTexture9 @ 452
+	_ZN8Renderer21DrawTextureFullScreenEP17IDirect3DTexture9 @ 470
 ;	Renderer::SetShadowMapVariables(Object*, float4x4)
-	_ZN8Renderer21SetShadowMapVariablesEP6Object8float4x4 @ 453
+	_ZN8Renderer21SetShadowMapVariablesEP6Object8float4x4 @ 471
 ;	Renderer::ScheduleSaveFrameTimes()
-	_ZN8Renderer22ScheduleSaveFrameTimesEv @ 454
+	_ZN8Renderer22ScheduleSaveFrameTimesEv @ 472
 ;	Renderer::End()
-	_ZN8Renderer3EndEv @ 455
+	_ZN8Renderer3EndEv @ 473
 ;	Renderer::Begin(bool)
-	_ZN8Renderer5BeginEb @ 456
+	_ZN8Renderer5BeginEb @ 474
 ;	Renderer::AddTime(int, int)
-	_ZN8Renderer7AddTimeEii @ 457
+	_ZN8Renderer7AddTimeEii @ 475
 ;	Renderer::GetTime()
-	_ZN8Renderer7GetTimeEv @ 458
+	_ZN8Renderer7GetTimeEv @ 476
 ;	Renderer::Present()
-	_ZN8Renderer7PresentEv @ 459
+	_ZN8Renderer7PresentEv @ 477
 ;	Renderer::SetTime(int, int)
-	_ZN8Renderer7SetTimeEii @ 460
+	_ZN8Renderer7SetTimeEii @ 478
 ;	Renderer::EndScene()
-	_ZN8Renderer8EndSceneEv @ 461
+	_ZN8Renderer8EndSceneEv @ 479
 ;	Renderer::DrawModel(Model*)
-	_ZN8Renderer9DrawModelEP5Model @ 462
+	_ZN8Renderer9DrawModelEP5Model @ 480
 ;	Renderer::DrawScene(Scene*)
-	_ZN8Renderer9DrawSceneEP5Scene @ 463
+	_ZN8Renderer9DrawSceneEP5Scene @ 481
 ;	Renderer::Renderer()
-	_ZN8RendererC1Ev @ 464
+	_ZN8RendererC1Ev @ 482
 ;	Renderer::Renderer()
-	_ZN8RendererC2Ev @ 465
+	_ZN8RendererC2Ev @ 483
 ;	Renderer::~Renderer()
-	_ZN8RendererD1Ev @ 466
+	_ZN8RendererD1Ev @ 484
 ;	Renderer::~Renderer()
-	_ZN8RendererD2Ev @ 467
+	_ZN8RendererD2Ev @ 485
 ;	Textures::GetByFileName(char const*)
-	_ZN8Textures13GetByFileNameEPKc @ 468
+	_ZN8Textures13GetByFileNameEPKc @ 486
 ;	Textures::GetByFullPath(char const*)
-	_ZN8Textures13GetByFullPathEPKc @ 469
+	_ZN8Textures13GetByFullPathEPKc @ 487
 ;	Textures::Add(Texture*)
-	_ZN8Textures3AddEP7Texture @ 470
+	_ZN8Textures3AddEP7Texture @ 488
 ;	Textures::Add(char const*)
-	_ZN8Textures3AddEPKc @ 471
+	_ZN8Textures3AddEPKc @ 489
 ;	Textures::Add()
-	_ZN8Textures3AddEv @ 472
+	_ZN8Textures3AddEv @ 490
 ;	Textures::Clear()
-	_ZN8Textures5ClearEv @ 473
+	_ZN8Textures5ClearEv @ 491
 ;	Textures::Print()
-	_ZN8Textures5PrintEv @ 474
+	_ZN8Textures5PrintEv @ 492
 ;	Textures::Delete(Texture*)
-	_ZN8Textures6DeleteEP7Texture @ 475
+	_ZN8Textures6DeleteEP7Texture @ 493
 ;	Textures::SaveToCSV()
-	_ZN8Textures9SaveToCSVEv @ 476
+	_ZN8Textures9SaveToCSVEv @ 494
 ;	Textures::Textures()
-	_ZN8TexturesC1Ev @ 477
+	_ZN8TexturesC1Ev @ 495
 ;	Textures::Textures()
-	_ZN8TexturesC2Ev @ 478
+	_ZN8TexturesC2Ev @ 496
 ;	Textures::~Textures()
-	_ZN8TexturesD1Ev @ 479
+	_ZN8TexturesD1Ev @ 497
 ;	Textures::~Textures()
-	_ZN8TexturesD2Ev @ 480
+	_ZN8TexturesD2Ev @ 498
 ;	float4x4::Determinant()
-	_ZN8float4x411DeterminantEv @ 481
+	_ZN8float4x411DeterminantEv @ 499
 ;	float4x4::Translation(D3DXVECTOR3 const&)
-	_ZN8float4x411TranslationERK11D3DXVECTOR3 @ 482
+	_ZN8float4x411TranslationERK11D3DXVECTOR3 @ 500
 ;	float4x4::EulerRotation(D3DXVECTOR3 const&)
-	_ZN8float4x413EulerRotationERK11D3DXVECTOR3 @ 483
+	_ZN8float4x413EulerRotationERK11D3DXVECTOR3 @ 501
 ;	float4x4::EulerRotationDeg(D3DXVECTOR3 const&)
-	_ZN8float4x416EulerRotationDegERK11D3DXVECTOR3 @ 484
+	_ZN8float4x416EulerRotationDegERK11D3DXVECTOR3 @ 502
 ;	float4x4::LookAt(D3DXVECTOR3 const&, D3DXVECTOR3 const&)
-	_ZN8float4x46LookAtERK11D3DXVECTOR3S2_ @ 485
+	_ZN8float4x46LookAtERK11D3DXVECTOR3S2_ @ 503
 ;	float4x4::Inverse()
-	_ZN8float4x47InverseEv @ 486
+	_ZN8float4x47InverseEv @ 504
 ;	float4x4::Scaling(D3DXVECTOR3 const&)
-	_ZN8float4x47ScalingERK11D3DXVECTOR3 @ 487
+	_ZN8float4x47ScalingERK11D3DXVECTOR3 @ 505
 ;	float4x4::Identity()
-	_ZN8float4x48IdentityEv @ 488
+	_ZN8float4x48IdentityEv @ 506
 ;	float4x4::float4x4(D3DXMATRIX const&)
-	_ZN8float4x4C1ERK10D3DXMATRIX @ 489
+	_ZN8float4x4C1ERK10D3DXMATRIX @ 507
 ;	float4x4::float4x4()
-	_ZN8float4x4C1Ev @ 490
+	_ZN8float4x4C1Ev @ 508
 ;	float4x4::float4x4(D3DXMATRIX const&)
-	_ZN8float4x4C2ERK10D3DXMATRIX @ 491
+	_ZN8float4x4C2ERK10D3DXMATRIX @ 509
 ;	float4x4::float4x4()
-	_ZN8float4x4C2Ev @ 492
+	_ZN8float4x4C2Ev @ 510
 ;	Animation::GetEndTime()
-	_ZN9Animation10GetEndTimeEv @ 493
+	_ZN9Animation10GetEndTimeEv @ 511
 ;	Animation::IsFinished()
-	_ZN9Animation10IsFinishedEv @ 494
+	_ZN9Animation10IsFinishedEv @ 512
 ;	Animation::AddKeyframe(Keyframe*)
-	_ZN9Animation11AddKeyframeEP8Keyframe @ 495
+	_ZN9Animation11AddKeyframeEP8Keyframe @ 513
 ;	Animation::GetStartTime()
-	_ZN9Animation12GetStartTimeEv @ 496
+	_ZN9Animation12GetStartTimeEv @ 514
 ;	Animation::OnUpdateTime(double)
-	_ZN9Animation12OnUpdateTimeEd @ 497
+	_ZN9Animation12OnUpdateTimeEd @ 515
 ;	Animation::ClearKeyframes()
-	_ZN9Animation14ClearKeyframesEv @ 498
+	_ZN9Animation14ClearKeyframesEv @ 516
 ;	Animation::GetKeyframeAfter(double)
-	_ZN9Animation16GetKeyframeAfterEd @ 499
+	_ZN9Animation16GetKeyframeAfterEd @ 517
 ;	Animation::GetKeyframeBefore(double)
-	_ZN9Animation17GetKeyframeBeforeEd @ 500
+	_ZN9Animation17GetKeyframeBeforeEd @ 518
 ;	Animation::Print()
-	_ZN9Animation5PrintEv @ 501
+	_ZN9Animation5PrintEv @ 519
 ;	Animation::GetPeriod()
-	_ZN9Animation9GetPeriodEv @ 502
+	_ZN9Animation9GetPeriodEv @ 520
 ;	Animation::Animation(Object*, AnimationType)
-	_ZN9AnimationC1EP6Object13AnimationType @ 503
+	_ZN9AnimationC1EP6Object13AnimationType @ 521
 ;	Animation::Animation(Object*, AnimationType)
-	_ZN9AnimationC2EP6Object13AnimationType @ 504
+	_ZN9AnimationC2EP6Object13AnimationType @ 522
 ;	Animation::~Animation()
-	_ZN9AnimationD1Ev @ 505
+	_ZN9AnimationD1Ev @ 523
 ;	Animation::~Animation()
-	_ZN9AnimationD2Ev @ 506
+	_ZN9AnimationD2Ev @ 524
 ;	Benchmark::OnTimerEnd(void*, double)
-	_ZN9Benchmark10OnTimerEndEPvd @ 507
+	_ZN9Benchmark10OnTimerEndEPvd @ 525
 ;	Benchmark::OnSaveClick(Component*)
-	_ZN9Benchmark11OnSaveClickEP9Component @ 508
+	_ZN9Benchmark11OnSaveClickEP9Component @ 526
 ;	Benchmark::AddFrameTime(float)
-	_ZN9Benchmark12AddFrameTimeEf @ 509
+	_ZN9Benchmark12AddFrameTimeEf @ 527
 ;	Benchmark::OnPrintClick(Component*)
-	_ZN9Benchmark12OnPrintClickEP9Component @ 510
+	_ZN9Benchmark12OnPrintClickEP9Component @ 528
 ;	Benchmark::GetSaveFolder(char*)
-	_ZN9Benchmark13GetSaveFolderEPc @ 511
+	_ZN9Benchmark13GetSaveFolderEPc @ 529
 ;	Benchmark::OnRenderFrame(void*, double)
-	_ZN9Benchmark13OnRenderFrameEPvd @ 512
+	_ZN9Benchmark13OnRenderFrameEPvd @ 530
 ;	Benchmark::CreateInterface()
-	_ZN9Benchmark15CreateInterfaceEv @ 513
+	_ZN9Benchmark15CreateInterfaceEv @ 531
 ;	Benchmark::GetLogSaveFileName(char*)
-	_ZN9Benchmark18GetLogSaveFileNameEPc @ 514
+	_ZN9Benchmark18GetLogSaveFileNameEPc @ 532
 ;	Benchmark::GetPicSaveFileName(char*)
-	_ZN9Benchmark18GetPicSaveFileNameEPc @ 515
+	_ZN9Benchmark18GetPicSaveFileNameEPc @ 533
 ;	Benchmark::Save()
-	_ZN9Benchmark4SaveEv @ 516
+	_ZN9Benchmark4SaveEv @ 534
 ;	Benchmark::Stop()
-	_ZN9Benchmark4StopEv @ 517
+	_ZN9Benchmark4StopEv @ 535
 ;	Benchmark::Print()
-	_ZN9Benchmark5PrintEv @ 518
+	_ZN9Benchmark5PrintEv @ 536
 ;	Benchmark::Start(float)
-	_ZN9Benchmark5StartEf @ 519
+	_ZN9Benchmark5StartEf @ 537
 ;	Benchmark::IsRunning()
-	_ZN9Benchmark9IsRunningEv @ 520
+	_ZN9Benchmark9IsRunningEv @ 538
 ;	Benchmark::Benchmark(float)
-	_ZN9BenchmarkC1Ef @ 521
+	_ZN9BenchmarkC1Ef @ 539
 ;	Benchmark::Benchmark()
-	_ZN9BenchmarkC1Ev @ 522
+	_ZN9BenchmarkC1Ev @ 540
 ;	Benchmark::Benchmark(float)
-	_ZN9BenchmarkC2Ef @ 523
+	_ZN9BenchmarkC2Ef @ 541
 ;	Benchmark::Benchmark()
-	_ZN9BenchmarkC2Ev @ 524
+	_ZN9BenchmarkC2Ev @ 542
 ;	Benchmark::~Benchmark()
-	_ZN9BenchmarkD1Ev @ 525
+	_ZN9BenchmarkD1Ev @ 543
 ;	Benchmark::~Benchmark()
-	_ZN9BenchmarkD2Ev @ 526
+	_ZN9BenchmarkD2Ev @ 544
 ;	Component::CreatePlane()
-	_ZN9Component11CreatePlaneEv @ 527
+	_ZN9Component11CreatePlaneEv @ 545
 ;	Component::OnResetDevice()
-	_ZN9Component13OnResetDeviceEv @ 528
+	_ZN9Component13OnResetDeviceEv @ 546
 ;	Component::Move(int, int)
-	_ZN9Component4MoveEii @ 529
+	_ZN9Component4MoveEii @ 547
 ;	Component::Show(bool)
-	_ZN9Component4ShowEb @ 530
+	_ZN9Component4ShowEb @ 548
 ;	Component::Resize(int, int)
-	_ZN9Component6ResizeEii @ 531
+	_ZN9Component6ResizeEii @ 549
 ;	Component::SetPos(int, int)
-	_ZN9Component6SetPosEii @ 532
+	_ZN9Component6SetPosEii @ 550
 ;	Component::Toggle()
-	_ZN9Component6ToggleEv @ 533
+	_ZN9Component6ToggleEv @ 551
 ;	Component::GetRect(tagRECT*)
-	_ZN9Component7GetRectEP7tagRECT @ 534
+	_ZN9Component7GetRectEP7tagRECT @ 552
 ;	Component::AddChild(Component*)
-	_ZN9Component8AddChildEPS_ @ 535
+	_ZN9Component8AddChildEPS_ @ 553
 ;	Component::IsVisible()
-	_ZN9Component9IsVisibleEv @ 536
+	_ZN9Component9IsVisibleEv @ 554
 ;	Component::Component(int, int, int, int)
-	_ZN9ComponentC1Eiiii @ 537
+	_ZN9ComponentC1Eiiii @ 555
 ;	Component::Component(int, int, int, int)
-	_ZN9ComponentC2Eiiii @ 538
+	_ZN9ComponentC2Eiiii @ 556
 ;	Component::~Component()
-	_ZN9ComponentD1Ev @ 539
+	_ZN9ComponentD1Ev @ 557
 ;	Component::~Component()
-	_ZN9ComponentD2Ev @ 540
+	_ZN9ComponentD2Ev @ 558
 ;	Interface::DoMouseDown(unsigned long long, long long)
-	_ZN9Interface11DoMouseDownEyx @ 541
+	_ZN9Interface11DoMouseDownEyx @ 559
 ;	Interface::DoMouseMove(unsigned long long, long long)
-	_ZN9Interface11DoMouseMoveEyx @ 542
+	_ZN9Interface11DoMouseMoveEyx @ 560
 ;	Interface::AddComponent(Component*)
-	_ZN9Interface12AddComponentEP9Component @ 543
+	_ZN9Interface12AddComponentEP9Component @ 561
 ;	Interface::DoMouseWheel(unsigned long long, long long)
-	_ZN9Interface12DoMouseWheelEyx @ 544
+	_ZN9Interface12DoMouseWheelEyx @ 562
 ;	Interface::OnLostDevice()
-	_ZN9Interface12OnLostDeviceEv @ 545
+	_ZN9Interface12OnLostDeviceEv @ 563
 ;	Interface::OnResetDevice()
-	_ZN9Interface13OnResetDeviceEv @ 546
+	_ZN9Interface13OnResetDeviceEv @ 564
 ;	Interface::GetComponentAt(int, int)
-	_ZN9Interface14GetComponentAtEii @ 547
+	_ZN9Interface14GetComponentAtEii @ 565
 ;	Interface::RemoveComponent(Component*)
-	_ZN9Interface15RemoveComponentEP9Component @ 548
+	_ZN9Interface15RemoveComponentEP9Component @ 566
 ;	Interface::AddKey(Key*)
-	_ZN9Interface6AddKeyEP3Key @ 549
+	_ZN9Interface6AddKeyEP3Key @ 567
 ;	Interface::DoKeyUp(unsigned long long, long long)
-	_ZN9Interface7DoKeyUpEyx @ 550
+	_ZN9Interface7DoKeyUpEyx @ 568
 ;	Interface::DoKeyChar(unsigned long long, long long)
-	_ZN9Interface9DoKeyCharEyx @ 551
+	_ZN9Interface9DoKeyCharEyx @ 569
 ;	Interface::DoKeyDown(unsigned long long, long long)
-	_ZN9Interface9DoKeyDownEyx @ 552
+	_ZN9Interface9DoKeyDownEyx @ 570
 ;	Interface::DoMouseUp(unsigned long long, long long)
-	_ZN9Interface9DoMouseUpEyx @ 553
+	_ZN9Interface9DoMouseUpEyx @ 571
 ;	Interface::OnMessage(HWND__*, unsigned int, unsigned long long, long long)
-	_ZN9Interface9OnMessageEP6HWND__jyx @ 554
+	_ZN9Interface9OnMessageEP6HWND__jyx @ 572
 ;	Interface::RemoveKey(Key*)
-	_ZN9Interface9RemoveKeyEP3Key @ 555
+	_ZN9Interface9RemoveKeyEP3Key @ 573
 ;	Interface::Interface()
-	_ZN9InterfaceC1Ev @ 556
+	_ZN9InterfaceC1Ev @ 574
 ;	Interface::Interface()
-	_ZN9InterfaceC2Ev @ 557
+	_ZN9InterfaceC2Ev @ 575
 ;	Interface::~Interface()
-	_ZN9InterfaceD1Ev @ 558
+	_ZN9InterfaceD1Ev @ 576
 ;	Interface::~Interface()
-	_ZN9InterfaceD2Ev @ 559
+	_ZN9InterfaceD2Ev @ 577
 ;	Spotlight::GetEnabled()
-	_ZN9Spotlight10GetEnabledEv @ 560
+	_ZN9Spotlight10GetEnabledEv @ 578
 ;	Spotlight::SetEnabled(bool)
-	_ZN9Spotlight10SetEnabledEb @ 561
+	_ZN9Spotlight10SetEnabledEb @ 579
 ;	Spotlight::GetPosition()
-	_ZN9Spotlight11GetPositionEv @ 562
+	_ZN9Spotlight11GetPositionEv @ 580
 ;	Spotlight::SetPosition(float3)
-	_ZN9Spotlight11SetPositionE6float3 @ 563
+	_ZN9Spotlight11SetPositionE6float3 @ 581
 ;	Spotlight::GetDirection()
-	_ZN9Spotlight12GetDirectionEv @ 564
+	_ZN9Spotlight12GetDirectionEv @ 582
 ;	Spotlight::SetDirection(float3)
-	_ZN9Spotlight12SetDirectionE6float3 @ 565
+	_ZN9Spotlight12SetDirectionE6float3 @ 583
 ;	Spotlight::GetProjection()
-	_ZN9Spotlight13GetProjectionEv @ 566
+	_ZN9Spotlight13GetProjectionEv @ 584
 ;	Spotlight::GetCastShadows()
-	_ZN9Spotlight14GetCastShadowsEv @ 567
+	_ZN9Spotlight14GetCastShadowsEv @ 585
 ;	Spotlight::SetCastShadows(bool)
-	_ZN9Spotlight14SetCastShadowsEb @ 568
+	_ZN9Spotlight14SetCastShadowsEb @ 586
 ;	Spotlight::Print()
-	_ZN9Spotlight5PrintEv @ 569
+	_ZN9Spotlight5PrintEv @ 587
 ;	Spotlight::GetAngle()
-	_ZN9Spotlight8GetAngleEv @ 570
+	_ZN9Spotlight8GetAngleEv @ 588
 ;	Spotlight::GetColor()
-	_ZN9Spotlight8GetColorEv @ 571
+	_ZN9Spotlight8GetColorEv @ 589
 ;	Spotlight::SetAngle(float)
-	_ZN9Spotlight8SetAngleEf @ 572
+	_ZN9Spotlight8SetAngleEf @ 590
 ;	Spotlight::SetColor(float3)
-	_ZN9Spotlight8SetColorE6float3 @ 573
+	_ZN9Spotlight8SetColorE6float3 @ 591
 ;	Spotlight::SetLookat(float3)
-	_ZN9Spotlight9SetLookatE6float3 @ 574
+	_ZN9Spotlight9SetLookatE6float3 @ 592
 ;	Spotlight::Spotlight(float3, float3, float3, float, bool)
-	_ZN9SpotlightC1E6float3S0_S0_fb @ 575
+	_ZN9SpotlightC1E6float3S0_S0_fb @ 593
 ;	Spotlight::Spotlight(float3, float3, float3, float, bool)
-	_ZN9SpotlightC2E6float3S0_S0_fb @ 576
+	_ZN9SpotlightC2E6float3S0_S0_fb @ 594
 ;	Spotlight::~Spotlight()
-	_ZN9SpotlightD1Ev @ 577
+	_ZN9SpotlightD1Ev @ 595
 ;	Spotlight::~Spotlight()
-	_ZN9SpotlightD2Ev @ 578
+	_ZN9SpotlightD2Ev @ 596
 ;	TimeEvent::AddPersistent(void (*)(void*, double), void*)
-	_ZN9TimeEvent13AddPersistentEPFvPvdES0_ @ 579
+	_ZN9TimeEvent13AddPersistentEPFvPvdES0_ @ 597
 ;	TimeEvent::Add(void (*)(void*, double), void*)
-	_ZN9TimeEvent3AddEPFvPvdES0_ @ 580
+	_ZN9TimeEvent3AddEPFvPvdES0_ @ 598
 ;	TimeEvent::Clear()
-	_ZN9TimeEvent5ClearEv @ 581
+	_ZN9TimeEvent5ClearEv @ 599
 ;	TimeEvent::Delete(TimeEventStruct*)
-	_ZN9TimeEvent6DeleteEP15TimeEventStruct @ 582
+	_ZN9TimeEvent6DeleteEP15TimeEventStruct @ 600
 ;	TimeEvent::Execute(double)
-	_ZN9TimeEvent7ExecuteEd @ 583
+	_ZN9TimeEvent7ExecuteEd @ 601
 ;	TimeEvent::TimeEvent()
-	_ZN9TimeEventC1Ev @ 584
+	_ZN9TimeEventC1Ev @ 602
 ;	TimeEvent::TimeEvent()
-	_ZN9TimeEventC2Ev @ 585
+	_ZN9TimeEventC2Ev @ 603
 ;	TimeEvent::~TimeEvent()
-	_ZN9TimeEventD1Ev @ 586
+	_ZN9TimeEventD1Ev @ 604
 ;	TimeEvent::~TimeEvent()
-	_ZN9TimeEventD2Ev @ 587
-	camera @ 588 DATA
-	console @ 589 DATA
-	d3ddev @ 590 DATA
-	exepath @ 591 DATA
-	hwnd @ 592 DATA
-	models @ 593 DATA
-	options @ 594 DATA
-	renderer @ 595 DATA
-	scene @ 596 DATA
-	textures @ 597 DATA
-	ui @ 598 DATA
+	_ZN9TimeEventD2Ev @ 605
+	camera @ 606 DATA
+	console @ 607 DATA
+	d3ddev @ 608 DATA
+	exepath @ 609 DATA
+	hwnd @ 610 DATA
+	models @ 611 DATA
+	options @ 612 DATA
+	renderer @ 613 DATA
+	scene @ 614 DATA
+	textures @ 615 DATA
+	ui @ 616 DATA

@@ -113,12 +113,14 @@ Renderer::Renderer() {
 		
 		// Shaders, Per vertex
 		shaders.push_back(new FXShader("PerVertex"));
+		shaders.push_back(new FXShader("PureColor"));
 		shaders.push_back(new FXShader("PureTexture"));
 		shaders.push_back(new FXShader("PureTextureMultitexConst"));
 		shaders.push_back(new FXShader("NoShade"));
 		
 		// Shaders, Per pixel
 		shaders.push_back(new FXShader("PerPixel"));
+		shaders.push_back(new FXShader("PerPixelColor"));
 		shaders.push_back(new FXShader("PerPixelSpecular"));
 		shaders.push_back(new FXShader("PerPixelGooch"));
 		shaders.push_back(new FXShader("PerPixelMinnaert"));
@@ -143,7 +145,6 @@ Renderer::Renderer() {
 		TechBrightPass = new FXShader("BrightPass");
 		TechBrightBlur = new FXShader("BrightBlur");
 		TechToneMap = new FXShader("ToneMap");
-		TechInterface = new FXShader("Interface");
 		TechStock = new FXShader("Stock");
 		
 		// Variabelen
@@ -157,13 +158,13 @@ Renderer::Renderer() {
 		FXMaterialshininess = new FXVariable("materialshininess");
 		FXMaterialTiling = new FXVariable("materialtiling");
 		FXMaterialMixer = new FXVariable("materialmixer");
+		FXPurecolor = new FXVariable("purecolor");
 		
 		FXWidth = new FXVariable("width");
 		FXHeight = new FXVariable("height");
 		FXInvwidth = new FXVariable("invwidth");
 		FXInvheight = new FXVariable("invheight");
 		FXTimevar = new FXVariable("timevar");
-		FXInterfacecolor = new FXVariable("interfacecolor");
 		
 		// textures
 		FXScreentex1 = new FXVariable("screentex1");
@@ -455,11 +456,11 @@ void Renderer::PrintTooltip() {
 			"Draw calls: %d\n"
 			"Time: %02d:%02d (%dx)",
 			properties.Description,
-			camera->pos.x,
-			camera->pos.y,
-			camera->pos.z,
-			RadToDeg(camera->angleH),
-			RadToDeg(camera->angleV),
+			camera->GetPos().x,
+			camera->GetPos().y,
+			camera->GetPos().z,
+			RadToDeg(camera->GetAngleH()),
+			RadToDeg(camera->GetAngleV()),
 			framecount,
 			framerate,
 			frametimes[0],
@@ -698,7 +699,7 @@ float2 Renderer::GetCenteringCorner(float2 windowsize) {
 void Renderer::DrawComponent(Component* component) {
 
 	// Verschuif met matrix, niet met bufferrecreate
-	FXMatWorld->Set(component->matWorld);
+	FXMatWorldViewProj->Set(component->matWorld);
 	
 	// Kleur en tekst kiezen
 	switch(component->type) {
@@ -707,7 +708,7 @@ void Renderer::DrawComponent(Component* component) {
 		case ctBase:
 		case ctBevel:
 		case ctWindow: {
-			FXInterfacecolor->Set(component->backcolor);
+			FXPurecolor->Set(component->backcolor);
 			break;
 		}
 		case ctButton: {
@@ -716,11 +717,11 @@ void Renderer::DrawComponent(Component* component) {
 			Button* button = (Button*)component;
 			
 			if(button->down) {
-				FXInterfacecolor->Set(button->downcolor);
+				FXPurecolor->Set(button->downcolor);
 			} else if(button->hot) {
-				FXInterfacecolor->Set(button->hotcolor);
+				FXPurecolor->Set(button->hotcolor);
 			} else {
-				FXInterfacecolor->Set(button->backcolor);
+				FXPurecolor->Set(button->backcolor);
 			}
 			break;
 		}
@@ -730,9 +731,9 @@ void Renderer::DrawComponent(Component* component) {
 			Edit* edit = (Edit*)component;
 
 			if(edit->focused) {
-				FXInterfacecolor->Set(edit->focuscolor);
+				FXPurecolor->Set(edit->focuscolor);
 			} else {
-				FXInterfacecolor->Set(edit->backcolor);
+				FXPurecolor->Set(edit->backcolor);
 			}
 			break;
 		}
@@ -787,7 +788,7 @@ void Renderer::DrawInterface(Interface* thisinterface) {
 	
 	alphablendstate->Set(true);
 	
-	BeginTechnique(TechInterface);
+	BeginTechnique(shaders[1]); // TODO: remove hardcoded 1
 	
 	for(int i = thisinterface->componentlist.size() - 1;i >= 0;i--) {
 		
@@ -824,12 +825,12 @@ float3 Renderer::GetPixelWorldRay(float2 pixelpos) {
 	
 	// Muis in view coords
 	float3 mouseview(
-		projectionpos.x / camera->matProj._11,
-		projectionpos.y / camera->matProj._22,
+		projectionpos.x / camera->GetMatProj()._11,
+		projectionpos.y / camera->GetMatProj()._22,
 		1.0f);
 		
 	// Muis in world space (z = z)
-	return mouseview.TransformNormal(camera->matViewInverse);
+	return mouseview.TransformNormal(camera->GetMatViewInverse());
 }
 float2 Renderer::PixelsToProjection(float2 pixelpos) {
 	float2 result;
@@ -878,7 +879,7 @@ void Renderer::BeginTechnique(FXShader* shader) {
 }
 void Renderer::EndTechnique() {
 	FX->EndPass();
-	FX->End();	
+	FX->End();
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 /*
@@ -939,7 +940,7 @@ float2 Renderer::GetUITextExtent(const char* text) {
 float2 Renderer::GetTooltipTextExtent(const char* text) {
 	RECT textrect = {0};
 	tooltipfontwhite->DrawText(NULL,text,-1,&textrect,DT_CALCRECT,D3DCOLOR_XRGB(255,255,255));
-	return float2(textrect.right,textrect.bottom);	
+	return float2(textrect.right,textrect.bottom);
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 /*
@@ -1037,12 +1038,12 @@ void Renderer::SetCameraTransforms(Object* object) {
 	// Object to View space
 	float4x4 matWorldView;
 	FXMatWorldView->Set(
-		D3DXMatrixMultiply(&matWorldView,&object->matWorld,&camera->matView));
+		D3DXMatrixMultiply(&matWorldView,&object->matWorld,&camera->GetMatView()));
 	
 	// Object to Proj space
 	float4x4 matWorldViewProj;
 	FXMatWorldViewProj->Set(
-		D3DXMatrixMultiply(&matWorldViewProj,&object->matWorld,&camera->matViewProj));	
+		D3DXMatrixMultiply(&matWorldViewProj,&object->matWorld,&camera->GetMatViewProj()));	
 }
 void Renderer::SetLightTransforms(Object* object,float4x4 lightprojection) {
 	// Object to sun Proj space
@@ -1058,6 +1059,8 @@ void Renderer::SetMaterial(Object* object) {
 	if(material->diffusetex) {
 		FXMaterialdiffuse->Set(&material->diffuse);
 		FXDiffusetex->SetTexture(material->diffusetex);
+	} else {
+		FXPurecolor->Set(material->color);
 	}
 	
 	// Idem for specular
@@ -1100,12 +1103,12 @@ void Renderer::SetSSAOVariables(Object* thisobject) {
 	// Object to View space
 	float4x4 matWorldView;
 	FXMatWorldView->Set(
-		D3DXMatrixMultiply(&matWorldView,&thisobject->matWorld,&camera->matView));
+		D3DXMatrixMultiply(&matWorldView,&thisobject->matWorld,&camera->GetMatView()));
 	
 	// Object to Proj space
 	float4x4 matWorldViewProj;
 	FXMatWorldViewProj->Set(
-		D3DXMatrixMultiply(&matWorldViewProj,&thisobject->matWorld,&camera->matViewProj));	
+		D3DXMatrixMultiply(&matWorldViewProj,&thisobject->matWorld,&camera->GetMatViewProj()));	
 	
 	// We samplen diffuse voor alpha
 	if(thisobject->material->diffusetex) {
@@ -1170,9 +1173,9 @@ void Renderer::PassShader(FXShader* thisshader) {
 		if(!object->visible) {
 			continue;
 		}
-		
+
 		// Get distance to nearest part of bounding sphere
-		float3 modeldir = object->worldcenter - camera->pos;
+		float3 modeldir = object->worldcenter - camera->GetPos();
 		float distance = std::max(0.0f,modeldir.Length() - object->worldr);
 		
 		// Determine which LOD we should draw
@@ -1243,7 +1246,7 @@ void Renderer::DrawScene(Scene* scene) {
 			}
 			
 			// Get distance to nearest part of bounding sphere
-			float3 modeldir = object->worldcenter - camera->pos;
+			float3 modeldir = object->worldcenter - camera->GetPos();
 			float distance = std::max(0.0f,modeldir.Length() - object->worldr);
 			if(distance < options->shadowdistance) {
 				
@@ -1280,7 +1283,7 @@ void Renderer::DrawScene(Scene* scene) {
 			}
 			
 			// Get distance to nearest part of bounding sphere
-			float3 modeldir = object->worldcenter - camera->pos;
+			float3 modeldir = object->worldcenter - camera->GetPos();
 			float distance = std::max(0.0f,modeldir.Length() - object->worldr);
 			if(distance < options->ssaodistance) {
 				
@@ -1311,18 +1314,18 @@ void Renderer::DrawScene(Scene* scene) {
 	
 	// Shaders, Per vertex
 	// vertex decl. staat al goed
-	for(unsigned int i = 0;i < 4;i++) {
+	for(unsigned int i = 0;i < 5;i++) {
 		PassShader(shaders[i]);
 	}
 	
 	// Shaders, Per pixel
-	for(unsigned int i = 4;i < 12;i++) {
+	for(unsigned int i = 5;i < 14;i++) {
 		PassShader(shaders[i]);
 	}
 	
 	// Shaders, Per pixel, tangent space
 	d3ddev->SetVertexDeclaration(normalmap);
-	for(unsigned int i = 12;i < 17;i++) {
+	for(unsigned int i = 14;i < 19;i++) {
 		PassShader(shaders[i]);
 	}
 	
