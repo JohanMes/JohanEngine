@@ -1,0 +1,4 @@
+diffuse sponza\sponza_bricks_a_diff.dds 1
+specular sponza\sponza_bricks_a_spec.dds 0.2 0.3
+normal sponza\sponza_bricks_a_ddn.dds
+shader PerPixelNormalSpecular

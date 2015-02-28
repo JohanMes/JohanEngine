@@ -1,0 +1,4 @@
+diffuse Grass.dds 1
+shader PerPixel
+cullmode ccw
+alphatest 1

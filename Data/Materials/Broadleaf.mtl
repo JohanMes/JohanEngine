@@ -1,0 +1,11 @@
+# de texture
+diffuse Broadleaf.dds 1
+normal BroadleafNormal.dds
+
+# de shader
+shader PerPixelNormal
+
+# en de extra effecten
+cullmode none
+fillmode solid
+alphatest 1

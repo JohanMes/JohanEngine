@@ -1,0 +1,4 @@
+diffuse Stone.dds 1
+normal StoneNormal.dds
+parallax StoneParallax.dds
+shader PerPixelNormalParallax

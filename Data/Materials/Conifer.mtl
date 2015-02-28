@@ -1,0 +1,4 @@
+diffuse Conifer.dds 1
+shader PerPixel
+cullmode none
+alphatest 1

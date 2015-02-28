@@ -1,0 +1,4 @@
+diffuse sponza\sponza_thorn_diff.dds 1
+specular sponza\sponza_thorn_spec.dds 1 0.1
+normal sponza\sponza_thorn_ddn.dds
+shader PerPixelNormalSpecular

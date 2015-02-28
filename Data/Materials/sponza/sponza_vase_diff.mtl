@@ -1,0 +1,3 @@
+diffuse sponza\sponza_vase_diff.dds 1
+normal sponza\sponza_vase_ddn.dds
+shader PerPixelNormal

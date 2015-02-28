@@ -1,0 +1,3 @@
+diffuse Shrub.dds 1
+shader PerPixel
+alphatest 1

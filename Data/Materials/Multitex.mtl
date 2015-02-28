@@ -1,0 +1,9 @@
+diffuse1 Brick.dds
+diffuse2 Ground.dds
+diffuse3 White.dds
+
+mixer Multimixer.dds
+
+shader PerPixelMultitex
+
+tiling 20

@@ -1,0 +1,3 @@
+diffuse Weapons.dds 1.9
+specular WeaponsSpecular.dds 3 5
+shader PixelShadedSpecular

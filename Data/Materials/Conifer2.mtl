@@ -1,0 +1,8 @@
+diffuse Conifer2.dds 1
+normal Conifer2Normal.dds
+
+shader PerPixelNormal
+
+cullmode none
+fillmode solid
+alphatest 1

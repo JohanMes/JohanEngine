@@ -1,0 +1,5 @@
+diffuse Brick.dds 1
+specular BrickSpecular.dds 0.1 1
+normal BrickNormal.dds
+parallax BrickParallax.dds
+shader PerPixelNormalSpecularParallax

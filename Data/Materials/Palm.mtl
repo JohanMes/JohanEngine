@@ -1,0 +1,10 @@
+# de texture
+diffuse Palm.dds 1
+normal PalmNormal.dds
+
+# de shader
+shader PerPixelNormal
+
+# en de extra effecten
+cullmode none
+alphatest 1

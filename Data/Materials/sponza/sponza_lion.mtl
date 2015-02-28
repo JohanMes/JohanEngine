@@ -1,0 +1,3 @@
+diffuse sponza\sponza_lion_diff.dds 1
+normal sponza\sponza_lion_ddn.dds
+shader PerPixelNormal

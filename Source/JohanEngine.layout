@@ -13,7 +13,7 @@ LeftChar=1
 Open=0
 Top=0
 [Editors]
-Focused=118
+Focused=4
 Order=4,9,10,118,117
 [Editor_0]
 Open=0
@@ -840,8 +840,8 @@ LeftChar=1
 [Editor_118]
 Open=1
 Top=1
-CursorCol=16
-CursorRow=25
+CursorCol=38
+CursorRow=53
 TopLine=10
 LeftChar=1
 [Editor_119]

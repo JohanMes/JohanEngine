@@ -1,0 +1,5 @@
+diffuse Tiles.dds 1
+specular TilesSpecular.dds 1 10
+normal TilesNormal.dds
+parallax TilesParallax.dds
+shader PerPixelNormalSpecularParallax

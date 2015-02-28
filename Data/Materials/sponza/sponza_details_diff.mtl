@@ -1,0 +1,3 @@
+diffuse sponza\sponza_details_diff.dds 1
+specular sponza\sponza_details_spec.dds 1 0.5
+shader PerPixelSpecular

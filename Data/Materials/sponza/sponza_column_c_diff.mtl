@@ -1,0 +1,4 @@
+diffuse sponza\sponza_column_c_diff.dds 1
+specular sponza\sponza_column_c_spec.dds 0.2 0.3
+normal sponza\sponza_column_c_ddn.dds
+shader PerPixelNormalSpecular

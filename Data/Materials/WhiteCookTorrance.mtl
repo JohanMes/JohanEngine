@@ -1,0 +1,3 @@
+diffuse White.dds 1
+shader PerPixelCookTorrance
+cullmode none

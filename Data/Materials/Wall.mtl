@@ -1,0 +1,5 @@
+diffuse Wall.dds 1
+specular WallSpecular.dds 0.1 0.1
+normal WallNormal.dds
+parallax WallParallax.dds
+shader PerPixelNormalSpecularParallax

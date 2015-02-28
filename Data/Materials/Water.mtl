@@ -1,0 +1,4 @@
+diffuse waterdmap0.dds 1
+specular WaterSpecular.dds 0.9 12
+normal WaterNormal.dds
+shader Water

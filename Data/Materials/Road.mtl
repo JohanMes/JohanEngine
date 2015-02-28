@@ -1,0 +1,4 @@
+diffuse Road.dds 1
+specular RoadSpecular.dds 0.1 1
+normal RoadNormal.dds
+shader PerPixelNormalSpecular

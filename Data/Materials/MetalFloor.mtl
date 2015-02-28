@@ -1,0 +1,4 @@
+diffuse MetalFloor.dds 1.2
+specular MetalFloorSpecular.dds 3 1.2
+normal MetalFloorNormal.dds
+shader PerPixelNormalSpecular
