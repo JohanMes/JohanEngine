@@ -1,43 +1,48 @@
-#include <cstdio>
-
 #include "FXShader.h"
-#include "Scene.h"
-#include "Console.h"
 
 FXShader::FXShader(const char* name) : FXHandle(name) {
-	Get(name);
+	handle = FX->GetTechniqueByName(name);
+	if(!handle) {
+		char buffer[1024];
+		snprintf(buffer,sizeof(buffer),"Error creating D3DXHANDLE to shader '%s'\r\n",name);
+		MessageBox(hwnd,buffer,"Error",MB_ICONERROR); // Don't use console, it might not exist yet
+	}
 	Reset();
 }
-
 FXShader::~FXShader() {
 }
-
-void FXShader::Get(const char* name) {
-	handle = FX->GetTechniqueByName(name);
-	if(!handle) { // Gebruik geen UI, want die hangt van het slagen van ons af...
-		char buffer[512];
-		snprintf(buffer,512,"Error creating D3DXHANDLE of shader %s\r\n",name);
-		MessageBox(hwnd,buffer,"Error",MB_ICONERROR);
-	}
-}
-
-void FXShader::Reset() {
-	if(scene) {
-		begin = scene->objects->begin(); // random value
-	} else {
-		begin = nulldummy;
-	}
-	end = begin; // end == begin means unused
-	unused = true;
-}
-
 void FXShader::Print() {
 	console->WriteVar("name",name);
 	console->WriteVar("handle",handle);
-//	console->WriteVar("nulldummy",nulldummy);
-	if(!unused) {
+	if(HasValidRange()) {
 		console->WriteVar("(*begin)->name",(*begin)->GetName());
-		console->WriteVar("(*end)->name)",(*end)->GetName());
+		console->WriteVar("(*end)->name",(*end)->GetName());
 	}
-	console->WriteVar("unused",unused);
+	console->WriteVar("HasValidRange()",HasValidRange());
+}
+bool FXShader::HasValidRange() {
+	return (beginvalid and endvalid);
+}
+void FXShader::SetRange(ObjectIterator begin,ObjectIterator end) {
+	SetBegin(begin);
+	SetEnd(end);
+
+}
+void FXShader::SetBegin(ObjectIterator begin) {
+	this->begin = begin;
+	beginvalid = true;
+}
+void FXShader::SetEnd(ObjectIterator end) {
+	this->end = end;
+	endvalid = true;
+}
+void FXShader::Reset() {
+	beginvalid = false;
+	endvalid = false;
+}
+ObjectIterator FXShader::GetBegin() {
+	return begin; // can be invalid
+}
+ObjectIterator FXShader::GetEnd() {
+	return end; // can be invalid
 }

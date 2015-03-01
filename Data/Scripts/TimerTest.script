@@ -1,0 +1,21 @@
+Object groundobject = GetObjectByName("ProceduralPlane")
+
+int count = GetObjectCount()
+int i = 0
+while(i < count) {
+	Object thisobject = GetObjectByIndex(i)
+	if(thisobject != groundobject) {
+		float x = RandomRange(-1,1)
+		float y = RandomRange(-1,1)
+		float z = RandomRange(-1,1)
+		thisobject.Translate(x,y,z)
+
+		float rx = RandomRange(0,360)
+		float ry = RandomRange(0,360)
+		float rz = RandomRange(0,360)
+		thisobject.SetRotation(rx,ry,rz)
+	}
+	i++
+}
+
+AddTimer(100,"TimerTest.script")

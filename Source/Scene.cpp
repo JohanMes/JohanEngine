@@ -1,10 +1,4 @@
-#include <cstdio>
 #include "Scene.h"
-#include "Dialogs.h"
-#include "renderer.h"
-#include "Bezier.h"
-#include "Parser.h"
-#include "Timers.h"
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 /*
 	abcd
@@ -60,9 +54,7 @@ void Scene::Load(const char* scnpath) {
 	console->WriteEndTimer("");
 
 	// new approach: use a parser object
-	Parser parser;
-    parser.printtiming = true;
-    parser.savetokens = false;
+	Parser parser(true,false);
     parser.Execute(fullpath);
 
 	console->WriteBeginTimer("Preparing scene for rendering... ");
@@ -234,35 +226,27 @@ void Scene::OnRenderFrame(float dt) {
 void Scene::OnCameraChange(float t) {
 	for(std::list<Object*>::iterator i = objects->begin();i != objects->end();i++) {
 		Object* thisobject = *i;
-		thisobject->visible = camera->IsVisible(thisobject);
+		thisobject->SetVisible(camera->IsVisible(thisobject));
 	}
 }
 void Scene::OnObjectsUpdate(float t) {
 	
-	// Laat alle shaders niks tekenen
+	// Remove all ranges
 	for(unsigned int i = 0;i < renderer->shaders.size();i++) {
 		renderer->shaders[i]->Reset();
 	}
 	
-	// Vind nu de eerste en laatste objecten behorend bij iedere shader
+	// Find first and last item belonging to each shader
 	for(std::list<Object*>::iterator i = objects->begin();i != objects->end();i++) {
 		Object* thisobject = *i;
 		FXShader* objectshader = renderer->shaders[thisobject->material->shaderindex];
 		
-		// To altijd opschuiven naar het laatste item
-		objectshader->end = i; 
+		// Always set ending to one more than current item
+		objectshader->SetEnd(next(i)); // exclusive ending
 		
-		// Alleen from verschuiven als we begin nog niet hebben gevonden
-		if(objectshader->unused) {
-			objectshader->begin = i;
-			objectshader->unused = false;
-		}
-	}
-	
-	// exclusive ending
-	for(unsigned int i = 0;i < renderer->shaders.size();i++) {
-		if(!renderer->shaders[i]->unused) {
-			advance(renderer->shaders[i]->end,1);
+		// Move start only once
+		if(!objectshader->HasValidRange()) {
+			objectshader->SetBegin(i);
 		}
 	}
 }

@@ -7,6 +7,7 @@
 
 #include "float2.h"
 #include "float3.h"
+#include "float4x4.h"
 
 #define pi 3.141592654
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -48,6 +49,7 @@ unsigned int Binomial(unsigned int n,unsigned int k);
 float3 GramSchmidt2(float3 v1,float3 x2);
 float3 GramSchmidt3(float3 v1,float3 v2,float3 x3);
 bool fequals(float x1,float x2);
+float4x4 LookAt(const D3DXVECTOR3& from,const D3DXVECTOR3& to);
 void GetFullPath(const char* file,const char* folder,char* fullpath);
 char* StripQuotes(const char* text);
 

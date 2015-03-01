@@ -1,0 +1,55 @@
+SetSunlight(1.4,1.4,1.2)
+
+SetCameraPos(7.395,1.8,7.383)
+SetCameraAngleDeg(228.9,-0.593)
+
+SetTime(14,00)
+SetTimeMulti(125)
+
+SetGround("Ground.mtl","Heightmaps\Wit.bmp",8000,0,0,1000)
+AddObject("Scene\Skybox8000.obj","Skybox2.mtl",0,0,0,0,0,0,1)
+AddObject("Scene\Sun.obj","Sun.mtl",0,0,0,0,0,0,1)
+
+int i = 0
+
+Object obj
+
+while (i < 1){
+	float x = RandomRange(-15,15)
+	float y = RandomRange(-15, 15)
+	float z = RandomRange(0,15)
+	float rx = RandomRange(0,1)
+	float ry = RandomRange(0,1)
+	float rz = RandomRange(0,1)
+	
+	obj = AddObject("Props\Barrel.obj","Barrel.mtl",x,y,z,rx,ry,rz,1)
+	i++
+}
+
+#AddObject("Primitives\Cube.obj","Wall.mtl",0,0,0,1,1,1,10)
+
+SetTime(20,00)
+
+AddPointlight(0,0.01,0,50,50,20)
+
+obj.SetTranslation(0,0,0)
+
+float x = obj.GetTranslationX()
+
+# we willen naar 10, 10, 10
+int x = GetTimeHours()
+
+while (x < 22){
+	int myInt = GetTimeMins()
+	obj.SetTranslation(obj.GetTranslationX() + myInt,0,0)
+	x = GetTimeHours()
+}
+
+# p0 = 0
+# p1 = 10
+# (p0 + (p1 - p0)) * dt/T
+# 0 -> 10 over 5 sec.
+# 10 - p0
+
+
+MessageBox(x)

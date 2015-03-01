@@ -1,0 +1,11 @@
+SetSunlight(1.4,1.4,1.2)
+
+SetCameraPos(10,1.85,10)
+SetCameraAngleDeg(-90,-00.0001)
+
+SetTime(12,00)
+SetTimeMulti(0)
+
+SetGround("Multitex.mtl","Heightmaps\Wit.bmp",8000,0,0,1000)
+AddObject("Scene\Skybox8000.obj","Skybox2.mtl",0,0,0,0,0,0,1)
+AddObject("Scene\Sun.obj","Sun.mtl",0,0,0,0,0,0,1)

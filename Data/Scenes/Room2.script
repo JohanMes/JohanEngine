@@ -1,0 +1,15 @@
+# scheelt gezeik iedere keer
+LoadScene("EmptyScene.script")
+
+# spawn voor deur
+SetCameraPos(0,1.8,10)
+SetCameraAngleDeg(-90,0)
+
+int i = GetTimeHours()
+i++
+
+SetTime(i,00)
+SetTimeMulti(0)
+
+Object portal = AddObject("Door.obj","Door.mtl",5,0,0,0,0,0,1)
+portal.SetOnClick("Load1.script")

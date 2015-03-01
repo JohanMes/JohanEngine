@@ -1,0 +1,17 @@
+SetSunlight(1.4,1.4,1.2)
+
+SetTime(12,00)
+SetTimeMulti(1)
+
+SetCameraPos(0,1.85,0 0 0)
+
+SetCameraAngleDeg(0,0)
+
+SetGround("Ground.mtl","Heightmaps\Wit.bmp",8000,0,0,1000)
+
+AddObject("Scene\Skybox8000.obj","Skybox2.mtl",0,0,0,0,0,0,1)
+AddObject("Scene\Sun.obj","Sun.mtl",0,0,0,0,0,0,1)
+
+AddObject("maxexport\Box01.obj","maxexport\WoodBoards.mtl",0,0,0,0,0,0,1)
+AddObject("maxexport\Box02.obj","maxexport\WoodBoards.mtl",0,0,0,0,0,0,1)
+AddObject("maxexport\Tube01.obj","maxexport\WoodBoards.mtl",0,0,0,0,0,0,1)

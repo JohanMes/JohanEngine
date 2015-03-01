@@ -1,5 +1,3 @@
-#include <d3dx9.h>
-#include <algorithm>
 #include "float3.h"
 
 float3::float3() {
@@ -19,7 +17,6 @@ float3::float3(const D3DXVECTOR3& rvalue) {
 	y = rvalue.y;
 	z = rvalue.z;
 }
-
 float float3::Length() {
 	return D3DXVec3Length(this);
 }
@@ -31,14 +28,14 @@ float3 float3::Min(const float3& rvalue) {
 	dummy.x = std::min(x,rvalue.x);
 	dummy.y = std::min(y,rvalue.x);
 	dummy.z = std::min(z,rvalue.x);
-	return dummy;	
+	return dummy;
 }
 float3 float3::Max(const float3& rvalue) {
 	float3 dummy;
 	dummy.x = std::max(x,rvalue.x);
 	dummy.y = std::max(y,rvalue.x);
 	dummy.z = std::max(z,rvalue.x);
-	return dummy;	
+	return dummy;
 }
 float3 float3::SetLength(float value) {
 	Normalize();

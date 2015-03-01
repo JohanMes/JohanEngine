@@ -1,16 +1,24 @@
 #ifndef STATE_INCLUDE
 #define STATE_INCLUDE
 
-#include "resource.h"
+#include <d3d9.h> // D3DRENDERSTATETYPE
+#include "Resource.h" // d3ddev
 
-class State {
-	D3DRENDERSTATETYPE RenderState;
-	DWORD Value;
+#if BUILDING_DLL
+#define DLLIMPORT __declspec(dllexport)
+#else
+#define DLLIMPORT __declspec(dllimport)
+#endif
+
+class DLLIMPORT State {
+	private:
+		D3DRENDERSTATETYPE renderstate;
+		DWORD value;
 	public:
-		State(D3DRENDERSTATETYPE NewState);
+		State(D3DRENDERSTATETYPE renderstate);
 		~State();
-		
-		void Set(DWORD NewValue);
+		DWORD Get();
+		void Set(DWORD value);
 };
 
 #endif

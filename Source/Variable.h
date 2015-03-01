@@ -1,10 +1,8 @@
 #ifndef VARIABLE_INCLUDE
 #define VARIABLE_INCLUDE
 
-#include "Object.h"
-#include "Path.h"
-#include "Clock.h"
-#include "Timer.h"
+#include <cstring> // strdup
+#include "Console.h" // console writing
 
 enum VarKind {
 	vtInt,
@@ -18,17 +16,15 @@ enum VarKind {
 };
 
 class Var {
-	void SetType(const char* type);
+	void SetTypeFromString(const char* type);
 	public:
-		Var(VarKind type,const char* name,int level);
-		Var(const char* type,const char* name,int level);
+		Var(VarKind type,const char* name,int level); // set from generic
+		Var(const char* type,const char* name,int level); // set from string type
 		~Var();
-		
 		int GetIntValue();
 		float GetFloatValue();
 		char* GetStringValue();
 		float3* GetFloat3Value();
-		
 		bool Equals(Var* rvalue);
 		bool Greater(Var* rvalue);
 		bool Less(Var* rvalue);

@@ -1,36 +1,51 @@
 #include "Timer.h"
-#include "Parser.h"
-#include "Scene.h"
-#include "Console.h"
-#include "TimeEvent.h"
 
 Timer::Timer() {
-	this->ms = -1;
-	this->set = false;
+	this->miliseconds = -1;
+	this->running = false;
 	this->OnTimer = new TimeEvent();
-	
-	scene->timers->Add(this);
+	if(scene) {
+		scene->timers->Add(this); // add self
+	}
 }
 Timer::~Timer() {
 	delete OnTimer;
-	scene->timers->Delete(this);
+	if(scene) {
+		scene->timers->Delete(this); // remove self
+	}
 }
-
 void Timer::AddEvent(void (*function)(void* sender,double data),void* sender) {
 	OnTimer->Add(function,sender);
 }
-void Timer::SetTime(int ms,bool set) {
-	this->ms = ms;
-	this->set = set;	
+void Timer::Set(int miliseconds,bool start) {
+	this->miliseconds = miliseconds;
+	this->running = start;
 }
 void Timer::OnUpdateTime(double dt) {
-	if(set) {
-		ms -= (dt * 1000);
-		if(ms <= 0) {
+	if(running) {
+		miliseconds -= (dt * 1000);
+		if(miliseconds <= 0) {
+			running = false;
 			OnTimer->Execute(0); // unused parameters
 		}
 	}
 }
-bool Timer::GetFinished() {
-	return (ms <= 0);
+bool Timer::IsRunning() {
+	return running;
+}
+bool Timer::IsFinished() {
+	return (miliseconds <= 0);
+}
+int Timer::MilisLeft() {
+	if(IsRunning()) {
+		return miliseconds;
+	} else {
+		return -1;
+	}
+}
+std::list<Timer*>::iterator Timer::GetBufferLocation() {
+	return bufferlocation;
+}
+void Timer::SetBufferLocation(std::list<Timer*>::iterator i) {
+	bufferlocation = i;
 }

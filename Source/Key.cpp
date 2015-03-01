@@ -3,35 +3,37 @@
 Key::Key(WPARAM key) {
 	this->key = key;
 	OnClick = NULL;
-	down = false;
+	pressed = false;
 }
-
 Key::Key(WPARAM key,void (*OnClick)(void* data)) {
 	this->key = key;
 	this->OnClick = OnClick;
-	down = false;
+	pressed = false;
 }
-
 Key::~Key() {
 }
-
 bool Key::Press() {
-	if(down) {
+	if(pressed) {
 		return false; // already down
 	} else {
-		down = true;
+		pressed = true;
 		if(OnClick) {
 			OnClick(NULL);
 		}
 		return true; // key went down
 	}
 }
-
 bool Key::Release() {
-	if(down) {
-		down = false;
+	if(pressed) {
+		pressed = false;
 		return true; // key went back up
 	} else {
-		return false;
+		return false; // already up
 	}
+}
+bool Key::IsPressed() {
+	return pressed;
+}
+WPARAM Key::GetKeyCode() {
+	return key;
 }

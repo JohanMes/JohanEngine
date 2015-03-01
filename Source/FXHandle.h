@@ -1,8 +1,7 @@
 #ifndef FXHANDLE_INCLUDE
 #define FXHANDLE_INCLUDE
 
-#include <string>
-#include <d3dx9.h>
+#include <d3dx9.h> // D3DXHANDLE
 
 class FXHandle {
 	public:

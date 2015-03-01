@@ -1,0 +1,16 @@
+SetSunlight(1.4,1.4,1.2)
+
+SetCameraPos(858.8,2953,-2853)
+SetCameraAngleDeg(1199,-59.33)
+
+SetTime(12,00)
+SetTimeMulti(0)
+
+# Water nabootsen
+#plane Water.mtl 0 -20 0 0 0 0 20000 100
+#plane Ground.mtl 0 -50 0 0 0 0 20000 100
+
+# Ierland als ground toevoegen
+SetGround("Ground.mtl","Heightmaps\Eire.bmp",8000,-5,100,1000)
+AddObject("Scene\Skybox8000.obj","Skybox2.mtl",0,0,0,0,0,0,1)
+AddObject("Scene\Sun.obj","Sun.mtl",0,0,0,0,0,0,1)

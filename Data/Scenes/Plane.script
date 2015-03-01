@@ -1,0 +1,22 @@
+SetSunlight(1.4,1.4,1.2)
+
+SetCameraPos(-6.422,4,-7.808)
+SetCameraAngleDeg(-377.1,-11.46)
+
+SetTime(9,00)
+SetTimeMulti(1)
+
+SetGround("TerrainGround.mtl","Heightmaps\Wit.bmp",8000,0,0,1000)
+AddObject("Scene\Skybox8000.obj","Skybox2.mtl",0,0,0,0,0,0,1)
+AddObject("Scene\Sun.obj","Sun.mtl",0,0,0,0,0,0,1)
+
+#int i = -75
+#while(i <= 75) {
+#	AddObject("Groen\Palm.obj","Palm.mtl",50,0,0,i,0,0,1)
+#	i += 15
+#}
+
+AddObject("Groen\Broadleaf.object",0,0,0,0,0,0,1)
+
+Object tmp = AddObject("Props\Crate.object",0,0,-10,0,0,0,1)
+tmp.SetOnClick("Spawn.script")

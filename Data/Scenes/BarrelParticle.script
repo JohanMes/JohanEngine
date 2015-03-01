@@ -1,0 +1,14 @@
+SetSunlight(1.4,1.4,1.2)
+
+SetCameraPos(7.395,1.85,7.383)
+SetCameraAngleDeg(228.9,-0.593)
+
+SetTime(14,00)
+SetTimeMulti(0)
+
+SetGround("Ground.mtl","Heightmaps\Wit.bmp",8000,0,0,1000)
+AddObject("Scene\Skybox8000.obj","Skybox2.mtl",0,0,0,0,0,0,1)
+AddObject("Scene\Sun.obj","Sun.mtl",0,0,0,0,0,0,1)
+
+# texture pos dir freq var life
+# spawner Sun.dds 0 1 0 0 1 0 0.1 0 5

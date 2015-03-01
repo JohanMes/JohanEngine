@@ -16,7 +16,6 @@ class DLLIMPORT Objects {
 	unsigned int updatecount;
 	std::list<Object*> list;
 	public:
-		
 		Objects();
 		~Objects();
 		

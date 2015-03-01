@@ -1,20 +1,20 @@
-#include <cstdio>
-
 #include "Variable.h"
-#include "Console.h"
+#include "Object.h" // var type union, cannot forward declare
+#include "Path.h" // var type union, cannot forward declare
+#include "float3.h" // var type union, cannot forward declare
+#include "Timer.h" // var type union, cannot forward declare
 
 Var::Var(const char* type,const char* name,int level) {
-	SetType(type);
-	this->name = strdup(name);
+	SetTypeFromString(type);
+	this->name = strdup(name); // copy
 	this->level = level;
 }
 Var::Var(VarKind type,const char* name,int level) {
 	this->type = type;
-	this->name = strdup(name);
+	this->name = strdup(name); // copy
 	this->level = level;
 }
-
-void Var::SetType(const char* type) {
+void Var::SetTypeFromString(const char* type) {
 	if(!strcmp(type,"int")) {
 		this->type = vtInt;
 	} else if(!strcmp(type,"float")) {
@@ -36,19 +36,26 @@ void Var::SetType(const char* type) {
 	} else {
 		this->type = vtUnknown;
 		console->Write("Unknown type \"%s\"\r\n",type);
-	}	
+	}
 }
-
 Var::~Var() {
 	delete[] name;
-	if(type == vtString) {
-		delete[] stringvalue;
-	} else if(type == vtFloat3) {
-		delete float3value;
+	switch(type) {
+		case vtPath: {
+			delete pathvalue;
+			break;
+		}
+		case vtString: {
+			delete[] stringvalue;
+			break;
+		}
+		case vtFloat3: {
+			delete float3value;
+			break;
+		}
 	}
 	// object and path only hold pointer, don't own data
 }
-
 int Var::GetIntValue() {
 	switch(type) {
 		case vtInt: {
@@ -62,7 +69,6 @@ int Var::GetIntValue() {
 		}
 	}
 }
-
 float Var::GetFloatValue() {
 	switch(type) {
 		case vtInt: {
@@ -76,7 +82,6 @@ float Var::GetFloatValue() {
 		}
 	}
 }
-
 float3* Var::GetFloat3Value() {
 	switch(type) {
 		case vtFloat3: {
@@ -88,7 +93,6 @@ float3* Var::GetFloat3Value() {
 		}
 	}
 }
-
 char* Var::GetStringValue() {
 	switch(type) {
 		case vtInt: {
@@ -107,14 +111,14 @@ char* Var::GetStringValue() {
 		case vtObject: {
 			char* buf = new char[128];
 			snprintf(buf,128,"%s",objectvalue->GetName());
-			return buf;			
+			return buf;
 		}
 		case vtFloat3: {
 			char* buf = new char[128];
 			snprintf(buf,128,"[%g %g %g]",
-				float3value->x,
-				float3value->y,
-				float3value->z);
+			         float3value->x,
+			         float3value->y,
+			         float3value->z);
 			return buf;
 			break;
 		}
@@ -123,7 +127,6 @@ char* Var::GetStringValue() {
 		}
 	}
 }
-
 bool Var::Equals(Var* rvalue) {
 	switch(type) {
 		case vtInt: {
@@ -151,7 +154,6 @@ bool Var::Equals(Var* rvalue) {
 		}
 	}
 }
-
 bool Var::Greater(Var* rvalue) {
 	switch(type) {
 		case vtInt: {
@@ -165,7 +167,6 @@ bool Var::Greater(Var* rvalue) {
 		}
 	}
 }
-
 bool Var::Less(Var* rvalue) {
 	switch(type) {
 		case vtInt: {

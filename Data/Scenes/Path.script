@@ -1,0 +1,93 @@
+SetSunlight(1.4,1.4,1.2)
+
+SetTime(9,00)
+SetTimeMulti(0)
+
+SetGround("Tiles.mtl","Heightmaps\Wit.bmp",8000,0,0,3000)
+AddObject("Scene\Skybox8000.obj","Skybox2.mtl",0,0,0,0,0,0,1)
+AddObject("Scene\Sun.obj","Sun.mtl",0,0,0,0,0,0,1)
+
+Path bezier
+
+float minlim = -100.0f
+float maxlim = 100.0f
+
+# Add some curves of degree 6
+int i = 0
+int j = 0
+while(i < 10) {
+	
+	# vertex 1
+	float p1x = RandomRange(minlim,maxlim)
+	float p1y = RandomRange(90.0f, 150.0f)
+	float p1z = RandomRange(minlim,maxlim)
+	
+	# vertex 2
+	float p2x = RandomRange(minlim,maxlim)
+	float p2y = RandomRange(90.0f, 150.0f)
+	float p2z = RandomRange(minlim,maxlim)
+	
+	# vertex 3
+	float p3x = RandomRange(minlim,maxlim)
+	float p3y = RandomRange(90.0f, 150.0f)
+	float p3z = RandomRange(minlim,maxlim)
+	
+	# vertex 4
+	float p4x = RandomRange(minlim,maxlim)
+	float p4y = RandomRange(90.0f, 150.0f)
+	float p4z = RandomRange(minlim,maxlim)
+	
+	# vertex 5
+	float p5x = RandomRange(minlim,maxlim)
+	float p5y = RandomRange(90.0f, 150.0f)
+	float p5z = RandomRange(minlim,maxlim)
+
+	# vertex 6
+	float p6x = RandomRange(minlim,maxlim)
+	float p6y = RandomRange(90.0f, 150.0f)
+	float p6z = RandomRange(minlim,maxlim)
+	
+	# vertex 7
+	float p7x = RandomRange(minlim,maxlim)
+	float p7y = RandomRange(90.0f, 150.0f)
+	float p7z = RandomRange(minlim,maxlim)
+		
+	bezier.AddToTail(p1x,p1y,p1z,p2x,p2y,p2z,p3x,p3y,p3z,p4x,p4y,p4z,p5x,p5y,p5z,p6x,p6y,p6z,p7x,p7y,p7z)
+	
+	i++
+}
+
+float pathlength = bezier.GetLength()
+float step = 0.5f / pathlength
+
+float t = 0.0f
+while(t < 1.0f) {
+	
+	if(t > 0.66f) {
+		bezier.AddObjectAt(t,"Primitives\Cube.obj","Stone.mtl",1)
+	} else if(t > 0.33f) {
+		bezier.AddObjectAt(t,"Primitives\Cube.obj","Road.mtl",1)
+	} else {
+		bezier.AddObjectAt(t,"Primitives\Cube.obj","Pebbles.mtl",1)
+	}
+	
+	t += step
+}
+bezier.AddObjectAt(1.0f,"Primitives\Cube.obj","Brick.mtl",1)
+
+# Place camera at start
+float cameraxpos = bezier.GetPointX(0)
+float cameraypos = bezier.GetPointY(0)
+float camerazpos = bezier.GetPointZ(0)
+
+# adjust eye height
+cameraypos += 1.8f
+
+# Point camera in path dir
+float cameraxdir = bezier.GetDirX(0)
+float cameraydir = bezier.GetDirY(0)
+float camerazdir = bezier.GetDirZ(0)
+
+SetFlyMode(1)
+SetCameraPos(cameraxpos,cameraypos,camerazpos)
+SetCameraDir(cameraxdir,cameraydir,camerazdir)

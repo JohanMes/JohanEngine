@@ -1,0 +1,5 @@
+SetSunlight(1.4,1.4,1.2)
+
+SetGround("Ground.mtl","Heightmaps\Wit.bmp",8000,0,0,1000)
+AddObject("Scene\Skybox8000.obj","Skybox2.mtl",0,0,0,0,0,0,1)
+AddObject("Scene\Sun.obj","Sun.mtl",0,0,0,0,0,0,1)

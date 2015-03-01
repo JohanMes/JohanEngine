@@ -1,5 +1,3 @@
-#include <d3dx9.h>
-
 #include "float4.h"
 
 float4::float4() {
@@ -16,7 +14,6 @@ float4::float4(const D3DXVECTOR4& rvalue) {
 	z = rvalue.z;
 	w = rvalue.w;
 }
-
 float float4::Length() {
 	return D3DXVec4Length(this);
 }

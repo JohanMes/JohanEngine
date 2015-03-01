@@ -91,17 +91,17 @@ void Dirlight::GetProjection() {
 			continue;
 		}
 		
-		float3 modeldirvector = object->worldcenter - camera->GetPos();
-		float modeldirlength = std::max(0.0f,modeldirvector.Length() - object->worldr);
+		float3 modeldirvector = object->GetWorldCenter() - camera->GetPos();
+		float modeldirlength = std::max(0.0f,modeldirvector.Length() - object->GetWorldRadius());
 		
 		// Also don't stretch frustum to fit these
 		if(modeldirlength < options->shadowdistance) {
 			
 			// World * View * Proj = Screenpos
-			float3 screenpos = object->worldcenter.Transform(matViewProj);
+			float3 screenpos = object->GetWorldCenter().Transform(matViewProj);
 
 			// http://stackoverflow.com/questions/3717226/radius-of-projected-sphere
-			float screenradius = object->worldr / screenpos.z; // assume 180 degrees viewing angle
+			float screenradius = object->GetWorldRadius() / screenpos.z; // assume 180 degrees viewing angle
 			
 			// Test four points of our sphere: top left bottom right
 			float3 points[4];

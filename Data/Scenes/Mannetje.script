@@ -1,0 +1,26 @@
+SetSunlight(1.4,1.4,1.2)
+
+SetTime(24,30)
+SetTimeMulti(0)
+
+SetCameraPos(20.03,17.9,19.13)
+SetCameraAngleDeg(216.1,-48.54)
+
+float x = -8.0
+float y = -8.0
+
+# hoihoicomment, we gaan een rooster van lampen dumpen
+while(x <= 8) {
+	y = -8.0;
+	while(y <= 8) {
+		AddSpotlight(x,100,y,x,0,y,40,40,40,1500)
+		y = y + 8
+	}
+	x = x + 8
+}
+
+AddObject("Mannetje.obj","White.mtl",0,0,0,0,0,0,100)
+
+SetGround("Stone.mtl","Heightmaps\Wit.bmp",8000,0,0,1000)
+AddObject("Scene\Skybox8000.obj","Skybox2.mtl",0,0,0,0,0,0,1)
+AddObject("Scene\Sun.obj","Sun.mtl",0,0,0,0,0,0,1)

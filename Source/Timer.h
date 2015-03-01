@@ -2,7 +2,9 @@
 #define TIMER_H
 
 #include <list>
-#include "TimeEvent.h"
+using std::list;
+#include "TimeEvent.h" // OnTimer
+#include "Scene.h" // timers list
 
 #if BUILDING_DLL
 #define DLLIMPORT __declspec(dllexport)
@@ -11,20 +13,24 @@
 #endif
 
 class DLLIMPORT Timer {
-	friend class Timers;
-	std::list<Timer*>::iterator bufferlocation;
+	private:
+		std::list<Timer*>::iterator bufferlocation;
+		bool running; // opposite of paused
+		int miliseconds;
 	public:
 		Timer();
 		~Timer();
-
-		bool set; // opposite of paused
-		int ms;
-		TimeEvent* OnTimer;
-
-		bool GetFinished();
+		std::list<Timer*>::iterator GetBufferLocation();
+		void SetBufferLocation(std::list<Timer*>::iterator i);
+		int MilisLeft();
+		bool IsRunning();
+		bool IsFinished();
 		void AddEvent(void (*function)(void* sender,double data),void* sender);
-		void SetTime(int ms,bool set);
+		void Set(int miliseconds, bool start);
 		void OnUpdateTime(double dt);
+
+		// Events
+		TimeEvent* OnTimer;
 };
 
 #endif

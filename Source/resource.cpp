@@ -366,6 +366,45 @@ DLLIMPORT float3 GramSchmidt3(float3 v1,float3 v2,float3 x3) {
 DLLIMPORT bool fequals(float x1,float x2) {
 	return x1 + 0.000001f >= x2 && x1 - 0.000001f <= x2;
 }
+DLLIMPORT float4x4 LookAt(const D3DXVECTOR3& from,const D3DXVECTOR3& to) {
+	
+	// basis #1
+	float3 x = to - from;
+	x.Normalize();
+
+	// basis #2
+	float3 y = GramSchmidt2(x,float3(0,1,0));
+	y.Normalize();
+	
+	// basis #3
+	float3 z = GramSchmidt3(x,y,float3(0,0,1));
+	z.Normalize();
+
+	// 4x4, "1"
+	float4x4 result;
+	result.Identity();
+
+	// insert vectors in rows (DX uses vec*matrix)
+	result._11 = x.x;
+	result._12 = x.y;
+	result._13 = x.z;
+	
+	result._21 = y.x;
+	result._22 = y.y;
+	result._23 = y.z;
+	
+	result._31 = z.x;
+	result._32 = z.y;
+	result._33 = z.z;
+	
+	// Flip or swap one if determinant = -1...
+	if(fequals(result.Determinant(),-1)) { // lame epsilon trick
+		result._31 = -z.x;
+		result._32 = -z.y;
+		result._33 = -z.z;
+	}
+	return result;
+}
 DLLIMPORT void GetFullPath(const char* file,const char* folder,char* fullpath) {
 	if(file[1] != ':') { // prepend exe dir
 		sprintf(fullpath,"%s\\%s\\%s",exepath,folder,file);

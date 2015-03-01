@@ -87,7 +87,7 @@ void Benchmark::Start(float testtime) {
 	// Stop when the timer ends
 	Timer* stoptimer = new Timer();
 	stoptimer->AddEvent(OnTimerEnd,this);
-	stoptimer->SetTime(testtime * 1000.0f,true);
+	stoptimer->Set(testtime * 1000.0f,true);
 }
 bool Benchmark::IsRunning() {
 	return (bool)listener;

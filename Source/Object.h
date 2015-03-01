@@ -2,11 +2,16 @@
 #define OBJECT_INCLUDE
 
 #include <cfloat>
+#include <cstdio>
+#include <vector>
+using std::vector;
 #include "Textures.h"
 #include "Models.h"
 #include "Material.h"
 #include "float4x4.h"
 #include "Animation.h"
+#include "Scene.h"
+#include "Objects.h" // friend
 
 #if BUILDING_DLL
 #define DLLIMPORT __declspec(dllexport)
@@ -32,52 +37,32 @@ class DetailLevel {
 		float maxdistance;
 };
 
-class DLLIMPORT Object {
-	friend class Objects;
-	
-	char* name;
-	Animation* animation; // remove when deleting object
-	std::vector<DetailLevel*> detaillevels;
+#define ObjectIterator std::list<Object*>::iterator
 
-	std::list<Object*>::iterator bufferlocation;
-	unsigned int updatecount;
-	
-	void Update();
+class DLLIMPORT Object {
+	private:
+		friend class Objects;
+		char* name;
+		Animation* animation; // remove when deleting object
+		vector<DetailLevel*> detaillevels;
+		ObjectIterator bufferlocation;
+		float3 worldcenter; // calculated on Update
+		float worldr; // calculated on Update
+		bool visible; // calculated on Update and camera change
+		float4x4 matTranslation;
+		float4x4 matScaling;
+		float4x4 matRotation;
+		float4x4 matWorld;
+		float4x4 matWorldInverse;
+		unsigned int updatecount;
+		void Update();
 	public:
-	
 		Object(const char* name);
 		Object(const char* objectpath,const float3& pos,const float3& rot,float scale); // from .object file
 		Object(const char* objectpath,const float3& pos,const float4x4& rot,float scale); // from .object file
 		Object(const char* name,const char* modelpath,const char* materialpath,const float3& pos,const float3& rot,float scale); // from .obj + .mtl
 		Object(const char* name,const char* modelpath,const char* materialpath,const float3& pos,const float4x4& rot,float scale); // from .obj + .mtl
 		~Object();
-		
-		// TODO: getter van maken?
-		Model* boundingmodel;
-		
-		// Materials
-		Material* material; // TODO: aparte dump van maken?
-		
-		// Transformation
-		float4x4 matRotation;
-		float4x4 matTranslation;
-		float4x4 matScaling; // store as float?
-		float4x4 matWorld;
-		float4x4 matWorldInverse; // don't recalculate
-		
-		// Transformed bounding model data
-		float3 worldcenter;
-		float worldr;
-		
-		// Engine-managed data
-		bool visible;
-		
-		// Misc.
-		bool castshadows;
-		
-		// Events
-		void (*OnClick)(Object* Sender);
-		
 		void LoadFromFile(const char* objectpath);
 		Collision IntersectSphere(float3 worldpos,float3 worlddir);
 		Collision IntersectModel(float3 worldpos,float3 worlddir);
@@ -85,9 +70,15 @@ class DLLIMPORT Object {
 		const char* GetName();
 		Model* GetBoundingModel();
 		float3 GetTranslation();
+		float4x4 GetTranslationMatrix();
 		float3 GetScaling();
+		float4x4 GetScalingMatrix();
+		//float3 GetRotation();
+		float4x4 GetRotationMatrix();
+		float4x4 GetWorldTransformMatrix();
+		float4x4 GetInvWorldTransformMatrix();
 		void ClearDetailLevels();
-		void AddDetailLevel(const char* modelpathmodel);
+		void AddDetailLevel(const char* modelpath);
 		void AddDetailLevel(Model* model);
 		void AddDetailLevel(Model* model,float maxdistance);
 		void AddDetailLevel(DetailLevel* detaillevel);
@@ -104,7 +95,19 @@ class DLLIMPORT Object {
 		void BeginUpdate();
 		void EndUpdate();
 		void Print();
-		void Clear();
+		void Reset();
+		float3 GetWorldCenter();
+		float GetWorldRadius();
+		bool IsVisible();
+		void SetVisible(bool value);
+
+		// Events
+		void (*OnClick)(Object* Sender);
+
+		// TODO: private?
+		bool castshadows;
+		Model* boundingmodel;
+		Material* material;
 };
 
 bool CompareObject(Object* a,Object* b);

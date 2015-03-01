@@ -15,7 +15,7 @@ class DLLIMPORT float2 : public D3DXVECTOR2 {
 		float2(float x,float y);
 		float2(const D3DXVECTOR2& rvalue);
 		float2(const POINT& rvalue);
-		
+
 		float Length();
 		float Dot(const float2& rvalue);
 		float2 SetLength(float value);

@@ -5,14 +5,14 @@ CPP      = g++.exe
 CC       = gcc.exe
 WINDRES  = windres.exe
 RES      = obj/JohanEngine_private.res
-OBJ      = obj/Console.o obj/Scene.o obj/main.o obj/Object.o obj/Options.o obj/Renderer.o obj/resource.o obj/Heightmap.o obj/Texture.o obj/Model.o obj/FXShader.o obj/Component.o obj/Button.o obj/Window.o obj/Label.o obj/Edit.o obj/Bevel.o obj/Dropdown.o obj/Camera.o obj/State.o obj/Dirlight.o obj/Pointlight.o obj/Spotlight.o obj/Clock.o obj/FXVariable.o obj/FXHandle.o obj/Messagebox.o obj/Models.o obj/Textures.o obj/Objects.o obj/Lights.o obj/Curve.o obj/Path.o obj/Parser.o obj/Variable.o obj/Interface.o obj/float3.o obj/Key.o obj/float2.o obj/float4.o obj/float4x4.o obj/Timer.o obj/Timers.o obj/Material.o obj/Skybox.o obj/Animation.o obj/Animations.o obj/Benchmark.o obj/TimeEvent.o obj/RenderTarget.o $(RES)
-LINKOBJ  = obj/Console.o obj/Scene.o obj/main.o obj/Object.o obj/Options.o obj/Renderer.o obj/resource.o obj/Heightmap.o obj/Texture.o obj/Model.o obj/FXShader.o obj/Component.o obj/Button.o obj/Window.o obj/Label.o obj/Edit.o obj/Bevel.o obj/Dropdown.o obj/Camera.o obj/State.o obj/Dirlight.o obj/Pointlight.o obj/Spotlight.o obj/Clock.o obj/FXVariable.o obj/FXHandle.o obj/Messagebox.o obj/Models.o obj/Textures.o obj/Objects.o obj/Lights.o obj/Curve.o obj/Path.o obj/Parser.o obj/Variable.o obj/Interface.o obj/float3.o obj/Key.o obj/float2.o obj/float4.o obj/float4x4.o obj/Timer.o obj/Timers.o obj/Material.o obj/Skybox.o obj/Animation.o obj/Animations.o obj/Benchmark.o obj/TimeEvent.o obj/RenderTarget.o $(RES)
-LIBS     = -L"C:/Program Files (x86)/Dev-Cpp/MinGW64/lib" -L"C:/Program Files (x86)/Dev-Cpp/MinGW64/x86_64-w64-mingw32/lib" -static-libgcc lib/x64/libd3d9.a lib/x64/libd3dcompiler_43.a lib/x64/libd3dx9_43.a --no-export-all-symbols --add-stdcall-alias -mwindows -s
+OBJ      = obj/Console.o obj/Scene.o obj/main.o obj/Object.o obj/Options.o obj/Renderer.o obj/Resource.o obj/Heightmap.o obj/Texture.o obj/Model.o obj/FXShader.o obj/Component.o obj/Button.o obj/Window.o obj/Label.o obj/Edit.o obj/Bevel.o obj/Dropdown.o obj/Camera.o obj/State.o obj/Dirlight.o obj/Pointlight.o obj/Spotlight.o obj/Clock.o obj/FXVariable.o obj/FXHandle.o obj/Messagebox.o obj/Models.o obj/Textures.o obj/Objects.o obj/Lights.o obj/Curve.o obj/Path.o obj/Parser.o obj/Variable.o obj/Interface.o obj/float3.o obj/Key.o obj/float2.o obj/float4.o obj/float4x4.o obj/Timer.o obj/Timers.o obj/Material.o obj/Skybox.o obj/Animation.o obj/Animations.o obj/Benchmark.o obj/TimeEvent.o obj/RenderTarget.o $(RES)
+LINKOBJ  = obj/Console.o obj/Scene.o obj/main.o obj/Object.o obj/Options.o obj/Renderer.o obj/Resource.o obj/Heightmap.o obj/Texture.o obj/Model.o obj/FXShader.o obj/Component.o obj/Button.o obj/Window.o obj/Label.o obj/Edit.o obj/Bevel.o obj/Dropdown.o obj/Camera.o obj/State.o obj/Dirlight.o obj/Pointlight.o obj/Spotlight.o obj/Clock.o obj/FXVariable.o obj/FXHandle.o obj/Messagebox.o obj/Models.o obj/Textures.o obj/Objects.o obj/Lights.o obj/Curve.o obj/Path.o obj/Parser.o obj/Variable.o obj/Interface.o obj/float3.o obj/Key.o obj/float2.o obj/float4.o obj/float4x4.o obj/Timer.o obj/Timers.o obj/Material.o obj/Skybox.o obj/Animation.o obj/Animations.o obj/Benchmark.o obj/TimeEvent.o obj/RenderTarget.o $(RES)
+LIBS     = -L"C:/Program Files (x86)/Dev-Cpp/MinGW64/lib" -L"C:/Program Files (x86)/Dev-Cpp/MinGW64/x86_64-w64-mingw32/lib" -static-libgcc lib/x64/libd3d9.a lib/x64/libd3dcompiler_43.a lib/x64/libd3dx9_43.a
 INCS     = -I"C:/Program Files (x86)/Dev-Cpp/MinGW64/include" -I"C:/Program Files (x86)/Dev-Cpp/MinGW64/x86_64-w64-mingw32/include" -I"C:/Program Files (x86)/Dev-Cpp/MinGW64/lib/gcc/x86_64-w64-mingw32/4.8.1/include"
 CXXINCS  = -I"C:/Program Files (x86)/Dev-Cpp/MinGW64/include" -I"C:/Program Files (x86)/Dev-Cpp/MinGW64/x86_64-w64-mingw32/include" -I"C:/Program Files (x86)/Dev-Cpp/MinGW64/lib/gcc/x86_64-w64-mingw32/4.8.1/include" -I"C:/Program Files (x86)/Dev-Cpp/MinGW64/lib/gcc/x86_64-w64-mingw32/4.8.1/include/c++"
 BIN      = ../JohanEngine.dll
-CXXFLAGS = $(CXXINCS) -std=gnu++11 -Wall -Wextra -pedantic -mwindows -pipe -DBUILDING_DLL=1 -Wno-unused-parameter -Wno-missing-field-initializers
-CFLAGS   = $(INCS) -std=gnu++11 -Wall -Wextra -pedantic -mwindows -pipe
+CXXFLAGS = $(CXXINCS) -std=gnu++11 -DBUILDING_DLL=1 -Wno-unused-parameter -Wno-missing-field-initializers
+CFLAGS   = $(INCS) -std=gnu++11
 RM       = rm.exe -f
 DEF      = ../libJohanEngine.def
 STATIC   = ../libJohanEngine.a
@@ -45,8 +45,8 @@ obj/Options.o: Options.cpp
 obj/Renderer.o: Renderer.cpp
 	$(CPP) -c Renderer.cpp -o obj/Renderer.o $(CXXFLAGS)
 
-obj/resource.o: resource.cpp
-	$(CPP) -c resource.cpp -o obj/resource.o $(CXXFLAGS)
+obj/Resource.o: Resource.cpp
+	$(CPP) -c Resource.cpp -o obj/Resource.o $(CXXFLAGS)
 
 obj/Heightmap.o: Heightmap.cpp
 	$(CPP) -c Heightmap.cpp -o obj/Heightmap.o $(CXXFLAGS)

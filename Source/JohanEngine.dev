@@ -12,7 +12,7 @@ ResourceIncludes=
 MakeIncludes=
 Compiler=
 CppCompiler=-DBUILDING_DLL=1_@@_-Wno-unused-parameter_@@_-Wno-missing-field-initializers_@@_
-Linker=lib/x64/libd3d9.a_@@_lib/x64/libd3dcompiler_43.a_@@_lib/x64/libd3dx9_43.a_@@_--no-export-all-symbols --add-stdcall-alias_@@_
+Linker=lib/x64/libd3d9.a_@@_lib/x64/libd3dcompiler_43.a_@@_lib/x64/libd3dx9_43.a_@@_
 IsCpp=1
 Icon=
 ExeOutput=..\..\JohanEngine
@@ -20,14 +20,14 @@ ObjectOutput=obj
 OverrideOutput=0
 OverrideOutputName=JohanEngine.dll
 HostApplication=C:\Users\Johan\Desktop\Bejeweled\JohanGame.exe
-Folders=Animation,Animations,Bezier,Bezier/Curve,Bezier/Path,Camera,Clock,Dialogs,Dialogs/Benchmark,Dialogs/Console,Dialogs/Messagebox,Dialogs/Options,Events,Events/ClickEvent,Events/TimeEvent,float2,float3,float4,float4x4,FX,FX/Main,FX/Screenspace,FX/Screenspace/HDR,FX/Screenspace/SSAO,FX/Specials,Handles,Handles/FXHandle,Handles/FXShader,Handles/FXVariable,Heightmap,Interface,Interface/Components,Interface/Components/Bevel,Interface/Components/Button,Interface/Components/Component,Interface/Components/Dropdown,Interface/Components/Edit,Interface/Components/Label,Interface/Components/Window,Key,Lights,Lights/Types,Lights/Types/Dirlight,Lights/Types/Pointlight,Lights/Types/Spotlight,Material,Model,Models,Object,Objects,Renderer,Renderer/RenderTarget,Scene,Script,Script/Parser,Script/Variable,Skybox,State,Texture,Textures,Timer,Timers
+Folders=Animation,Animations,Bezier,Bezier/Curve,Bezier/Path,Camera,Clock,Dialogs,Dialogs/Benchmark,Dialogs/Console,Dialogs/Messagebox,Dialogs/Options,Events,Events/ClickEvent,Events/TimeEvent,float2,float3,float4,float4x4,FX,FX/Main,FX/Screenspace,FX/Screenspace/HDR,FX/Screenspace/SSAO,FX/Specials,Handles,Handles/FXHandle,Handles/FXShader,Handles/FXVariable,Heightmap,Interface,Interface/Components,Interface/Components/Bevel,Interface/Components/Button,Interface/Components/Component,Interface/Components/Dropdown,Interface/Components/Edit,Interface/Components/Label,Interface/Components/Window,Key,Lights,Lights/Types,Lights/Types/Dirlight,Lights/Types/Pointlight,Lights/Types/Spotlight,Material,Model,Models,Object,Objects,Renderer,Renderer/RenderTarget,Resource,Scene,Script,Script/Parser,Script/Variable,Skybox,State,Texture,Textures,Timer,Timers
 CommandLine=
 UseCustomMakefile=0
 CustomMakefile=Makefile.win
 IncludeVersionInfo=1
 SupportXPThemes=0
 CompilerSet=0
-CompilerSettings=00000000g0111000000011001
+CompilerSettings=00000000g0000000000000000
 LogOutput=C:\Users\Johan Mes\Desktop
 LogOutputEnabled=0
 
@@ -35,18 +35,18 @@ LogOutputEnabled=0
 Major=1
 Minor=4
 Release=3
-Build=22645
+Build=22682
 LanguageID=1033
 CharsetID=1252
 CompanyName=
-FileVersion=1.4.3.22645
+FileVersion=1.4.3.22682
 FileDescription=JohanEngine
 InternalName=
 LegalCopyright=Kopijregt © 2011 Dhr. J.C. Mes
 LegalTrademarks=
 OriginalFilename=
 ProductName=
-ProductVersion=1.4.3.22645
+ProductVersion=1.4.3.22682
 AutoIncBuildNr=1
 SyncProduct=1
 
@@ -81,9 +81,9 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit12]
-FileName=resource.cpp
+FileName=Resource.cpp
 CompileCpp=1
-Folder=
+Folder=Resource
 Compile=1
 Link=1
 Priority=1000
@@ -91,9 +91,9 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit13]
-FileName=resource.h
+FileName=Resource.h
 CompileCpp=1
-Folder=
+Folder=Resource
 Compile=1
 Link=1
 Priority=1000

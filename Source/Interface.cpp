@@ -215,7 +215,7 @@ void Interface::DoKeyDown(WPARAM wParam,LPARAM lParam) {
 	if(!focuscomponent) {
 		for(unsigned int i = 0;i < keylist.size();i++) {
 			Key* thiskey = keylist[i];
-			if(thiskey->key == wParam) {
+			if(thiskey->GetKeyCode() == wParam) {
 				thiskey->Press();
 				handled = true;
 			}
@@ -237,7 +237,7 @@ void Interface::DoKeyUp(WPARAM wParam,LPARAM lParam) {
 	if(!focuscomponent) {
 		for(unsigned int i = 0;i < keylist.size();i++) {
 			Key* thiskey = keylist[i];
-			if(thiskey->key == wParam) {
+			if(thiskey->GetKeyCode() == wParam) {
 				thiskey->Release();
 				handled = true;
 			}

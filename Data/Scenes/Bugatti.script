@@ -1,0 +1,21 @@
+SetSunlight(1.4,1.4,1.2)
+
+SetCameraPos(3.187,1.85,-3.473)
+SetCameraAngleDeg(142.9,-19.42)
+
+# belichting van bovenaf
+AddSpotlight(0,10,0,0,0,0,4.4,4.2,4.5,5)
+
+#spotlight 3.5  0.1  3.5 0 5 0 100 0 100 5# paars
+#spotlight 3.5  0.1 -3.5 0 5 0 0 70 60 5# blauw
+#spotlight -3.5 0.1  3.5 0 5 0 50 50 0 5# geel
+#spotlight -3.5 0.1 -3.5 0 5 0 30 0 0 5# rood
+
+SetTime(20,00)
+SetTimeMulti(0)
+
+AddObject("Bugatti.obj","WhiteMinnaert2Sided.mtl",4.6,-1.8,10,0,0,0,0.05)
+
+SetGround("Stone.mtl","Heightmaps\Wit.bmp",8000,0,0,1000)
+AddObject("Scene\Skybox8000.obj","Skybox2.mtl",0,0,0,0,0,0,1)
+AddObject("Scene\Sun.obj","Sun.mtl",0,0,0,0,0,0,1)

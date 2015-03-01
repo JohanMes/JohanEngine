@@ -1,5 +1,3 @@
-#include <d3dx9.h>
-
 #include "float2.h"
 
 float2::float2() {
@@ -16,7 +14,6 @@ float2::float2(const POINT& rvalue) {
 	x = rvalue.x;
 	y = rvalue.y;
 }
-
 float float2::Length() {
 	D3DXVECTOR2 a(x,y);
 	return D3DXVec2Length(&a);

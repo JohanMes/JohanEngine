@@ -2,6 +2,7 @@
 #define FLOAT3_H
 
 #include <d3dx9math.h>
+#include <algorithm> // std::max
 
 #if BUILDING_DLL
 #define DLLIMPORT __declspec(dllexport)

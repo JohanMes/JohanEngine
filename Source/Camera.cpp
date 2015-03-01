@@ -31,8 +31,8 @@ Camera::~Camera() {
 
 bool Camera::IsVisible(Object* object) {
 	for(int i = 0;i < 6;i++) {
-		float distance = frustumplanes[i].d + frustumplanes[i].normal.Dot(object->worldcenter);
-		if(distance < -object->worldr) {
+		float distance = frustumplanes[i].d + frustumplanes[i].normal.Dot(object->GetWorldCenter());
+		if(distance < -object->GetWorldRadius()) {
 			return false; // don't bother to check the other planes
 		}
 	}

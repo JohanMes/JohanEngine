@@ -1,0 +1,28 @@
+SetSunlight(1.4,1.4,1.2)
+
+SetCameraPos(-0.6992,1.85,2.371)
+SetCameraAngleDeg(-431.6,-28.81)
+
+SetTime(9,00)
+SetTimeMulti(0)
+
+int i = 0
+while(i < 1000) {
+	float xrand = RandomRange(-100,100)
+	float yrand = RandomRange(1,5)
+	float zrand = RandomRange(-100,100)
+	
+	float rotxrand = RandomRange(0,360)
+	float rotyrand = RandomRange(0,360)
+	float rotzrand = RandomRange(0,360)
+	
+	float scalerand = RandomRange(0.8f,1.2f)
+	
+	AddObject("Primitives\Sphere.obj","Road.mtl",xrand,yrand,zrand,rotxrand,rotyrand,rotzrand,scalerand)
+	
+	i++
+}
+
+SetGround("Tiles.mtl","Heightmaps\Wit.bmp",8000,0,0,2000)
+AddObject("Scene\Skybox8000.obj","Skybox2.mtl",0,0,0,0,0,0,1)
+AddObject("Scene\Sun.obj","Sun.mtl",0,0,0,0,0,0,1)

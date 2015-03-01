@@ -1,0 +1,37 @@
+SetSunlight(1.4,1.4,1.2)
+
+SetTime(15,00)
+SetTimeMulti(0)
+
+#AddPointlight(0,20,0,2,2,1)
+
+SetFlyMode(1)
+SetCameraPos(-10.9,14.09,3.407)
+SetCameraAngleDeg(346,-53)
+
+int i = 0
+while(i < 500) {
+	float rx = RandomRange(-100,100)
+	float rz = RandomRange(-100,100)
+	float rrot = RandomRange(0,360)
+	AddObject("Groen\Grass.obj","Grass.mtl",rx,0,rz,0,rrot,0,1)
+	i++
+}
+
+SetGround("Ground.mtl","Heightmaps\Wit.bmp",8000,0,0,3000)
+AddObject("Scene\Skybox8000.obj","Skybox2.mtl",0,0,0,0,0,0,1)
+AddObject("Scene\Sun.obj","Sun.mtl",0,0,0,0,0,0,1)
+#AddObject("Groen\Broadleaf.obj","Broadleaf.mtl",-3,0,0,0,0,0,1)
+
+# koning
+Object king = AddObject("Props\Barrel.obj","Barrel.mtl",0,5,0,0,0,0,3)
+float3 position = king.GetPosition()
+
+i = 0
+while(i < 5000) {
+	float rx = RandomRange(-60,60)
+	float rz = RandomRange(-60,60)
+	Object minion = AddObject("Props\Crate.obj","Crate.mtl",rx,0,rz,0,0,0,1)
+	minion.LookAt(position)
+	i++
+}

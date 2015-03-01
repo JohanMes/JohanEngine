@@ -1,24 +1,25 @@
 #ifndef FXVARIABLE_INCLUDE
 #define FXVARIABLE_INCLUDE
 
-#include "FXHandle.h"
-#include "Textures.h"
+#include <cstdio>
+#include "FXHandle.h" // inheritance
 #include "RenderTarget.h"
+#include "Texture.h"
+#include "Resource.h" // FX
 
 class FXVariable : public FXHandle {
-	LPDIRECT3DBASETEXTURE9 current;
+	LPDIRECT3DBASETEXTURE9 texturevalue;
+	float floatvalue;
+	unsigned int intvalue;
 	public:
 		FXVariable(const char* name);
 		~FXVariable();
-		
-		// TODO: operators maken?
-		void Set(void* data);
-		void Set(float data);
-		void Set(unsigned int data);
-		
-		void SetTexture(LPDIRECT3DBASETEXTURE9 texture);
-		void SetTexture(Texture* texture);
-		void SetTexture(RenderTarget* target);
+		void Set(void* value);
+		void Set(float value);
+		void Set(unsigned int value);
+		void SetTexture(LPDIRECT3DBASETEXTURE9 value);
+		void SetTexture(Texture* value);
+		void SetTexture(RenderTarget* value);
 };
 
 #endif
