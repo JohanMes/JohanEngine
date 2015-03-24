@@ -3,9 +3,9 @@
 
 #include <list>
 using std::list;
-#include "Timer.h"
 #include <iterator> // std::next
 #include <cstdio> // fopen/fwrite
+#include <windows.h> // MAX_PATH
 
 #if BUILDING_DLL
 #define DLLIMPORT __declspec(dllexport)
@@ -14,6 +14,8 @@ using std::list;
 #endif
 
 class Timer;
+
+typedef std::list<Timer*>::iterator TimerIterator;
 
 class DLLIMPORT Timers {
 	private:

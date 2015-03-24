@@ -1,7 +1,8 @@
 #ifndef HEIGHT_INCLUDE
 #define HEIGHT_INCLUDE
 
-#include "resource.h"
+#include <cstdio>
+#include "Console.h"
 
 class Heightmap {
 	public:

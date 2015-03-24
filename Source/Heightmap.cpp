@@ -1,7 +1,4 @@
-#include <cstdio>
-
 #include "Heightmap.h"
-#include "Console.h"
 
 Heightmap::Heightmap(const char* path,float minheight,float maxheight,float widthmeters) {
 	this->widthpixels = 0; // halen we uit bitmap

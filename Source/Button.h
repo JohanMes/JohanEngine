@@ -2,7 +2,7 @@
 #define BUTTON_INCLUDE
 
 #include "Label.h"
-#include "resource.h"
+#include "Resource.h"
 #include "TimeEvent.h"
 
 class DLLIMPORT Button : public Label {

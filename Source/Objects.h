@@ -1,10 +1,15 @@
 #ifndef OBJECTS_INCLUDED
 #define OBJECTS_INCLUDED
 
-#include <list> // zodat we items kunnen weggooien terwijl bufferlocation geldig blijft
+#include <list> // allow fast deletion
+using std::list;
+#include <cstdio>
+#include <algorithm>
 
-#include "Object.h"
-#include "TimeEvent.h"
+class Object;
+class float3;
+class TimeEvent;
+class Heightmap;
 
 #if BUILDING_DLL
 #define DLLIMPORT __declspec(dllexport)
@@ -13,31 +18,27 @@
 #endif
 
 class DLLIMPORT Objects {
-	unsigned int updatecount;
-	std::list<Object*> list;
+	private:
+		unsigned int updatecount;
+		list<Object*> objects;
 	public:
 		Objects();
 		~Objects();
-		
-		TimeEvent* OnUpdate;
-		
 		Object* Add(Object* object);
-		Object* AddPlane(const char* name,const char* matpath,const float3& pos,const float3& rot,float edgelen,unsigned int tiling,unsigned int textiling,Heightmap* height);
-		
+//		Object* AddPlane(const char* name,const char* matpath,const float3& pos,const float3& rot,float edgelen,unsigned int tiling,unsigned int textiling,Heightmap* height);
 		Object* GetByName(const char* name);
 		void Delete(Object* thisobject);
 		void Clear();
-		void Update(); // sorteren op shader
-		
-		void BeginUpdate();
-		void EndUpdate();
-		
-		// Toegang tot lijst
 		std::list<Object*>::iterator begin();
 		std::list<Object*>::iterator end();
 		unsigned int size();
-		
 		void Print();
+		void Update(); // sort by shader
+		void BeginUpdate();
+		void EndUpdate();
+		
+		// Events
+		TimeEvent* OnUpdate;
 };
 
 #endif

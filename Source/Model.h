@@ -2,15 +2,11 @@
 #define MODEL_INCLUDE
 
 #include <list>
+using std::list;
+#include "float2.h"
+#include "float3.h"
 
-#include "Heightmap.h"
-#include "resource.h"
-
-#if BUILDING_DLL
-#define DLLIMPORT __declspec(dllexport)
-#else
-#define DLLIMPORT __declspec(dllimport)
-#endif
+class Heightmap;
 
 struct VERTEX {
 	float3 pos;
@@ -20,35 +16,23 @@ struct VERTEX {
 	float3 bin;
 };
 
+#if BUILDING_DLL
+#define DLLIMPORT __declspec(dllexport)
+#else
+#define DLLIMPORT __declspec(dllimport)
+#endif
+
+class Model;
+typedef std::list<Model*>::iterator ModelIterator;
+
 class DLLIMPORT Model {
-	friend class Models; // manages creation and destruction
-	
-	Model(); // create empty shell
-	Model(const char* filename,bool sendtogpu); // load OBJ
-	~Model();
-	
-	std::list<Model*>::iterator bufferlocation;
+	private:
+		friend class Models; // manages creation and destruction
+		std::list<Model*>::iterator bufferlocation;
+		Model(); // create empty shell
+		Model(const char* filename,bool sendtogpu); // load OBJ
+		~Model();
 	public:
-
-		// Pointers naar VRAM
-		LPDIRECT3DVERTEXBUFFER9 vertexbuffer;
-		LPDIRECT3DINDEXBUFFER9 indexbuffer;
-		
-		// Sphere approximation
-		float r;
-		float3 center;
-		
-		// Kopietje voor de CPU
-		VERTEX* localvertexbuffer;
-		unsigned int* localindexbuffer;
-
-		unsigned int numvertices;
-		unsigned int numfaces;
-		
-		// En de naam nog
-		char* fullpath;
-		char* filename;
-		
 		__int64 GetSize();
 		void FreeBuffers();
 		void CreateTangents();
@@ -60,8 +44,19 @@ class DLLIMPORT Model {
 		void LoadPlane(unsigned int tiling,unsigned int textiling,float edgelen,Heightmap* height);
 		void LoadBuffer(VERTEX* vb,unsigned int* ib,unsigned int numvertices,unsigned int numindices);
 		void LoadParticle();
-		
 		void Print();
+
+		// TODO: private?
+		LPDIRECT3DVERTEXBUFFER9 vertexbuffer;
+		LPDIRECT3DINDEXBUFFER9 indexbuffer;
+		float r;
+		float3 center;
+		VERTEX* localvertexbuffer;
+		unsigned int* localindexbuffer;
+		unsigned int numvertices;
+		unsigned int numfaces;
+		char* fullpath;
+		char* filename;
 };
 
 #endif

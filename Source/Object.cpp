@@ -1,7 +1,17 @@
 #include "Object.h"
+#include "Console.h"
+#include "Camera.h"
+#include "Textures.h"
+#include "Models.h"
+#include "Material.h"
+#include "float4x4.h"
+#include "Animation.h"
+#include "Objects.h" // friend
+using Globals::console;
 
 Object::Object(const char* name) {
 	updatecount = 0;
+	worldmatrixoverride = false;
 	BeginUpdate();
 	{
 		// Create separate material class
@@ -11,42 +21,13 @@ Object::Object(const char* name) {
 		Reset();
 
 		// Use name we received
-		SetName(name);
-
-		// Calculate some properties after setting up
-		EndUpdate();
+		this->name = name;
 	}
-
-	// Add ourself to the global dump
-	scene->objects->Add(this);
-}
-Object::Object(const char* objectpath,const float3& pos,const float3& rot,float scale) {
-	updatecount = 0;
-	BeginUpdate();
-	{
-		// Create separate material class
-		material = new Material();
-
-		// Clear properties
-		Reset();
-
-		// Load everything from the .object file
-		LoadFromFile(objectpath);
-
-		// Set position separately
-		SetTranslation(pos);
-		SetRotationDeg(rot); // only difference between one below
-		SetScaling(scale);
-
-		// Calculate some properties after setting up
-		EndUpdate();
-	}
-
-	// Add ourself to the global dump
-	scene->objects->Add(this);
+	EndUpdate();
 }
 Object::Object(const char* objectpath,const float3& pos,const float4x4& rot,float scale) {
 	updatecount = 0;
+	worldmatrixoverride = false;
 	BeginUpdate();
 	{
 		// Create separate material class
@@ -59,62 +40,15 @@ Object::Object(const char* objectpath,const float3& pos,const float4x4& rot,floa
 		LoadFromFile(objectpath);
 
 		// Set position
+		SetRotation(rot);
 		SetTranslation(pos);
-		SetRotation(rot); // only difference between one above
 		SetScaling(scale);
 	}
 	EndUpdate();
-
-	// Add ourself to the global dump
-	scene->objects->Add(this);
-}
-Object::Object(const char* name,const char* modelpath,const char* materialpath,const float3& pos,const float3& rot,float scale) {
-	updatecount = 0;
-	BeginUpdate();
-	{
-		// Create separate material class
-		material = new Material();
-
-		// Clear properties
-		Reset();
-
-		// Set name directly instead of from .object file
-		SetName(name);
-
-		// Set position
-		SetTranslation(pos);
-		SetRotationDeg(rot);
-		SetScaling(scale);
-
-		// Get full model path
-		char fullmodelpath[MAX_PATH];
-		GetFullPath(modelpath,"Data\\Models",fullmodelpath);
-
-		// Add top level detail from model path
-		AddDetailLevel(models->Add(fullmodelpath,true),50);
-
-		// Add other detail levels from .lodX files
-		char lodfilename[MAX_PATH];
-		if(FileExists(ChangeFileExt(fullmodelpath,".lod1.obj",lodfilename))) {
-			AddDetailLevel(models->Add(lodfilename,true),250);
-		}
-		if(FileExists(ChangeFileExt(fullmodelpath,".lod2.obj",lodfilename))) {
-			AddDetailLevel(models->Add(lodfilename,true),1000);
-		}
-		if(FileExists(ChangeFileExt(fullmodelpath,".lod3.obj",lodfilename))) {
-			AddDetailLevel(models->Add(lodfilename,true)); // FLT_MAX
-		}
-
-		// Set material from material path
-		material->LoadFromFile(materialpath);
-	}
-	EndUpdate();
-
-	// Add ourself to the global dump
-	scene->objects->Add(this);
 }
 Object::Object(const char* name,const char* modelpath,const char* materialpath,const float3& pos,const float4x4& rot,float scale) {
 	updatecount = 0;
+	worldmatrixoverride = false;
 	BeginUpdate();
 	{
 		// Create separate material class
@@ -127,71 +61,63 @@ Object::Object(const char* name,const char* modelpath,const char* materialpath,c
 		SetName(name);
 
 		// Set position
+		SetRotation(rot);
 		SetTranslation(pos);
-		SetRotation(rot); // only difference from item above
 		SetScaling(scale);
 
 		// Get full model path
 		char fullmodelpath[MAX_PATH];
-		GetFullPath(modelpath,"Data\\Models",fullmodelpath);
+		Utils::GetFullPath(modelpath,"Data\\Models",fullmodelpath);
 
 		// Add top level detail from model path
-		AddDetailLevel(models->Add(fullmodelpath,true),50);
+		AddDetailLevel(Globals::models->Add(fullmodelpath,true),50);
 
 		// Add other detail levels from .lodX files
 		char lodfilename[MAX_PATH];
-		if(FileExists(ChangeFileExt(fullmodelpath,".lod1.obj",lodfilename))) {
-			AddDetailLevel(models->Add(lodfilename,true),250);
+		if(Utils::FileExists(Utils::ChangeFileExt(fullmodelpath,".lod1.obj",lodfilename))) {
+			AddDetailLevel(Globals::models->Add(lodfilename,true),250);
 		}
-		if(FileExists(ChangeFileExt(fullmodelpath,".lod2.obj",lodfilename))) {
-			AddDetailLevel(models->Add(lodfilename,true),1000);
+		if(Utils::FileExists(Utils::ChangeFileExt(fullmodelpath,".lod2.obj",lodfilename))) {
+			AddDetailLevel(Globals::models->Add(lodfilename,true),1000);
 		}
-		if(FileExists(ChangeFileExt(fullmodelpath,".lod3.obj",lodfilename))) {
-			AddDetailLevel(models->Add(lodfilename,true)); // FLT_MAX
+		if(Utils::FileExists(Utils::ChangeFileExt(fullmodelpath,".lod3.obj",lodfilename))) {
+			AddDetailLevel(Globals::models->Add(lodfilename,true)); // FLT_MAX
 		}
 
 		// Set material from material path
 		material->LoadFromFile(materialpath);
 	}
 	EndUpdate();
-
-	// Add ourself to the global dump
-	scene->objects->Add(this);
 }
 Object::~Object() {
-	delete[] name;
+	delete animation;
 	for(unsigned int i = 0; i < detaillevels.size(); i++) {
 		delete detaillevels[i]; // do not delete model though
 	}
-	delete animation;
 	// we do not own boundingmodel
 	delete material;
-
-	// Remove ourselves from the global dump
-	scene->objects->Delete(this);
 }
 void Object::Reset() {
-	ClearDetailLevels();
-	boundingmodel = NULL;
-
-	matRotation.Identity();
-	matTranslation.Identity();
-	matScaling.Identity();
-	matWorld.Identity();
-	matWorldInverse.Identity();
-
+	name = "";
+	animation = NULL;
+	ClearDetailLevels(); // LODs
+	// TODO: bufferlocation
+	worldcenter = float3(0,0,0);
+	worldr = 0;
+	visible = false;
+	worldmatrixoverride = false;
+	rotationmatrix.Identity();
+	translationmatrix.Identity();
+	scalingmatrix.Identity();
+	worldmatrix.Identity();
+	worldinversematrix.Identity();
+//	updatecount = 0;
 	worldcenter = float3(0,0,0);
 	worldr = 0.0f;
-
-	animation = NULL;
-
-	castshadows = true;
-
-	name = NULL; // TODO: memory leak!
-
-	OnClick = NULL;
-
+	castshadows = false;
+	boundingmodel = NULL;
 	material->Clear();
+	OnClick = NULL;
 }
 void Object::BeginUpdate() {
 	updatecount++;
@@ -212,16 +138,15 @@ void Object::LoadFromFile(const char* objectpath) {
 		char line[1024];
 		char word1[512];
 		char word2[512];
-		float token3;
 
 		// Get absolute path
 		char fullobjectpath[MAX_PATH];
-		GetFullPath(objectpath,"Data\\Objects",fullobjectpath);
+		Utils::GetFullPath(objectpath,"Data\\Objects",fullobjectpath);
 
 		// Try to open file
 		FILE* objectfile = fopen(fullobjectpath,"r");
 		if(objectfile == NULL) {
-			console->Write("Error opening object file '%s'\r\n",fullobjectpath);
+			Globals::console->Write("ERROR: cannot open object file '%s'\r\n",fullobjectpath);
 			return;
 		}
 
@@ -232,34 +157,35 @@ void Object::LoadFromFile(const char* objectpath) {
 					if(sscanf(line,"name %s",word2) == 1) {
 						SetName(word2);
 					} else {
-						console->Write("Error reading line:\r\n%s\r\n",line);
+						Globals::console->Write("ERROR: not enough arguments in line '%s'\r\n",line);
 					}
 				} else if(!strcmp(word1,"material")) {
 					if(sscanf(line,"material %s",word2) == 1) {
 						material->LoadFromFile(word2);
 					} else {
-						console->Write("Error reading line:\r\n%s\r\n",line);
+						Globals::console->Write("ERROR: not enough arguments in line '%s'\r\n",line);
 					}
 				} else if(!strcmp(word1,"castshadows")) {
 					if(sscanf(line,"castshadows %s",word2) == 1) {
 						castshadows = (bool)atoi(word2);
 					} else {
-						console->Write("Error reading line:\r\n%s\r\n",line);
+						Globals::console->Write("ERROR: not enough arguments in line '%s'\r\n",line);
 					}
 				} else if(!strcmp(word1,"detaillevel")) {
+					float token3;
 					if(sscanf(line,"detaillevel %s %f",word2,&token3) == 2) {
-						AddDetailLevel(models->Add(word2,true),token3);
+						AddDetailLevel(Globals::models->Add(word2,true),token3);
 					} else {
-						console->Write("Error reading line:\r\n%s\r\n",line);
+						Globals::console->Write("ERROR: not enough arguments in line '%s'\r\n",line);
 					}
 				} else if(!strcmp(word1,"boundingmodel")) {
 					if(sscanf(line,"boundingmodel %s",word2) == 1) {
-						boundingmodel = models->Add(word2,false); // don't send to GPU to save time
+						boundingmodel = Globals::models->Add(word2,false); // don't send to GPU to save time
 					} else {
-						console->Write("Error reading line:\r\n%s\r\n",line);
+						Globals::console->Write("ERROR: not enough arguments in line '%s'\r\n",line);
 					}
 				} else {
-					console->Write("Unknown command \"%s\" in file \"%s\"\r\n",word1,line);
+					Globals::console->Write("ERROR: unknown command '%s' on line '%s'\r\n",word1,line);
 				}
 			}
 		}
@@ -267,9 +193,8 @@ void Object::LoadFromFile(const char* objectpath) {
 	}
 	EndUpdate();
 }
-void Object::SetName(const char* text) {
-	delete[] name;
-	name = strdup(text);
+void Object::SetName(const char* value) {
+	name = value;
 }
 void Object::SetAnimation(Animation* animation) {
 
@@ -287,66 +212,105 @@ void Object::SetAnimation(Animation* animation) {
 	// apply new
 	this->animation = animation;
 }
+bool Object::IsWorldMatrixOverridden() {
+	return worldmatrixoverride;
+}
 float3 Object::GetTranslation() {
-	return float3(matTranslation._41,
-	              matTranslation._42,
-	              matTranslation._43);
+	return float3(translationmatrix._41,
+	              translationmatrix._42,
+	              translationmatrix._43);
 }
 float4x4 Object::GetTranslationMatrix() {
-	return matTranslation;
+	return translationmatrix;
 }
 float3 Object::GetScaling() {
-	return float3(matScaling._11,
-	              matScaling._22,
-	              matScaling._33);
+	return float3(scalingmatrix._11,
+	              scalingmatrix._22,
+	              scalingmatrix._33);
 }
 float4x4 Object::GetScalingMatrix() {
-	return matScaling;
+	return scalingmatrix;
 }
 float4x4 Object::GetRotationMatrix() {
-	return matRotation;
+	return rotationmatrix;
 }
 float4x4 Object::GetWorldTransformMatrix() {
-	return matWorld;
+	return worldmatrix;
 }
 float4x4 Object::GetInvWorldTransformMatrix() {
-	return matWorldInverse;
+	return worldinversematrix;
 }
-void Object::SetRotation(const float3& rotation) {
+void Object::SetRotation(const float3& value) {
 	BeginUpdate();
-	matRotation.EulerRotation(rotation);
+	{
+		rotationmatrix.EulerRotation(value);
+		worldmatrixoverride = false;
+	}
 	EndUpdate();
 }
-void Object::SetRotationDeg(const float3& rotation) {
+void Object::SetRotationDeg(const float3& value) {
 	BeginUpdate();
-	matRotation.EulerRotationDeg(rotation);
+	{
+		rotationmatrix.EulerRotationDeg(value);
+		worldmatrixoverride = false;
+	}
 	EndUpdate();
 }
-void Object::SetRotation(const float4x4& rotation) {
+void Object::SetRotation(const float4x4& value) {
 	BeginUpdate();
-	matRotation = rotation; // ez
+	{
+		rotationmatrix = value; // ez
+		worldmatrixoverride = false;
+	}
 	EndUpdate();
 }
-void Object::SetTranslation(const float3& translation) {
+void Object::SetTranslation(const float3& value) {
 	BeginUpdate();
-	matTranslation.Translation(translation);
+	{
+		translationmatrix.Translation(value);
+		worldmatrixoverride = false;
+	}
 	EndUpdate();
 }
-void Object::SetTranslation(const float4x4& translation) {
+void Object::SetTranslation(const float4x4& value) {
 	BeginUpdate();
-	matTranslation = translation;
+	{
+		translationmatrix = value;
+		worldmatrixoverride = false;
+	}
 	EndUpdate();
 }
-void Object::SetScaling(float scaling) {
+void Object::SetScaling(float value) {
 	BeginUpdate();
-	matScaling.Scaling(float3(scaling));
+	{
+		scalingmatrix.Scaling(float3(value));
+		worldmatrixoverride = false;
+	}
 	EndUpdate();
 }
-void Object::Move(const float3& dir) {
-	SetTranslation(GetTranslation() + dir);
+void Object::SetWorldTransForm(const float4x4& value) {
+	BeginUpdate();
+	{
+		worldmatrix = value;
+		worldinversematrix = worldmatrix.Inverse();
+
+		// parts that compute world matrix are now invalid
+		worldmatrixoverride = true;
+		rotationmatrix.Identity();
+		translationmatrix.Identity();
+		scalingmatrix.Identity();
+	}
+	EndUpdate();
+}
+void Object::Move(const float3& value) {
+	if(!worldmatrixoverride) {
+		SetTranslation(GetTranslation() + value);
+	} else {
+		Globals::console->Write("WARNING: cannot move world-locked object '%s'\r\n",name.c_str());
+	}
 }
 void Object::AddDetailLevel(const char* modelpath) {
-	AddDetailLevel(new DetailLevel(models->Add(modelpath,true),FLT_MAX));
+	AddDetailLevel(new DetailLevel(Globals::models->Add(modelpath,true),FLT_MAX));
 }
 void Object::AddDetailLevel(Model* model) {
 	AddDetailLevel(new DetailLevel(model,FLT_MAX));
@@ -383,8 +347,11 @@ DetailLevel* Object::GetDetailLevel(float distance) {
 	return NULL;
 }
 void Object::Update() {
-	matWorld = matRotation*matScaling*matTranslation;
-	matWorldInverse = matWorld.Inverse();
+	// Y = ROTATE(SCALE(TRANSLATE(X)))
+	if(!worldmatrixoverride) {
+		worldmatrix = rotationmatrix*scalingmatrix*translationmatrix; // TODO: ?
+		worldinversematrix = worldmatrix.Inverse();
+	}
 
 	// Get world data from first LOD
 	DetailLevel* firstlod = GetDetailLevel(0);
@@ -392,7 +359,7 @@ void Object::Update() {
 		worldr = firstlod->model->r;
 		worldcenter = firstlod->model->center; // verandert bij rotate...
 	} else {
-		console->Write("Cannot analyse object '%s' because it has no LODs\r\n",name);
+		Globals::console->Write("ERROR: cannot analyse object '%s' because it has no LODs\r\n",name.c_str());
 		worldr = 0;
 		worldcenter = 0;
 		visible = false;
@@ -401,10 +368,10 @@ void Object::Update() {
 
 	// Apply scaling and transformation to approximation
 	worldr *= GetScaling().x;
-	worldcenter = worldcenter.Transform(matWorld);
+	worldcenter = worldcenter.Transform(worldmatrix);
 
 	// Check if object is still visible by applying frustrum culling
-	visible = camera->IsVisible(this); // reapplied on camera move
+	visible = Globals::camera->IsVisible(this); // reapplied on camera move
 }
 float3 Object::GetWorldCenter() {
 	return worldcenter;
@@ -419,28 +386,29 @@ void Object::SetVisible(bool value) {
 	this->visible = value;
 }
 void Object::Print() {
-
-	console->Write("\r\n----- Info for class Object -----\r\n\r\n");
-
+	Globals::console->Write("INFO: properties of class Object\r\n");
+	
+	// Print LODs
 	for(unsigned int i = 0; i < detaillevels.size(); i++) {
 		console->WriteVar("maxdistance",detaillevels[i]->maxdistance);
 		detaillevels[i]->model->Print();
 	}
 
-	// textures, tiling, diffuse, specular, shininess, shader, visible
+	// Defer material info to specific class
 	material->Print();
 
-	console->WriteVar("matRotation",matRotation);
-	console->WriteVar("matTranslation",matTranslation);
-	console->WriteVar("matScaling",matScaling);
-	console->WriteVar("matWorld",matWorld);
+	// Print etc
+	console->WriteVar("rotationmatrix",rotationmatrix);
+	console->WriteVar("translationmatrix",translationmatrix);
+	console->WriteVar("scalingmatrix",scalingmatrix);
+	console->WriteVar("worldmatrix",worldmatrix);
+	console->WriteVar("worldinversematrix",worldinversematrix);
 	console->WriteVar("worldcenter",worldcenter);
 	console->WriteVar("worldr",worldr);
 	console->WriteVar("visible",visible);
-	console->WriteVar("name",name);
+	console->WriteVar("name",name.c_str());
 	console->WriteVar("castshadows",castshadows);
-
-	console->Write("\r\n----- End of info -----\r\n\r\n");
+	console->Write("\r\n");
 }
 bool CompareObject(Object* a,Object* b) {
 	return a->material->shaderindex < b->material->shaderindex;
@@ -449,7 +417,7 @@ Animation* Object::GetAnimation() {
 	return animation;
 }
 const char* Object::GetName() {
-	return name;
+	return name.c_str();
 }
 Model* Object::GetBoundingModel() {
 	if(boundingmodel) { // separate bounding model
@@ -515,13 +483,13 @@ Collision Object::IntersectModel(float3 worldpos,float3 worlddir) {
 
 	Model* model = GetBoundingModel();
 	if(!model) {
-		console->Write("Cannot intersect object %s without mesh\r\n",name);
+		console->Write("ERROR: cannot intersect object '%s' without bounding model\r\n",name.c_str());
 		return result; // object without a mesh assigned to it
 	}
 
 	// http://www.lighthouse3d.com/tutorials/maths/ray-triangle-intersection/
-	float3 r0obj = r0.Transform(matWorldInverse);
-	float3 r1obj = r1.TransformNormal(matWorldInverse);
+	float3 r0obj = r0.Transform(worldinversematrix);
+	float3 r1obj = r1.TransformNormal(worldinversematrix);
 
 	// Walk the index buffer
 	for(unsigned int j = 0; j < 3 * model->numfaces; j+=3) {

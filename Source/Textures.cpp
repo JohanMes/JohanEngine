@@ -1,100 +1,93 @@
-#include <cstdio>
 #include "Textures.h"
-#include "Console.h"
+#include "Console.h" // error output
+#include "Texture.h" // Texture*
 
 Textures::Textures() {
 }
 Textures::~Textures() {
 	Clear();
 }
-
 Texture* Textures::Add() {
 	return Add(new Texture());
 }
 Texture* Textures::Add(const char* filename) {
-	
 	// Obtain full path
 	char fullpath[MAX_PATH];
-	GetFullPath(filename,"Data\\Textures",fullpath);
+	Utils::GetFullPath(filename,"Data\\Textures",fullpath);
 
 	// Did we add that one already?
 	Texture* search = GetByFullPath(fullpath);
 	if(search) {
 		return search;
 	}
-	
+
 	// Not found? Add it to the pile
 	return Add(new Texture(filename));
 }
-
 Texture* Textures::Add(Texture* texture) {
-	list.push_back(texture);
-	texture->bufferlocation = --list.end();
+	textures.push_back(texture);
+	texture->bufferlocation = --textures.end();
 	return texture;
 }
-
 Texture* Textures::GetByFullPath(const char* fullpath) {
-	for(std::list<Texture*>::iterator i = list.begin();i != list.end();i++) {
+	for(TextureIterator i = textures.begin(); i != textures.end(); i++) {
 		if(!strcmp(fullpath,(*i)->fullpath)) {
 			return *i;
+		} else {
+			
 		}
 	}
 	return NULL;
 }
-
 Texture* Textures::GetByFileName(const char* filename) {
-	for(std::list<Texture*>::iterator i = list.begin();i != list.end();i++) {
+	for(TextureIterator i = textures.begin(); i != textures.end(); i++) {
 		if(!strcmp(filename,(*i)->filename)) {
 			return *i;
 		}
 	}
 	return NULL;
 }
-
 void Textures::Delete(Texture* thistexture) {
 	if(thistexture) {
-		list.erase(thistexture->bufferlocation);
+		textures.erase(thistexture->bufferlocation);
 		delete thistexture;
 	}
 }
-
 void Textures::Clear() {
-	for(std::list<Texture*>::iterator i = list.begin();i != list.end();i++) {
+	for(TextureIterator i = textures.begin(); i != textures.end(); i++) {
 		delete *i;
 	}
-	list.clear();
+	textures.clear();
 }
-
 void Textures::Print() {
-	console->WriteVar("list.size()",(int)list.size());
-	for(std::list<Texture*>::iterator i = list.begin();i != list.end();i++) {
+	Globals::console->WriteVar("list.size()",(int)textures.size());
+	for(TextureIterator i = textures.begin(); i != textures.end(); i++) {
 		(*i)->Print();
 	}
 }
 
 void Textures::SaveToCSV() {
-	
 	// Save next to exe
 	char finalpath[MAX_PATH];
-	sprintf(finalpath,"%s\\%s",exepath,"Textures.csv");
+	snprintf(finalpath,sizeof(finalpath),"%s\\%s",Globals::exepath,"Textures.csv");
 
 	// Save grand total too
-	unsigned int totalbytes = 0;
-	
+	__int64 totalbytes = 0;
+
 	FILE* file = fopen(finalpath,"wb");
 	if(file) {
 		fprintf(file,"Full path;Width;Height;Size (bytes)\r\n");
-		for(std::list<Texture*>::iterator i = list.begin();i != list.end();i++) {
+		for(TextureIterator i = textures.begin(); i != textures.end(); i++) {
 			Texture* texture = *i;
+			__int64 texturesize = texture->GetSizeBytes(); // reuse
 			fprintf(file,"%s;%u;%u;%llu\r\n",
-				texture->fullpath,
-				texture->GetWidth(),
-				texture->GetHeight(),
-				texture->GetSize());
-			
-			totalbytes += texture->GetSize();
+			        texture->fullpath,
+			        texture->GetWidthPixels(),
+			        texture->GetHeightPixels(),
+			        texturesize);
+			totalbytes += texturesize;
 		}
-		
+
 		// TODO: create function
 		if(totalbytes > 1024*1024*1024) { // 1 GiB
 			fprintf(file,";;;%u (%.2f GiB)",totalbytes,totalbytes/1024.0f/1024.0f/1024.0f);

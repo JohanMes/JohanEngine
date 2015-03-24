@@ -1,4 +1,5 @@
 #include "State.h"
+#include "Resource.h" // d3ddev
 
 State::State(D3DRENDERSTATETYPE state) {
 	this->renderstate = state;
@@ -12,6 +13,6 @@ DWORD State::Get() {
 void State::Set(DWORD value) {
 	if(this->value != value) {
 		this->value = value;
-		d3ddev->SetRenderState(renderstate,value);
+		Globals::d3ddev->SetRenderState(renderstate,value);
 	}
 }

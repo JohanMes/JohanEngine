@@ -1,10 +1,11 @@
-#include "Animation.h"
-#include "Scene.h"
-#include "Console.h"
+#include "Animation.h" // includes as little as possible
+#include "Object.h" // thing we act upon
+#include "TimeEvent.h" // events
+#include "float3.h" // keyframe stuff
+#include "Resource.h"
 #include "Renderer.h"
 
 Animation::Animation(Object* object,AnimationType type) {
-	
 	// Apply animation to object
 	this->object = object;
 	this->object->SetAnimation(this); // throws us away on deletion
@@ -12,16 +13,10 @@ Animation::Animation(Object* object,AnimationType type) {
 	
 	// Start at time t = 0
 	this->type = type;
-	t = renderer->GetTime();
-	
-	// Add to big dump
-	scene->animations->Add(this);
+	t = Globals::renderer->GetTime();
 }
 Animation::~Animation() {
 	ClearKeyframes();
-	
-	scene->animations->Delete(this);
-	
 	delete OnAnimationEnd;
 	
 	// Remove animation from object
@@ -29,7 +24,6 @@ Animation::~Animation() {
 		object->SetAnimation(NULL);
 	}
 }
-
 void Animation::OnUpdateTime(double dt) {
 	t += dt;
 	
@@ -146,4 +140,7 @@ bool Animation::IsFinished() {
 			return false;
 		}
 	}
+}
+double Animation::GetTime() {
+	return t;
 }

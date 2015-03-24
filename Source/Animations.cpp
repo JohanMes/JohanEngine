@@ -11,27 +11,27 @@ Animations::~Animations() {
 }
 
 Animation* Animations::Add(Animation* animation) {
-	list.push_back(animation);
-	animation->bufferlocation = --list.end();
+	animations.push_back(animation);
+	animation->bufferlocation = --animations.end();
 	return animation;
 }
 void Animations::Delete(Animation* animation) {
 	if(animation) {
-		list.erase(animation->bufferlocation);
+		animations.erase(animation->bufferlocation);
 	}
 }
 void Animations::Clear() {
-	std::list<Animation*>::iterator i = list.begin();
-	while(i != list.end()) { // Make sure we can remove items while iterating
-		std::list<Animation*>::iterator next = std::next(i); // Store next item iterator (as current will be invalidated)
+	AnimationIterator i = animations.begin();
+	while(i != animations.end()) { // Make sure we can remove items while iterating
+		AnimationIterator next = std::next(i); // Store next item iterator (as current will be invalidated)
 		delete *i; // Delete current
 		i = next; // Goto next
 	}
 }
 void Animations::OnUpdateTime(float dt) {
-	std::list<Animation*>::iterator i = list.begin();
-	while(i != list.end()) { // Make sure we can remove items while iterating
-		std::list<Animation*>::iterator next = std::next(i); // Store next item iterator (as current will be invalidated)	
+	AnimationIterator i = animations.begin();
+	while(i != animations.end()) { // Make sure we can remove items while iterating
+		AnimationIterator next = std::next(i); // Store next item iterator (as current will be invalidated)	
 		
 		// Play animation and remove when finished	
 		Animation* animation = *i;
@@ -42,13 +42,13 @@ void Animations::OnUpdateTime(float dt) {
 		
 		i = next; // Goto next
 	}
-	for(std::list<Animation*>::iterator i = list.begin();i != list.end();i++) {
+	for(AnimationIterator i = animations.begin();i != animations.end();i++) {
 		(*i)->OnUpdateTime(dt);
 	}
 }
 void Animations::Print() {
-	console->WriteVar("list.size()",(int)list.size());
-	for(std::list<Animation*>::iterator i = list.begin();i != list.end();i++) {
+	console->WriteVar("list.size()",(int)animations.size());
+	for(AnimationIterator i = animations.begin();i != animations.end();i++) {
 		(*i)->Print();
 	}
 }
@@ -56,12 +56,12 @@ void Animations::SaveToCSV() {
 	
 	// Save next to exe
 	char finalpath[MAX_PATH];
-	sprintf(finalpath,"%s\\%s",exepath,"Animations.csv");
+	sprintf(finalpath,"%s\\%s",Globals::exepath,"Animations.csv");
 
 	FILE* file = fopen(finalpath,"wb");
 	if(file) {
 		fprintf(file,"Type;Object;Time;Start Time;End Time;Period;Keyframes\r\n");
-		for(std::list<Animation*>::iterator i = list.begin();i != list.end();i++) {
+		for(AnimationIterator i = animations.begin();i != animations.end();i++) {
 			Animation* animation = *i;
 			if(animation->object) {
 				fprintf(file,"%d;%s;%.3f;%.3f;%.3f;%.3f;%d\r\n",

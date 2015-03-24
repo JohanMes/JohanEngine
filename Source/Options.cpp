@@ -1,13 +1,7 @@
-#include <cstdio>
-
 #include "Options.h"
 #include "Console.h"
 #include "Renderer.h"
 #include "Options.h"
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-/*
-	abcd
-*/
 Options::Options(const char* inifile) : Window(1024-205,768-650,200,645,"Options") {
 	
 	// Stel alles in
@@ -92,20 +86,12 @@ Options::Options(const char* inifile) : Window(1024-205,768-650,200,645,"Options
 Options::~Options() {
 	// Dialog gooit alle windows weg
 }
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-/*
-	Reageer op knopjes
-*/
 void Options::OnShowDialog(Component* Sender) { // fake static scope
 	options->LoadInterface();
 }
 void Options::OnApplyClick(Component* Sender) { // fake static scope
 	options->SaveInterface();
 }
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-/*
-	Reageer op knopjes
-*/
 void Options::SetToDefaults() {
 	// Reso
 	backbufferwidth = 1024;
@@ -283,10 +269,6 @@ void Options::FindMaxResolution() {
 		}
 	}
 }
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-/*
-	Interface, van RAM naar UI
-*/
 void Options::LoadInterface() {
 	
 	char buffer[128];
@@ -357,10 +339,6 @@ void Options::LoadInterface() {
 	snprintf(buffer,128,"%g",options->hdrbloomthreshold);
 	edhdrbloomthreshold->SetCaption(buffer);
 }
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-/*
-	Van UI naar RAM
-*/
 void Options::SaveInterface() {
 	
 	// Stel de resolutie in in

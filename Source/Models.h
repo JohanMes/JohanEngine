@@ -1,7 +1,9 @@
 #ifndef MODELS_INCLUDE
 #define MODELS_INCLUDE
 
-#include <stdio.h>
+#include <cstdio>
+#include <list>
+using std::list;
 #include "Model.h"
 
 #if BUILDING_DLL
@@ -11,11 +13,11 @@
 #endif
 
 class DLLIMPORT Models {
-	std::list<Model*> list;
+	private:
+		list<Model*> models;
 	public:
 		Models();
 		~Models();
-		
 		Model* Add(); // create empty shell
 		Model* Add(const char* filename,bool sendtogpu); // add model from OBJ to pile
 		Model* AddPlane(unsigned int tiling,unsigned int textiling,float edgelen,Heightmap* height,bool sendtogpu); // add plane to pile
@@ -28,6 +30,8 @@ class DLLIMPORT Models {
 		void SaveToCSV();
 };
 
-extern Models* models;
+namespace Globals {
+	extern Models* models;
+}
 
 #endif

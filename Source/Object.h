@@ -5,13 +5,13 @@
 #include <cstdio>
 #include <vector>
 using std::vector;
-#include "Textures.h"
-#include "Models.h"
-#include "Material.h"
+#include <list>
+using std::list;
+#include <string>
+using std::string;
+#include "float3.h"
 #include "float4x4.h"
-#include "Animation.h"
-#include "Scene.h"
-#include "Objects.h" // friend
+#include "Material.h"
 
 #if BUILDING_DLL
 #define DLLIMPORT __declspec(dllexport)
@@ -20,14 +20,16 @@ using std::vector;
 #endif
 
 class Object;
+class Model;
+class Animation;
 
-struct Collision {
+struct DLLIMPORT Collision {
 	Object* object;
 	float3 point;
 	float t;
 };
 
-class DetailLevel {
+class DLLIMPORT DetailLevel {
 	public:
 		DetailLevel(Model* model,float maxdistance) {
 			this->model = model;
@@ -37,32 +39,33 @@ class DetailLevel {
 		float maxdistance;
 };
 
-#define ObjectIterator std::list<Object*>::iterator
+class Object;
+typedef std::list<Object*>::iterator ObjectIterator;
 
 class DLLIMPORT Object {
 	private:
-		friend class Objects;
-		char* name;
+		friend class Scene; // constructors? TODO: move to Objects
+		friend class Objects; // bufferlocation
+		string name;
 		Animation* animation; // remove when deleting object
 		vector<DetailLevel*> detaillevels;
 		ObjectIterator bufferlocation;
 		float3 worldcenter; // calculated on Update
 		float worldr; // calculated on Update
 		bool visible; // calculated on Update and camera change
-		float4x4 matTranslation;
-		float4x4 matScaling;
-		float4x4 matRotation;
-		float4x4 matWorld;
-		float4x4 matWorldInverse;
+		bool worldmatrixoverride; // if true, rotate, translate, scale not valid
+		float4x4 rotationmatrix;
+		float4x4 translationmatrix;
+		float4x4 scalingmatrix;
+		float4x4 worldmatrix;
+		float4x4 worldinversematrix;
 		unsigned int updatecount;
 		void Update();
-	public:
 		Object(const char* name);
-		Object(const char* objectpath,const float3& pos,const float3& rot,float scale); // from .object file
 		Object(const char* objectpath,const float3& pos,const float4x4& rot,float scale); // from .object file
-		Object(const char* name,const char* modelpath,const char* materialpath,const float3& pos,const float3& rot,float scale); // from .obj + .mtl
 		Object(const char* name,const char* modelpath,const char* materialpath,const float3& pos,const float4x4& rot,float scale); // from .obj + .mtl
 		~Object();
+	public:
 		void LoadFromFile(const char* objectpath);
 		Collision IntersectSphere(float3 worldpos,float3 worlddir);
 		Collision IntersectModel(float3 worldpos,float3 worlddir);
@@ -83,14 +86,15 @@ class DLLIMPORT Object {
 		void AddDetailLevel(Model* model,float maxdistance);
 		void AddDetailLevel(DetailLevel* detaillevel);
 		DetailLevel* GetDetailLevel(float distance);
-		void SetTranslation(const float3& pos);
-		void SetTranslation(const float4x4& pos);
-		void SetRotation(const float3& rotation);
-		void SetRotationDeg(const float3& rotation);
-		void SetRotation(const float4x4& rotation);
-		void SetScaling(float scaling);
-		void Move(const float3& dir);
-		void SetName(const char* text);
+		void SetTranslation(const float3& value);
+		void SetTranslation(const float4x4& value);
+		void SetRotation(const float3& value);
+		void SetRotationDeg(const float3& value);
+		void SetRotation(const float4x4& value);
+		void SetScaling(float value);
+		void SetWorldTransForm(const float4x4& value);
+		void Move(const float3& value);
+		void SetName(const char* value);
 		void SetAnimation(Animation* animation);
 		void BeginUpdate();
 		void EndUpdate();
@@ -100,7 +104,8 @@ class DLLIMPORT Object {
 		float GetWorldRadius();
 		bool IsVisible();
 		void SetVisible(bool value);
-
+		bool IsWorldMatrixOverridden();
+		
 		// Events
 		void (*OnClick)(Object* Sender);
 

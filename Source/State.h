@@ -2,7 +2,6 @@
 #define STATE_INCLUDE
 
 #include <d3d9.h> // D3DRENDERSTATETYPE
-#include "Resource.h" // d3ddev
 
 #if BUILDING_DLL
 #define DLLIMPORT __declspec(dllexport)

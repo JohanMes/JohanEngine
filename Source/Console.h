@@ -1,6 +1,8 @@
 #ifndef CONSOLE_INCLUDE
 #define CONSOLE_INCLUDE
 
+#include <vector>
+using std::vector;
 #include "Components.h"
 #include "Clock.h"
 #include "float4x4.h"
@@ -12,18 +14,18 @@
 #endif
 
 class DLLIMPORT Console : public Window {
-
-	std::vector<Clock*> clocks;
-	
-	static void OnSaveClick(Component* sender);
-	static void OnClearClick(Component* sender);
-	static void OnReturnPress(Component* sender);
-
+	private:
+		vector<Clock*> clocks;
+		Label* textctrl;
+		Button* btnsave;
+		Button* btnclear;
+		Edit* inputctrl;
+		static void OnSaveClick(Component* sender);
+		static void OnClearClick(Component* sender);
+		static void OnReturnPress(Component* sender);
 	public:
-		
 		Console();
 		~Console();
-		
 		void WriteVar(const char* name,int value);
 		void WriteVar(const char* name,unsigned int value);
 		void WriteVar(const char* name,void* value);
@@ -38,18 +40,12 @@ class DLLIMPORT Console : public Window {
 		void Write(const char* format,...);
 		void WriteBeginTimer(const char* text);
 		void WriteEndTimer(const char* text);
-
-		// 3D window
-		Label* textctrl;
-		Button* btnsave;
-		Button* btnclear;
-		Edit* inputctrl;
-		
-		// Opties
 		void GetInput();
 		void ProcessString(const char *input);
 };
 
-extern Console* console;
+namespace Globals {
+	extern Console* console;
+}
 
 #endif

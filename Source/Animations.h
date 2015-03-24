@@ -2,7 +2,8 @@
 #define ANIMATIONS_H
 
 #include <list>
-#include "Animation.h"
+using std::list;
+#include "Animation.h" // AnimationType
 
 #if BUILDING_DLL
 #define DLLIMPORT __declspec(dllexport)
@@ -10,14 +11,15 @@
 #define DLLIMPORT __declspec(dllimport)
 #endif
 
+class Object;
+
 class DLLIMPORT Animations {
-	std::list<Animation*> list;
+	friend class Scene; // Allow access to StaticOnUpdateTime
+	list<Animation*> animations;
 	static void StaticOnUpdateTime(void* sender,double data);
-	friend class Scene; // Deze mag bij OnUpdateTime
 	public:
 		Animations();
 		~Animations();
-		
 		Animation* Add(Animation* animation);
 		Animation* Add(Object* object,AnimationType type);
 		void Delete(Animation* animation);

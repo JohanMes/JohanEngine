@@ -1,4 +1,16 @@
 #include "Parser.h"
+#include "Variable.h"
+#include "Messagebox.h"
+#include "Console.h"
+#include "Renderer.h"
+#include "Scene.h"
+#include "Camera.h"
+#include "Lights.h"
+#include "Objects.h"
+#include "Object.h"
+#include "Path.h"
+#include "Curve.h"
+using Globals::console;
 
 Parser::Parser(bool printtiming,bool savetokens) {
 	this->printtiming = printtiming;
@@ -82,8 +94,7 @@ Var* Parser::Evaluate(Token* token) {
 		return result;
 	}
 }
-Var* Parser::Evaluate(std::vector<Token*>&
-                      tokens) { // do not delete tokens, only remove from list
+Var* Parser::Evaluate(std::vector<Token*>& tokens) { // do not delete tokens, only remove from list
 
 	// Evaluate first value/constant only
 	if(tokens.size() == 1) {
@@ -229,10 +240,13 @@ float3* Parser::GetFloat3Value(const char* text) {
 		return variable->GetFloat3Value();
 	} else { // literal value, interpret as float3
 		float3* tmp = new float3();
-		sscanf(text,"[%g %g %g]",
-		       &tmp->x,
-		       &tmp->y,
-		       &tmp->z);
+		if(sscanf(text,"[%g %g %g]",
+		          &tmp->x,
+		          &tmp->y,
+		          &tmp->z) == 3) {
+		} else {
+			console->Write("WARNING: cannot read '%s' as float3\r\n",text);
+		}
 		return tmp;
 	}
 }
@@ -286,7 +300,7 @@ bool Parser::HandleBoolean() {
 	} else if(!strcmp(op,">=")) {
 		return !lvalue->Less(rvalue);
 	} else {
-		console->Write("Unknown operation \"%s\"\r\n",op);
+		console->Write("WARNING: unknown boolean operation '%s'\r\n",op);
 		return false;
 	}
 }
@@ -341,129 +355,133 @@ Var* Parser::HandleFunction(Var* parent) {
 		if(!strcmp(function,"AddObject")) {
 			if(args.size() == 8) { // add from .object file
 
-				float3 pos(GetFloatValue(args[1]),GetFloatValue(args[2]),
+				float3 pos(GetFloatValue(args[1]),
+				           GetFloatValue(args[2]),
 				           GetFloatValue(args[3]));
-				float3 rot(GetFloatValue(args[4]),GetFloatValue(args[5]),
+				float3 rot(GetFloatValue(args[4]),
+				           GetFloatValue(args[5]),
 				           GetFloatValue(args[6]));
 
 				// Return object itself
 				result = new Var(vtObject,"tmp",level);
-				result->objectvalue = new Object(args[0],pos,rot,GetFloatValue(args[7]));
+				result->objectvalue = Globals::scene->AddObject(args[0],pos,rot,GetFloatValue(args[7]));
 			} else if(args.size() == 9) { // add, name not provided
-				float3 pos(GetFloatValue(args[2]),GetFloatValue(args[3]),
+				float3 pos(GetFloatValue(args[2]),
+				           GetFloatValue(args[3]),
 				           GetFloatValue(args[4]));
-				float3 rot(GetFloatValue(args[5]),GetFloatValue(args[6]),
+				float3 rot(GetFloatValue(args[5]),
+				           GetFloatValue(args[6]),
 				           GetFloatValue(args[7]));
 
 				// Use model file name as name
 				char name[MAX_PATH];
-				ExtractFileName(args[0],name);
+				Utils::ExtractFileName(args[0],name);
 
 				// Return object itself
 				result = new Var(vtObject,"tmp",level);
-				result->objectvalue = new Object(name,args[0],args[1],pos,rot,
-				                                 GetFloatValue(args[8]));
+				result->objectvalue = Globals::scene->AddObject(name,args[0],args[1],pos,rot,GetFloatValue(args[8]));
 			} else if(args.size() == 10) { // add, name provided
-				float3 pos(GetFloatValue(args[3]),GetFloatValue(args[4]),
+				float3 pos(GetFloatValue(args[3]),
+				           GetFloatValue(args[4]),
 				           GetFloatValue(args[5]));
-				float3 rot(GetFloatValue(args[6]),GetFloatValue(args[7]),
+				float3 rot(GetFloatValue(args[6]),
+				           GetFloatValue(args[7]),
 				           GetFloatValue(args[8]));
 
 				// Return object itself
 				result = new Var(vtObject,"tmp",level);
-				result->objectvalue = new Object(args[0],args[1],args[2],pos,rot,
-				                                 GetFloatValue(args[9]));
+				result->objectvalue = Globals::scene->AddObject(args[0],args[1],args[2],pos,rot,GetFloatValue(args[9]));
 			} else {
-				console->Write("Expected 8 arguments for function %s, got %d\r\n",function,
-				               args.size());
+				console->Write("WARNING: expected 8/9/10 arguments for function '%s', got %d\r\n",function,args.size());
 			}
 		} else if(!strcmp(function,"AddPlane")) {
 			if(args.size() > 9) {
 
-				float3 pos(GetFloatValue(args[1]),GetFloatValue(args[2]),
+				float3 pos(GetFloatValue(args[1]),
+				           GetFloatValue(args[2]),
 				           GetFloatValue(args[3]));
-				float3 rot(GetFloatValue(args[4]),GetFloatValue(args[5]),
+				float3 rot(GetFloatValue(args[4]),
+				           GetFloatValue(args[5]),
 				           GetFloatValue(args[6]));
 
-				scene->objects->AddPlane("ProceduralPlane",args[0],pos,rot,
-				                         GetFloatValue(args[7]),GetIntValue(args[8]),GetIntValue(args[9]),NULL);
+				// TODO: reimplement
+//				scene->objects->AddPlane("ProceduralPlane",args[0],pos,rot,GetFloatValue(args[7]),GetIntValue(args[8]),GetIntValue(args[9]),NULL);
 			} else {
-				console->Write("Expected 10 arguments for function %s, got %d\r\n",function,
-				               args.size());
+				console->Write("WARNING: expected 10 arguments for function '%s', got %d\r\n",function,args.size());
 			}
 		} else if(!strcmp(function,"SetGround")) {
 			if(args.size() > 5) {
-				scene->AddHeightMap(args[0],args[1],GetFloatValue(args[2]),
-				                    GetFloatValue(args[3]),GetFloatValue(args[4]),GetIntValue(args[5]));
+//				Globals::scene->AddHeightMap(args[0],args[1],GetFloatValue(args[2]),GetFloatValue(args[3]),GetFloatValue(args[4]),GetIntValue(args[5]));
 			} else {
-				console->Write("Expected 6 arguments for function %s, got %d\r\n",function,
-				               args.size());
+				console->Write("WARNING: expected 6 arguments for function '%s', got %d\r\n",function,args.size());
 			}
 		} else if(!strcmp(function,"SetTime")) {
 			if(args.size() > 1) {
-				renderer->SetTime(GetIntValue(args[0]),GetIntValue(args[1]));
+				Globals::renderer->SetTime(GetIntValue(args[0]),GetIntValue(args[1]));
 			} else {
-				console->Write("Expected 2 arguments for function %s, got %d\r\n",function,
-				               args.size());
+				console->Write("WARNING: expected 2 arguments for function '%s', got %d\r\n",function,args.size());
 			}
 		} else if(!strcmp(function,"SetTimeMulti")) {
 			if(args.size() > 0) {
-				renderer->SetTimeMulti(GetIntValue(args[0]));
+				Globals::renderer->SetTimeMulti(GetIntValue(args[0]));
 			} else {
-				console->Write("Expected 1 argument for function %s, got %d\r\n",function,
-				               args.size());
+				console->Write("WARNING: expected 1 argument for function '%s', got %d\r\n",function,args.size());
 			}
 		} else if(!strcmp(function,"AddDirlight")) {
 			if(args.size() > 5) {
 
-				float3 dir(GetFloatValue(args[0]),GetFloatValue(args[1]),
+				float3 dir(GetFloatValue(args[0]),
+				           GetFloatValue(args[1]),
 				           GetFloatValue(args[2]));
-				float3 col(GetFloatValue(args[3]),GetFloatValue(args[4]),
+				float3 col(GetFloatValue(args[3]),
+				           GetFloatValue(args[4]),
 				           GetFloatValue(args[5]));
 
 				new Dirlight(dir,col,true);
 			} else {
-				console->Write("Expected 1 argument for function %s, got %d\r\n",function,
-				               args.size());
+				console->Write("WARNING: expected 1 argument for function '%s', got %d\r\n",function,args.size());
 			}
 		} else if(!strcmp(function,"AddSpotlight")) {
 			if(args.size() > 9) {
 
-				float3 pos(GetFloatValue(args[0]),GetFloatValue(args[1]),
+				float3 pos(GetFloatValue(args[0]),
+				           GetFloatValue(args[1]),
 				           GetFloatValue(args[2]));
-				float3 lat(GetFloatValue(args[3]),GetFloatValue(args[4]),
+				float3 lat(GetFloatValue(args[3]),
+				           GetFloatValue(args[4]),
 				           GetFloatValue(args[5])); // look at
-				float3 col(GetFloatValue(args[6]),GetFloatValue(args[7]),
+				float3 col(GetFloatValue(args[6]),
+				           GetFloatValue(args[7]),
 				           GetFloatValue(args[8]));
 
 				new Spotlight(pos,lat,col,GetFloatValue(args[9]),true);
 			} else {
-				console->Write("Expected 10 arguments for function %s, got %d\r\n",function,
-				               args.size());
+				console->Write("WARNING: expected 10 arguments for function '%s', got %d\r\n",function,args.size());
 			}
 		} else if(!strcmp(function,"AddPointlight")) {
 			if(args.size() > 5) {
 
-				float3 pos(GetFloatValue(args[0]),GetFloatValue(args[1]),
+				float3 pos(GetFloatValue(args[0]),
+				           GetFloatValue(args[1]),
 				           GetFloatValue(args[2]));
-				float3 col(GetFloatValue(args[3]),GetFloatValue(args[4]),
+				float3 col(GetFloatValue(args[3]),
+				           GetFloatValue(args[4]),
 				           GetFloatValue(args[5]));
 
-				scene->lights->AddPointlight(pos,col,true);
+				Globals::scene->lights->AddPointlight(pos,col,true);
 			} else {
-				console->Write("Expected 6 arguments for function %s, got %d\r\n",function,
-				               args.size());
+				console->Write("WARNING: expected 6 arguments for function '%s', got %d\r\n",function,args.size());
 			}
 		} else if(!strcmp(function,"SetCameraPos")) {
 			if(args.size() > 2) {
 
-				float3 pos(GetFloatValue(args[0]),GetFloatValue(args[1]),
+				float3 pos(GetFloatValue(args[0]),
+				           GetFloatValue(args[1]),
 				           GetFloatValue(args[2]));
 
-				camera->SetPos(pos);
+				Globals::camera->SetPos(pos);
 			} else {
-				console->Write("Expected 3 arguments for function %s, got %d\r\n",function,
-				               args.size());
+				console->Write("WARNING: expected 3 arguments for function '%s', got %d\r\n",function,args.size());
 			}
 		} else if(!strcmp(function,"SetCameraLookAt")) {
 			if(args.size() > 2) {
@@ -471,10 +489,9 @@ Var* Parser::HandleFunction(Var* parent) {
 				float3 pos(GetFloatValue(args[0]),GetFloatValue(args[1]),
 				           GetFloatValue(args[2]));
 
-				camera->SetLookAt(pos);
+				Globals::camera->SetLookAt(pos);
 			} else {
-				console->Write("Expected 3 arguments for function %s, got %d\r\n",function,
-				               args.size());
+				console->Write("WARNING: expected 3 arguments for function '%s', got %d\r\n",function,args.size());
 			}
 		} else if(!strcmp(function,"SetCameraDir")) {
 			if(args.size() > 2) {
@@ -482,17 +499,15 @@ Var* Parser::HandleFunction(Var* parent) {
 				float3 dir(GetFloatValue(args[0]),GetFloatValue(args[1]),
 				           GetFloatValue(args[2]));
 
-				camera->SetDir(dir);
+				Globals::camera->SetDir(dir);
 			} else {
-				console->Write("Expected 3 arguments for function %s, got %d\r\n",function,
-				               args.size());
+				console->Write("WARNING: expected 3 arguments for function '%s', got %d\r\n",function,args.size());
 			}
 		} else if(!strcmp(function,"SetCameraFOV")) {
 			if(args.size() > 0) {
-				camera->SetFOV(DegToRad(GetFloatValue(args[0])));
+				Globals::camera->SetFOV(Utils::DegToRad(GetFloatValue(args[0])));
 			} else {
-				console->Write("Expected 1 arguments for function %s, got %d\r\n",function,
-				               args.size());
+				console->Write("WARNING: expected 1 arguments for function '%s', got %d\r\n",function,args.size());
 			}
 		} else if(!strcmp(function,"MessageBox")) {
 			if(args.size() > 0) {
@@ -500,52 +515,47 @@ Var* Parser::HandleFunction(Var* parent) {
 				new Messagebox(val);
 				delete[] val;
 			} else {
-				console->Write("Expected 1 argument for function %s, got %d\r\n",function,
-				               args.size());
+				console->Write("WARNING: expected 1 argument for function '%s', got %d\r\n",function,args.size());
 			}
 		} else if(!strcmp(function,"RandomRange")) {
 			if(args.size() > 1) {
 				result = new Var(vtFloat,"tmp",level);
-				result->floatvalue = RandomRange(GetFloatValue(args[0]),GetFloatValue(args[1]));
+				result->floatvalue = Utils::RandomRange(GetFloatValue(args[0]),GetFloatValue(args[1]));
 			} else {
-				console->Write("Expected 2 arguments for function %s, got %d\r\n",function,
-				               args.size());
+				console->Write("WARNING: expected 2 arguments for function '%s', got %d\r\n",function,args.size());
 			}
 		} else if(!strcmp(function,"ClearScene")) {
-			scene->Clear();
+			Globals::scene->Clear();
 		} else if(!strcmp(function,"LoadScene")) {
 			if(args.size() > 0) {
-				scene->Load(args[0]);
+				Globals::scene->LoadFromFile(args[0]);
 			} else {
-				console->Write("Expected 1 argument for function %s, got %d\r\n",function,
-				               args.size());
+				console->Write("WARNING: expected 1 argument for function '%s', got %d\r\n",function,args.size());
 			}
 		} else if(!strcmp(function,"Execute")) {
 			if(args.size() > 0) {
 				Parser parser(args[0]);
 			} else {
-				console->Write("Expected 1 argument for function %s, got %d\r\n",function,
-				               args.size());
+				console->Write("WARNING: expected 1 argument for function '%s', got %d\r\n",function,args.size());
 			}
 		} else if(!strcmp(function,"GetClockTimeHours")) {
 			result = new Var(vtInt,"tmp",level);
-			result->intvalue = renderer->GetClockTimeHours();
+			result->intvalue = Globals::renderer->GetClockTimeHours();
 		} else if(!strcmp(function,"GetClockTimeMins")) {
 			result = new Var(vtInt,"tmp",level);
-			result->intvalue = renderer->GetClockTimeMins();
+			result->intvalue = Globals::renderer->GetClockTimeMins();
 		} else if(!strcmp(function,"GetObjectByName")) {
 			if(args.size() > 0) {
 				result = new Var(vtObject,"tmp",level);
-				result->objectvalue = scene->objects->GetByName(args[0]);
+				result->objectvalue = Globals::scene->objects->GetByName(args[0]);
 			} else {
-				console->Write("Expected 1 argument for function %s, got %d\r\n",function,
-				               args.size());
+				console->Write("WARNING: expected 1 argument for function '%s', got %d\r\n",function,args.size());
 			}
 		} else if(!strcmp(function,"GetObjectCount")) {
 			result = new Var(vtInt,"tmp",level);
-			result->intvalue = scene->objects->size();
+			result->intvalue = Globals::scene->objects->size();
 		} else {
-			console->Write("Unknown global function \"%s\"\r\n",function);
+			console->Write("WARNING: unknown global function '%s'\r\n",function);
 		}
 
 		// object member functions
@@ -556,8 +566,7 @@ Var* Parser::HandleFunction(Var* parent) {
 				           GetFloatValue(args[2]));
 				parent->objectvalue->Move(dir);
 			} else {
-				console->Write("Expected 3 arguments for function %s, got %d\r\n",function,
-				               args.size());
+				console->Write("WARNING: expected 3 arguments for function '%s', got %d\r\n",function,args.size());
 			}
 		} else if(!strcmp(function,"SetPosition")) {
 			if(args.size() > 2) {
@@ -565,8 +574,7 @@ Var* Parser::HandleFunction(Var* parent) {
 				           GetFloatValue(args[2]));
 				parent->objectvalue->SetTranslation(dir);
 			} else {
-				console->Write("Expected 3 arguments for function %s, got %d\r\n",function,
-				               args.size());
+				console->Write("WARNING: expected 3 arguments for function '%s', got %d\r\n",function,args.size());
 			}
 		} else if(!strcmp(function,"SetRotation")) {
 			if(args.size() > 2) {
@@ -574,28 +582,27 @@ Var* Parser::HandleFunction(Var* parent) {
 				           GetFloatValue(args[2]));
 				parent->objectvalue->SetRotation(dir);
 			} else {
-				console->Write("Expected 3 arguments for function %s, got %d\r\n",function,
-				               args.size());
+				console->Write("WARNING: expected 3 arguments for function '%s', got %d\r\n",function,args.size());
 			}
 		} else if(!strcmp(function,"LookAt")) {
 			if(args.size() == 1) {
 				float3 pos = *GetFloat3Value(args[0]);
-				float4x4 rotation = LookAt(parent->objectvalue->GetTranslation(),pos);
+				float4x4 rotation = Utils::LookAt(parent->objectvalue->GetTranslation(),pos);
 				parent->objectvalue->SetRotation(rotation);
 			} else if(args.size() > 2) {
-				float3 pos(GetFloatValue(args[0]),GetFloatValue(args[1]),
+				float3 pos(GetFloatValue(args[0]),
+				           GetFloatValue(args[1]),
 				           GetFloatValue(args[2]));
-				float4x4 rotation = LookAt(parent->objectvalue->GetTranslation(),pos);
+				float4x4 rotation = Utils::LookAt(parent->objectvalue->GetTranslation(),pos);
 				parent->objectvalue->SetRotation(rotation);
 			} else {
-				console->Write("Expected 3 arguments for function %s, got %d\r\n",function,
-				               args.size());
+				console->Write("WARNING: expected 3 arguments for function '%s', got %d\r\n",function,args.size());
 			}
 		} else if(!strcmp(function,"GetPosition")) {
 			result = new Var(vtFloat3,"tmp",level);
 			result->float3value = new float3(parent->objectvalue->GetTranslation());
 		} else {
-			console->Write("Unknown Object function \"%s\"\r\n",function);
+			console->Write("WARNING: unknown Object function '%s'\r\n",function);
 		}
 
 		// path member functions
@@ -605,10 +612,9 @@ Var* Parser::HandleFunction(Var* parent) {
 
 			int pointcount = args.size()/3; // convert array of scalars to float3
 			for(int i = 0; i < pointcount; i++) {
-				float3 point = float3(
-				                   GetFloatValue(args[i]),
-				                   GetFloatValue(args[i+1]),
-				                   GetFloatValue(args[i+2]));
+				float3 point = float3(GetFloatValue(args[i]),
+				                      GetFloatValue(args[i+1]),
+				                      GetFloatValue(args[i+2]));
 				points.push_back(point);
 			}
 			parent->pathvalue->AddToTail(new Curve(points));
@@ -625,15 +631,13 @@ Var* Parser::HandleFunction(Var* parent) {
 
 				// Use model file name as name
 				char name[MAX_PATH];
-				ExtractFileName(args[0],name);
+				Utils::ExtractFileName(args[0],name);
 
 				// Return object
 				result = new Var(vtObject,"tmp",level);
-				result->objectvalue = new Object(name,args[1],args[2],pos,rot,
-				                                 GetFloatValue(args[3]));
+				result->objectvalue = Globals::scene->AddObject(name,args[1],args[2],pos,rot,GetFloatValue(args[3]));
 			} else {
-				console->Write("Expected 4 arguments for function %s, got %d\r\n",function,
-				               args.size());
+				console->Write("WARNING: expected 4 arguments for function '%s', got %d\r\n",function,args.size());
 			}
 		} else if(!strcmp(function,"GetLength")) {
 			result = new Var(vtFloat,"tmp",level);
@@ -646,8 +650,7 @@ Var* Parser::HandleFunction(Var* parent) {
 				result = new Var(vtFloat,"tmp",level);
 				result->floatvalue = parent->pathvalue->GetPoint(t).x;
 			} else {
-				console->Write("Expected 1 argument for function %s, got %d\r\n",function,
-				               args.size());
+				console->Write("WARNING: expected 1 argument for function '%s', got %d\r\n",function,args.size());
 			}
 		} else if(!strcmp(function,"GetPointY")) {
 			if(args.size() > 0) {
@@ -657,8 +660,7 @@ Var* Parser::HandleFunction(Var* parent) {
 				result = new Var(vtFloat,"tmp",level);
 				result->floatvalue = parent->pathvalue->GetPoint(t).y;
 			} else {
-				console->Write("Expected 1 argument for function %s, got %d\r\n",function,
-				               args.size());
+				console->Write("WARNING: expected 1 argument for function '%s', got %d\r\n",function,args.size());
 			}
 		} else if(!strcmp(function,"GetPointZ")) {
 			if(args.size() > 0) {
@@ -668,8 +670,7 @@ Var* Parser::HandleFunction(Var* parent) {
 				result = new Var(vtFloat,"tmp",level);
 				result->floatvalue = parent->pathvalue->GetPoint(t).z;
 			} else {
-				console->Write("Expected 1 argument for function %s, got %d\r\n",function,
-				               args.size());
+				console->Write("WARNING: expected 1 argument for function '%s', got %d\r\n",function,args.size());
 			}
 		} else if(!strcmp(function,"GetDirX")) {
 			if(args.size() > 0) {
@@ -679,8 +680,7 @@ Var* Parser::HandleFunction(Var* parent) {
 				result = new Var(vtFloat,"tmp",level);
 				result->floatvalue = parent->pathvalue->GetTangent(t).x;
 			} else {
-				console->Write("Expected 1 argument for function %s, got %d\r\n",function,
-				               args.size());
+				console->Write("WARNING: expected 1 argument for function '%s', got %d\r\n",function,args.size());
 			}
 		} else if(!strcmp(function,"GetDirY")) {
 			if(args.size() > 0) {
@@ -690,8 +690,7 @@ Var* Parser::HandleFunction(Var* parent) {
 				result = new Var(vtFloat,"tmp",level);
 				result->floatvalue = parent->pathvalue->GetTangent(t).y;
 			} else {
-				console->Write("Expected 1 argument for function %s, got %d\r\n",function,
-				               args.size());
+				console->Write("WARNING: expected 1 argument for function '%s', got %d\r\n",function,args.size());
 			}
 		} else if(!strcmp(function,"GetDirZ")) {
 			if(args.size() > 0) {
@@ -701,8 +700,7 @@ Var* Parser::HandleFunction(Var* parent) {
 				result = new Var(vtFloat,"tmp",level);
 				result->floatvalue = parent->pathvalue->GetTangent(t).z;
 			} else {
-				console->Write("Expected 1 argument for function %s, got %d\r\n",function,
-				               args.size());
+				console->Write("WARNING: expected 1 argument for function '%s', got %d\r\n",function,args.size());
 			}
 		} else {
 			console->Write("Unknown Path function \"%s\"\r\n",function);
@@ -752,8 +750,7 @@ void Parser::HandleAssignment(Var* lvalue) { // parent variable
 				return;
 			}
 			default: {
-				console->Write("Operator++ not supported for \"%s\" at line %u\r\n",
-				               tokens[index]->text,tokens[index]->line);
+				console->Write("WARNING: operator++ not supported for '%s' at line %u\r\n",tokens[index]->text,tokens[index]->line);
 				return;
 			}
 		}
@@ -768,8 +765,7 @@ void Parser::HandleAssignment(Var* lvalue) { // parent variable
 				return;
 			}
 			default: {
-				console->Write("Operator-- not supported for \"%s\" at line %u\r\n",
-				               tokens[index]->text,tokens[index]->line);
+				console->Write("WARNING: operator-- not supported for '%s' at line %u\r\n",tokens[index]->text,tokens[index]->line);
 				return;
 			}
 		}
@@ -787,7 +783,7 @@ void Parser::HandleAssignment(Var* lvalue) { // parent variable
 			index += 2; // step onto function name
 			rvalue = HandleFunction(parent); // steps over ending ) too
 		} else  {
-			console->Write("Unknown parent \"%s\"\r\n",tokens[index]->text);
+			console->Write("WARNING: unknown parent '%s'\r\n",tokens[index]->text);
 			return;
 		}
 	} else { // Evaluate expression after assignment operator
@@ -799,8 +795,7 @@ void Parser::HandleAssignment(Var* lvalue) { // parent variable
 
 	// Functie faalde bijvoorbeeld
 	if(!rvalue) {
-		console->Write("Error evaluating expression before \"%s\"\r\n",
-		               tokens[index]->text);
+		console->Write("WARNING: cannot evaluate expression before '%s'\r\n",tokens[index]->text);
 		return;
 	}
 
@@ -815,7 +810,7 @@ void Parser::HandleAssignment(Var* lvalue) { // parent variable
 				break;
 			}
 			default: {
-				console->Write("Unsupported operator \"%s\" on variable \"%s\"\r\n",op,
+				console->Write("WARNING: unsupported operator '%s' on variable '%s'\r\n",op,
 				               lvalue->name);
 				break;
 			}
@@ -831,7 +826,7 @@ void Parser::HandleAssignment(Var* lvalue) { // parent variable
 				break;
 			}
 			default: {
-				console->Write("Unsupported operator \"%s\" on variable \"%s\"\r\n",op,
+				console->Write("WARNING: unsupported operator '%s' on variable '%s'\r\n",op,
 				               lvalue->name);
 				break;
 			}
@@ -855,13 +850,13 @@ void Parser::HandleAssignment(Var* lvalue) { // parent variable
 				break;
 			}
 			default: {
-				console->Write("Unsupported operator \"%s\" on variable \"%s\"\r\n",op,
+				console->Write("WARNING: unsupported operator '%s' on variable '%s'\r\n",op,
 				               lvalue->name);
 				break;
 			}
 		}
 	} else {
-		console->Write("Unknown operator \"%s\"\r\n",op);
+		console->Write("WARNING: unknown operator \"%s\"\r\n",op);
 	}
 }
 void Parser::Clear() {
@@ -890,16 +885,19 @@ void Parser::AddToken(int length,char* ptr) {
 }
 void Parser::Tokenize(const char* file) {
 
+	// Get full file path
 	char fullpath[MAX_PATH];
-	GetFullPath(file,"Data\\Scripts",fullpath);
+	Utils::GetFullPath(file,"Data\\Scripts",fullpath);
 
-	line = 1;
-
+	// Try to open it
 	FILE* script = fopen(fullpath,"rb");
 	if(script == NULL) {
-		console->Write("Error opening script %s\r\n",fullpath);
+		console->Write("ERROR: cannot open script file '%s'\r\n",fullpath);
 		return;
 	}
+
+	// Incremented on each newline token
+	line = 1;
 
 	// How big is the file?
 	fseek(script,0,SEEK_END);
@@ -1033,19 +1031,24 @@ void Parser::Tokenize(const char* file) {
 
 	fclose(script);
 
+	// If we are asked to do so, save tokens (for debugging)
 	if(savetokens) {
 
 		// Save to exe path
 		char fullpath[MAX_PATH];
-		GetFullPath("Tokens.txt","",fullpath);
-		FILE* tokenoutput = fopen(fullpath,"w");
+		Utils::GetFullPath("Tokens.txt","",fullpath);
 
-		for(unsigned int i = 0; i < tokens.size(); i++) {
-			Token* thistoken = tokens[i];
-			fprintf(tokenoutput,"Index = %u:\tLine = %u\tText = %s\n",i,thistoken->line,
-			        thistoken->text);
+		// Try to write to it
+		FILE* tokenoutput = fopen(fullpath,"wb");
+		if(tokenoutput) {
+			for(unsigned int i = 0; i < tokens.size(); i++) {
+				Token* thistoken = tokens[i];
+				fprintf(tokenoutput,"Index = %u:\tLine = %u\tText = %s\n",i,thistoken->line,thistoken->text);
+			}
+			fclose(tokenoutput);
+		} else {
+			console->Write("ERROR: cannot open toke save file '%s'\r\n",fullpath);
 		}
-		fclose(tokenoutput);
 	}
 }
 void Parser::Optimize() {
@@ -1160,8 +1163,7 @@ void Parser::Parse() {
 			}
 		} else if(tokens[index]->type == ttOpenSquare) { // array assignment, ignore
 			index = tokens[index]->complement + 1; // step over ]
-		} else if(tokens[index]->type ==
-		          ttCloseBracket) { // end of code block, check if it's a loop
+		} else if(tokens[index]->type == ttCloseBracket) { // end of code block, check if it's a loop
 
 			int oldindex = index;
 
@@ -1183,8 +1185,7 @@ void Parser::Parse() {
 				}
 				index--;
 			}
-		} else if(tokens[index]->type ==
-		          ttVarType) { // declaration, don't handle assignments here
+		} else if(tokens[index]->type == ttVarType) { // declaration, don't handle assignments here
 			HandleVar();
 		} else { // assume var operation value
 			Var* lvalue = GetVariable(tokens[index]->text);
@@ -1204,13 +1205,11 @@ void Parser::Parse() {
 						delete result;
 					}
 				} else {
-					console->Write("Unknown operation on variable \"%s\" at line %u\r\n",
-					               tokens[index]->text,tokens[index]->line);
+					console->Write("WARNING: unknown operation on variable '%s' at line %u\r\n",tokens[index]->text,tokens[index]->line);
 					index++;
 				}
 			} else { // ???
-				console->Write("Unexpected token \"%s\" at line %u\r\n",tokens[index]->text,
-				               tokens[index]->line);
+				console->Write("WARNING: unexpected token '%s' at line %u\r\n",tokens[index]->text,tokens[index]->line);
 				index++;
 			}
 		}
@@ -1225,10 +1224,10 @@ void Parser::Execute(const char* file) {
 
 	// Obtain full path if needed
 	char fullpath[MAX_PATH];
-	GetFullPath(file,"Data\\Scripts",fullpath);
+	Utils::GetFullPath(file,"Data\\Scripts",fullpath);
 
 	if(printtiming) {
-		console->WriteBeginTimer("Tokenizing... ");
+		console->WriteBeginTimer("INFO: tokenizing... ");
 	}
 
 	Tokenize(fullpath);
@@ -1238,7 +1237,7 @@ void Parser::Execute(const char* file) {
 	}
 
 	if(printtiming) {
-		console->WriteBeginTimer("Optimizing... ");
+		console->WriteBeginTimer("INFO: optimizing... ");
 	}
 
 	Optimize();
@@ -1248,7 +1247,7 @@ void Parser::Execute(const char* file) {
 	}
 
 	if(printtiming) {
-		console->WriteBeginTimer("Parsing... ");
+		console->WriteBeginTimer("INFO: parsing... ");
 	}
 
 	Parse();

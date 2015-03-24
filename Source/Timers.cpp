@@ -1,4 +1,6 @@
 #include "Timers.h"
+#include "Timer.h"
+#include "Resource.h"
 
 Timers::Timers() {
 }
@@ -16,10 +18,9 @@ void Timers::Delete(Timer* timer) {
 }
 void Timers::OnUpdateTime(float dt) {
 	// Make sure we can remove items while iterating
-	std::list<Timer*>::iterator i = timerlist.begin();
+	TimerIterator i = timerlist.begin();
 	while(i != timerlist.end()) {
-		std::list<Timer*>::iterator next =
-		    std::next(i); // Store next item iterator (current will be invalidated)
+		TimerIterator next = std::next(i); // Store next item iterator (current will be invalidated)
 
 		// Update timer and remove when finished
 		Timer* timer = *i;
@@ -31,25 +32,23 @@ void Timers::OnUpdateTime(float dt) {
 	}
 }
 void Timers::Clear() {
-	std::list<Timer*>::iterator i = timerlist.begin();
+	TimerIterator i = timerlist.begin();
 	while(i != timerlist.end()) { // Make sure we can remove items while iterating
-		std::list<Timer*>::iterator next =
-		    std::next(i); // Store next item iterator (current will be invalidated)
+		TimerIterator next = std::next(i); // Store next item iterator (current will be invalidated)
 		delete *i; // Delete current
 		i = next; // Goto next
 	}
 }
 void Timers::SaveToCSV() {
-
 	// Save next to exe
 	char finalpath[MAX_PATH];
-	snprintf(finalpath,MAX_PATH,"%s\\%s",exepath,"Timers.csv");
+	snprintf(finalpath,sizeof(finalpath),"%s\\%s",Globals::exepath,"Timers.csv");
 
+	// Just write the whole array
 	FILE* file = fopen(finalpath,"wb");
 	if(file) {
 		fprintf(file,"Set;ms left\r\n");
-		for(std::list<Timer*>::iterator i = timerlist.begin(); i != timerlist.end();
-		        i++) {
+		for(TimerIterator i = timerlist.begin(); i != timerlist.end(); i++) {
 			Timer* timer = *i;
 			fprintf(file,"%d;%d;%u\r\n",
 			        timer->IsRunning(),

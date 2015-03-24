@@ -2,7 +2,8 @@
 #define TEXTURES_INCLUDE
 
 #include <list>
-#include "Texture.h"
+using std::list;
+#include <cstdio>
 
 #if BUILDING_DLL
 #define DLLIMPORT __declspec(dllexport)
@@ -10,12 +11,15 @@
 #define DLLIMPORT __declspec(dllimport)
 #endif
 
+class Texture;
+
 class DLLIMPORT Textures {
-	std::list<Texture*> list;
+	private:
+		list<Texture*> textures;
 	public:
 		Textures();
 		~Textures();
-		
+
 		Texture* Add(); // add empty shell
 		Texture* Add(const char* filename); // perform dupe check
 		Texture* Add(Texture* texture); // blindly add
@@ -27,6 +31,8 @@ class DLLIMPORT Textures {
 		void SaveToCSV();
 };
 
-extern Textures* textures;
+namespace Globals {
+	extern Textures* textures;
+}
 
 #endif

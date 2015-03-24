@@ -2,27 +2,52 @@
 #define PANEL_INCLUDE
 
 #include <vector>
-
-#include "Models.h"
+using std::vector;
 #include "float4.h"
 #include "float4x4.h"
 
+class Model;
+
 enum ComponentType {
-	ctBase,
-	ctButton,
-	ctLabel,
-	ctWindow,
-	ctEdit,
-	ctBevel,
-	ctDropdown,
+    ctBase,
+    ctButton,
+    ctLabel,
+    ctWindow,
+    ctEdit,
+    ctBevel,
+    ctDropdown,
 };
 
+#if BUILDING_DLL
+#define DLLIMPORT __declspec(dllexport)
+#else
+#define DLLIMPORT __declspec(dllimport)
+#endif
+
 class DLLIMPORT Component {
+	private:
+		bool visible;
+		float4x4 matWorld;
+		Component* parent;
+		void ComputeWorldTransform();
 	public:
 		Component(int left,int top,int width,int height);
 		~Component();
-		
-		Component* parent;
+		void GetRect(RECT* result);
+		void CreatePlane();
+		void Move(int dx,int dy);
+		void SetPos(int x,int y);
+		void Resize(int width,int height);
+		void AddChild(Component* child);
+		void Toggle();
+		bool IsVisible();
+		void Show(bool value);
+		float4x4 GetWorldTransform();
+		Component* GetParent();
+		void OnResetDevice();
+
+		// TODO: private?
+		Model* plane;
 		int left;
 		int top;
 		int width;
@@ -31,31 +56,10 @@ class DLLIMPORT Component {
 		int abstop;
 		float4 backcolor;
 		ComponentType type;
-		bool visible; // private maken?
-		float4x4 matWorld;
+		vector<Component*> children;
 		
-		// Handigheidjes
-		void GetRect(RECT* result);
-		
-		// 3D representation
-		Model* plane;
-		void CreatePlane();
-		void Move(int dx,int dy);
-		void SetPos(int x,int y);
-		void Resize(int width,int height);
-		
-		// Child windows with position relatieve to us
-		void AddChild(Component* child);
-		std::vector<Component*> children;
-		
-    	// Nu kunnen we dingen doen als we tevoorschijn komen
-    	void (*OnShow)(Component* Sender); // TODO: TimeEvent maken?
-		
-		// Visibility
-		void Toggle();
-		bool IsVisible();
-		void Show(bool value);
-		void OnResetDevice();
+		// Events
+		void (*OnShow)(Component* Sender); // TODO: TimeEvent?
 };
 
 #endif

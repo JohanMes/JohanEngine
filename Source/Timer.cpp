@@ -1,18 +1,18 @@
 #include "Timer.h"
+#include "TimeEvent.h" // OnTimer
 
 Timer::Timer() {
+	this->OnTimer = new TimeEvent();
 	this->miliseconds = -1;
 	this->running = false;
+}
+Timer::Timer(int miliseconds, bool start) {
 	this->OnTimer = new TimeEvent();
-	if(scene) {
-		scene->timers->Add(this); // add self
-	}
+	this->miliseconds = miliseconds;
+	this->running = start;
 }
 Timer::~Timer() {
 	delete OnTimer;
-	if(scene) {
-		scene->timers->Delete(this); // remove self
-	}
 }
 void Timer::AddEvent(void (*function)(void* sender,double data),void* sender) {
 	OnTimer->Add(function,sender);
@@ -34,10 +34,10 @@ bool Timer::IsRunning() {
 	return running;
 }
 bool Timer::IsFinished() {
-	return (miliseconds <= 0);
+	return (miliseconds <= 0) and (not running);
 }
 int Timer::MilisLeft() {
-	if(IsRunning()) {
+	if(running) {
 		return miliseconds;
 	} else {
 		return -1;

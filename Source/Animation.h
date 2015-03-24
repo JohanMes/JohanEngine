@@ -2,11 +2,13 @@
 #define ANIMATION_H
 
 #include <vector>
+using std::vector;
 #include <list>
+using std::list;
 #include "float3.h"
-#include "TimeEvent.h"
 
 class Object;
+class TimeEvent;
 
 #if BUILDING_DLL
 #define DLLIMPORT __declspec(dllexport)
@@ -21,7 +23,7 @@ enum AnimationType {
 	// bezier
 };
 
-class Keyframe {
+class DLLIMPORT Keyframe {
 	public:
 		Keyframe(double t,float3 position) {
 			this->t = t;
@@ -38,20 +40,17 @@ class Keyframe {
 		float3 rotation;
 };
 
+// for easier typing
+class Animation;
+typedef std::list<Animation*>::iterator AnimationIterator;
+
 class DLLIMPORT Animation {
 	friend class Animations;
-
-	std::list<Animation*>::iterator bufferlocation;
+	AnimationIterator bufferlocation;
+	double t;
 	public:
 		Animation(Object* object,AnimationType type);
 		~Animation();
-	
-		AnimationType type;
-		Object* object;
-		double t;
-		std::vector<Keyframe*> keyframes;
-		TimeEvent* OnAnimationEnd;
-		
 		bool IsFinished();
 		double GetStartTime();
 		double GetEndTime();
@@ -62,6 +61,15 @@ class DLLIMPORT Animation {
 		void AddKeyframe(Keyframe* keyframe);
 		void ClearKeyframes();
 		void Print();
+		double GetTime();
+		
+		// TODO: private
+		AnimationType type;
+		Object* object;
+		vector<Keyframe*> keyframes;
+		
+		// Events
+		TimeEvent* OnAnimationEnd;
 };
 
 #endif

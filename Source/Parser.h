@@ -4,10 +4,8 @@
 #include <cstdio>
 #include <vector>
 using std::vector;
+#include "float3.h"
 #include "Variable.h"
-#include "Messagebox.h"
-#include "Console.h"
-#include "Renderer.h"
 
 enum TokenKind {
     ttWhile,
@@ -27,6 +25,8 @@ enum TokenKind {
     ttMember,
 };
 
+class Var;
+
 class Token {
 	public:
 		~Token() {
@@ -42,7 +42,7 @@ class Token {
 		TokenKind type;
 		unsigned int complement;
 		unsigned int line;
-		Var* data; // used to store temp values
+		Var* data; // used to store temp values in Parser::Evaluate
 };
 
 #if BUILDING_DLL

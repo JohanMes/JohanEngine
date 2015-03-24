@@ -2,21 +2,32 @@
 #define VARIABLE_INCLUDE
 
 #include <cstring> // strdup
-#include "Console.h" // console writing
+
+#if BUILDING_DLL
+#define DLLIMPORT __declspec(dllexport)
+#else
+#define DLLIMPORT __declspec(dllimport)
+#endif
 
 enum VarKind {
-	vtInt,
-	vtFloat,
-	vtString,
-	vtObject,
-	vtPath, // bezier access
-	vtFloat3,
-	vtTimer,
-	vtUnknown,
+    vtInt,
+    vtFloat,
+    vtString,
+    vtObject,
+    vtPath, // bezier access
+    vtFloat3,
+    vtTimer,
+    vtUnknown,
 };
 
-class Var {
-	void SetTypeFromString(const char* type);
+class float3;
+class Object;
+class Path;
+class Timer;
+
+class DLLIMPORT Var {
+	private:
+		void SetTypeFromString(const char* type);
 	public:
 		Var(VarKind type,const char* name,int level); // set from generic
 		Var(const char* type,const char* name,int level); // set from string type
@@ -28,7 +39,7 @@ class Var {
 		bool Equals(Var* rvalue);
 		bool Greater(Var* rvalue);
 		bool Less(Var* rvalue);
-		
+
 		char* name;
 		VarKind type;
 		int level;

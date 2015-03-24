@@ -1,21 +1,49 @@
 #include "Renderer.h"
+#include "Object.h" // drawing
+#include "State.h"
+#include "Clock.h"
+#include "RenderTarget.h"
+#include "FXVariable.h"
+#include "FXShader.h"
+#include "float2.h"
+#include "float3.h"
+#include "float4.h"
+#include "float4x4.h"
+#include "TimeEvent.h"
+#include "Interface.h"
+#include "Camera.h"
+#include "Scene.h"
+#include "Material.h"
+#include "Options.h"
+#include "Resource.h"
+#include "Console.h"
+#include "Models.h"
+#include "Texture.h"
+#include "Lights.h"
+#include "Objects.h"
+using namespace Globals;
+using namespace Utils;
 
-Renderer::Renderer() {
+Renderer::Renderer(HWND hwnd) {
+	// Should remain valid
+	this->hwnd = hwnd;
 
-	OnRenderFrame = new TimeEvent();
+	// Use this to measure frame times
+	frameclock = new Clock(true); // start immediately to measure startup delay?
 
-	// Vertexdeclaraties ook
-	standard = NULL;
-	normalmap = NULL;
+	// Create optimized render states
+	cullmodestate = new State(D3DRS_CULLMODE);
+	fillmodestate = new State(D3DRS_FILLMODE);
+	alphateststate = new State(D3DRS_ALPHATESTENABLE);
+	alphablendstate = new State(D3DRS_ALPHABLENDENABLE);
+	alpharefstate = new State(D3DRS_ALPHAREF);
+	alphafuncstate = new State(D3DRS_ALPHAFUNC);
+	alphasrcblendstate = new State(D3DRS_SRCBLEND);
+	alphadestblendstate = new State(D3DRS_DESTBLEND);
+	zenablestate = new State(D3DRS_ZENABLE);
+	zwriteenablestate = new State(D3DRS_ZWRITEENABLE);
 
-	// Fonts ook
-	tooltipfontwhite = NULL;
-	tooltipfontshadow = NULL;
-	interfacefont = NULL;
-	interfacesprite = NULL;
-	tooltipfontsprite = NULL;
-
-	// Zet alle textures op nul, zie header voor meer informatie
+	// Create custom render targets
 	AmbientDataTex = new RenderTarget();
 	AmbientFactorTex = new RenderTarget();
 	FloatTex1 = new RenderTarget();
@@ -23,279 +51,301 @@ Renderer::Renderer() {
 	HalfFloatTex1 = new RenderTarget();
 	HalfFloatTex2 = new RenderTarget();
 
-	// Pointers naar scherm
+	// Create time events
+	OnRenderFrame = new TimeEvent();
+
+	// Reset D3D resources
+	standard = NULL;
+	normalmap = NULL;
+	tooltipfontwhite = NULL;
+	tooltipfontshadow = NULL;
+	interfacefont = NULL;
+	interfacesprite = NULL;
+	tooltipfontsprite = NULL;
 	backbuffercolor = NULL;
 	backbufferdepth = NULL;
+	d3d = NULL;
+	properties = {0};
 
-	// Nog meer rommel op 0
-	schedulesave = false;
-
-	// Tooltipopties
-	framecount = 0;
+	// Tooltip defaults
 	tooltipmode = ttmFramerate;
+	tooltip[0] = 0;
+
+	// Time defaults
 	timemulti = 1;
 	time = 0.0f;
-	frameratechecktime = 0.0f;
-	saveframetimes = false;
+	paused = false;
+	valid = false;
 
-	// Renderstate-handling
-	cullmodestate = new State(D3DRS_CULLMODE);
-	fillmodestate = new State(D3DRS_FILLMODE);
-	alphateststate = new State(D3DRS_ALPHATESTENABLE);
-	alphablendstate = new State(D3DRS_ALPHABLENDENABLE);
-
-	// Maak de frameclock (leest alleen tijd af)
-	frameclock = new Clock(true);
-
-	// En stel NOG meer op 0 in
-	drawnfaces = 0;
-	drawnvertices = 0;
-	drawcalls = 0;
-
+	// Fit render target to hwnd
 	RECT rcClient;
 	GetClientRect(hwnd,&rcClient);
 
-	// Vul de standaardopties in en neem die direct in gebruik
+	// Startup device using these default options
 	memset(&presentparameters,0,sizeof(presentparameters));
-	presentparameters.Windowed = true;
-	presentparameters.SwapEffect = D3DSWAPEFFECT_DISCARD;
+	presentparameters.Windowed = true; // always start windowed
+	presentparameters.SwapEffect = D3DSWAPEFFECT_DISCARD; // fast swapping
 	presentparameters.BackBufferCount = 1;
 	presentparameters.hDeviceWindow = hwnd;
 	presentparameters.BackBufferFormat = D3DFMT_X8R8G8B8;
 	presentparameters.EnableAutoDepthStencil = true;
 	presentparameters.BackBufferWidth = rcClient.right;
 	presentparameters.BackBufferHeight = rcClient.bottom;
-	presentparameters.AutoDepthStencilFormat = D3DFMT_D24X8;
-	presentparameters.MultiSampleType = D3DMULTISAMPLE_NONE;
-	presentparameters.PresentationInterval = D3DPRESENT_INTERVAL_IMMEDIATE;
+	presentparameters.AutoDepthStencilFormat = D3DFMT_D24X8; // 24bit depth
+	presentparameters.MultiSampleType = D3DMULTISAMPLE_NONE; // no anti aliasing
+	presentparameters.PresentationInterval = D3DPRESENT_INTERVAL_IMMEDIATE; // no vsync
 	presentparameters.Flags = D3DPRESENTFLAG_DISCARD_DEPTHSTENCIL;
 
-	// Maak het videokaartobject
+	// Try to connect with the GPU
 	d3d = Direct3DCreate9(D3D_SDK_VERSION);
 	if(!d3d) {
-		MessageBox(hwnd,"Call to Direct3DCreate9 failed!","Error",MB_ICONERROR);
+		Globals::console->Write("ERROR: call to Direct3DCreate9 failed\r\n");
+		return;
 	}
 
-	// Verbind met GPU #0
+	// Check if we can use a device
 	if(d3d->GetAdapterCount() > 0) {
-		d3d->GetAdapterIdentifier(0,0,&properties);
-		if(options->usesoftware) {
-			d3d->CreateDevice(D3DADAPTER_DEFAULT,D3DDEVTYPE_REF,hwnd,D3DCREATE_SOFTWARE_VERTEXPROCESSING|D3DCREATE_PUREDEVICE,&presentparameters,&d3ddev);
+
+		// Get device info
+		if(d3d->GetAdapterIdentifier(0,0,&properties) == D3DERR_INVALIDCALL) {
+			Globals::console->Write("ERROR: cannot get adapter info for adapter 0\r\n");
+			return; // nope
+		}
+
+		// Attempt to connect
+		DWORD flags;
+		D3DDEVTYPE devtype;
+		if(Globals::options->usesoftware) {
+			devtype = D3DDEVTYPE_REF;
+			flags = D3DCREATE_SOFTWARE_VERTEXPROCESSING|D3DCREATE_PUREDEVICE;
 		} else {
-			d3d->CreateDevice(D3DADAPTER_DEFAULT,D3DDEVTYPE_HAL,hwnd,D3DCREATE_HARDWARE_VERTEXPROCESSING|D3DCREATE_PUREDEVICE,&presentparameters,&d3ddev);
+			devtype = D3DDEVTYPE_HAL;
+			flags = D3DCREATE_HARDWARE_VERTEXPROCESSING|D3DCREATE_PUREDEVICE;
+		}
+		switch(d3d->CreateDevice(D3DADAPTER_DEFAULT,devtype,hwnd,flags,&presentparameters,&Globals::d3ddev)) {
+			case D3DERR_DEVICELOST: {
+				Globals::console->Write("ERROR: cannot create device 0: D3DERR_DEVICELOST\r\n");
+				return;
+			}
+			case D3DERR_INVALIDCALL: {
+				Globals::console->Write("ERROR: cannot create device 0: D3DERR_INVALIDCALL\r\n");
+				return;
+			}
+			case D3DERR_NOTAVAILABLE: {
+				Globals::console->Write("ERROR: cannot create device 0: D3DERR_NOTAVAILABLE\r\n");
+				return;
+			}
+			case D3DERR_OUTOFVIDEOMEMORY: {
+				Globals::console->Write("ERROR: cannot create device 0: D3DERR_OUTOFVIDEOMEMORY\r\n");
+				return;
+			}
 		}
 	} else {
-		MessageBox(hwnd,"Cannot find any graphics adapters!","Error",MB_ICONERROR);
+		Globals::console->Write("ERROR: adapter count equal to 0\r\n");
+		return;
 	}
 
-	// Fonts maken
+	// Create accelerated fonts
+	// Assume it works
 	HDC hdc = GetDC(hwnd);
-	D3DXCreateFont(d3ddev,GetFontSizePt(14,hdc),0,0,0,0,0,OUT_TT_ONLY_PRECIS,0,0,"Consolas",&tooltipfontwhite);
-	D3DXCreateFont(d3ddev,GetFontSizePt(14,hdc),0,FW_BLACK,0,0,0,OUT_TT_ONLY_PRECIS,0,0,"Consolas",&tooltipfontshadow);
-	D3DXCreateFont(d3ddev,GetFontSizePt(9,hdc),0,0,0,0,0,OUT_TT_ONLY_PRECIS,0,0,"Segoe UI",&interfacefont);
-	D3DXCreateSprite(d3ddev,&interfacesprite);
-	D3DXCreateSprite(d3ddev,&tooltipfontsprite);
+	D3DXCreateFont(Globals::d3ddev,Utils::GetFontSizePt(12,hdc),0,0,0,0,0,OUT_TT_ONLY_PRECIS,0,0,"Consolas",&tooltipfontwhite);
+	D3DXCreateFont(Globals::d3ddev,Utils::GetFontSizePt(12,hdc),0,FW_BLACK,0,0,0,OUT_TT_ONLY_PRECIS,0,0,"Consolas",&tooltipfontshadow);
+	D3DXCreateFont(Globals::d3ddev,Utils::GetFontSizePt(9,hdc),0,0,0,0,0,OUT_TT_ONLY_PRECIS,0,0,"Segoe UI",&interfacefont);
+	D3DXCreateSprite(Globals::d3ddev,&interfacesprite);
+	D3DXCreateSprite(Globals::d3ddev,&tooltipfontsprite);
 	ReleaseDC(hwnd,hdc);
 
-	// Compileer dan de shaders (gebruik prebuilt?)
+	// Compile shaders once
+	// Get all shader resource handles
 	LPD3DXBUFFER error = NULL;
-	D3DXCreateEffectFromFile(d3ddev,"Data\\Shaders\\main.fxo",0,0,D3DXFX_NOT_CLONEABLE|D3DXSHADER_PREFER_FLOW_CONTROL,0,&FX,&error);
+	D3DXCreateEffectFromFile(Globals::d3ddev,"Data\\Shaders\\main.fxo",0,0,D3DXFX_NOT_CLONEABLE|D3DXSHADER_PREFER_FLOW_CONTROL,0,&FX,&error);
 	if(error) {
-		MessageBox(hwnd,(char*)error->GetBufferPointer(),"Error",MB_ICONERROR);
-	} else {
-
-		// Shaders, Per vertex
-		shaders.push_back(new FXShader("PerVertex"));
-		shaders.push_back(new FXShader("PureColor"));
-		shaders.push_back(new FXShader("PureTexture"));
-		shaders.push_back(new FXShader("PureTextureMultitexConst"));
-		shaders.push_back(new FXShader("NoShade"));
-
-		// Shaders, Per pixel
-		shaders.push_back(new FXShader("PerPixel"));
-		shaders.push_back(new FXShader("PerPixelColor"));
-		shaders.push_back(new FXShader("PerPixelSpecular"));
-		shaders.push_back(new FXShader("PerPixelGooch"));
-		shaders.push_back(new FXShader("PerPixelMinnaert"));
-		shaders.push_back(new FXShader("PerPixelMultitexConst"));
-		shaders.push_back(new FXShader("PerPixelMultitexMixer"));
-		shaders.push_back(new FXShader("PerPixelOrenNayar"));
-		shaders.push_back(new FXShader("PerPixelCookTorrance"));
-
-		// Shaders, Per pixel, tangent space
-		shaders.push_back(new FXShader("PerPixelNormal"));
-		shaders.push_back(new FXShader("PerPixelNormalSpecular"));
-		shaders.push_back(new FXShader("PerPixelNormalParallax"));
-		shaders.push_back(new FXShader("PerPixelNormalSpecularParallax"));
-		shaders.push_back(new FXShader("PerPixelNormalSpecularAmbient"));
-
-		// Buffervullers voor shadow/SSAO/hardcoded zooi
-		TechShadowMap = new FXShader("ShadowMap");
-		TechAmbientMap = new FXShader("AmbientMap");
-		TechGaussian = new FXShader("GaussFilter");
-		TechSSAOFactor = new FXShader("SSAOFactor");
-		TechSSAOBlur = new FXShader("SSAOBlur");
-		TechBrightPass = new FXShader("BrightPass");
-		TechBrightBlur = new FXShader("BrightBlur");
-		TechToneMap = new FXShader("ToneMap");
-		TechStock = new FXShader("Stock");
-
-		// Variabelen
-		FXMatWorld = new FXVariable("World");
-		FXMatWorldView = new FXVariable("WorldView");
-		FXMatWorldViewProj = new FXVariable("WorldViewProj");
-		FXMatLightWorldViewProj = new FXVariable("LightWorldViewProj");
-
-		FXMaterialdiffuse = new FXVariable("materialdiffuse");
-		FXMaterialspecular = new FXVariable("materialspecular");
-		FXMaterialshininess = new FXVariable("materialshininess");
-		FXMaterialTiling = new FXVariable("materialtiling");
-		FXMaterialMixer = new FXVariable("materialmixer");
-		FXPurecolor = new FXVariable("purecolor");
-
-		FXWidth = new FXVariable("width");
-		FXHeight = new FXVariable("height");
-		FXInvwidth = new FXVariable("invwidth");
-		FXInvheight = new FXVariable("invheight");
-		FXTimevar = new FXVariable("timevar");
-
-		// textures
-		FXScreentex1 = new FXVariable("screentex1");
-		FXScreentex2 = new FXVariable("screentex2");
-		FXScreentex3 = new FXVariable("screentex3");
-		FXDiffusetex = new FXVariable("diffusetex");
-		FXSpeculartex = new FXVariable("speculartex");
-		FXNormaltex = new FXVariable("normaltex");
-		FXParallaxtex = new FXVariable("parallaxtex");
-		FXAmbienttex = new FXVariable("ambienttex");
-		FXShadowtex = new FXVariable("shadowtex");
+		Globals::console->Write("ERROR: cannot compile shaders: '%s'\r\n",(char*)error->GetBufferPointer());
+		return;
 	}
 
+	// Main shaders
+	shaders.push_back(new FXShader(FX,"PerVertex"));
+	shaders.push_back(new FXShader(FX,"PureColor"));
+	shaders.push_back(new FXShader(FX,"PureTexture"));
+	shaders.push_back(new FXShader(FX,"PureTextureMultitexConst"));
+	shaders.push_back(new FXShader(FX,"NoShade"));
+	shaders.push_back(new FXShader(FX,"PerPixel"));
+	shaders.push_back(new FXShader(FX,"PerPixelColor"));
+	shaders.push_back(new FXShader(FX,"PerPixelSpecular"));
+	shaders.push_back(new FXShader(FX,"PerPixelGooch"));
+	shaders.push_back(new FXShader(FX,"PerPixelMinnaert"));
+	shaders.push_back(new FXShader(FX,"PerPixelMultitexConst"));
+	shaders.push_back(new FXShader(FX,"PerPixelMultitexMixer"));
+	shaders.push_back(new FXShader(FX,"PerPixelOrenNayar"));
+	shaders.push_back(new FXShader(FX,"PerPixelCookTorrance"));
+	shaders.push_back(new FXShader(FX,"PerPixelNormal"));
+	shaders.push_back(new FXShader(FX,"PerPixelNormalSpecular"));
+	shaders.push_back(new FXShader(FX,"PerPixelNormalParallax"));
+	shaders.push_back(new FXShader(FX,"PerPixelNormalSpecularParallax"));
+	shaders.push_back(new FXShader(FX,"PerPixelNormalSpecularAmbient"));
+
+	// Post processing shaders
+	TechShadowMap = new FXShader(FX,"ShadowMap");
+	TechAmbientMap = new FXShader(FX,"AmbientMap");
+	TechGaussian = new FXShader(FX,"GaussFilter");
+	TechSSAOFactor = new FXShader(FX,"SSAOFactor");
+	TechSSAOBlur = new FXShader(FX,"SSAOBlur");
+	TechBrightPass = new FXShader(FX,"BrightPass");
+	TechBrightBlur = new FXShader(FX,"BrightBlur");
+	TechToneMap = new FXShader(FX,"ToneMap");
+	TechStock = new FXShader(FX,"Stock");
+
+	// Variables
+	// TODO: lower case
+	FXMatWorld = new FXVariable(FX,"World");
+	FXMatWorldView = new FXVariable(FX,"WorldView");
+	FXMatWorldViewProj = new FXVariable(FX,"WorldViewProj");
+	FXMatLightWorldViewProj = new FXVariable(FX,"LightWorldViewProj");
+
+	// Misc variables
+	FXMaterialdiffuse = new FXVariable(FX,"materialdiffuse");
+	FXMaterialspecular = new FXVariable(FX,"materialspecular");
+	FXMaterialshininess = new FXVariable(FX,"materialshininess");
+	FXMaterialTiling = new FXVariable(FX,"materialtiling");
+	FXMaterialMixer = new FXVariable(FX,"materialmixer");
+	FXPurecolor = new FXVariable(FX,"purecolor");
+	FXFilter = new FXVariable(FX,"filter");
+	FXNumaniso = new FXVariable(FX,"numaniso");
+	FXWidth = new FXVariable(FX,"width");
+	FXHeight = new FXVariable(FX,"height");
+	FXInvwidth = new FXVariable(FX,"invwidth");
+	FXInvheight = new FXVariable(FX,"invheight");
+	FXTimevar = new FXVariable(FX,"timevar");
+
+	// Texture handles
+	FXScreentex1 = new FXVariable(FX,"screentex1");
+	FXScreentex2 = new FXVariable(FX,"screentex2");
+	FXScreentex3 = new FXVariable(FX,"screentex3");
+	FXDiffusetex = new FXVariable(FX,"diffusetex");
+	FXSpeculartex = new FXVariable(FX,"speculartex");
+	FXNormaltex = new FXVariable(FX,"normaltex");
+	FXParallaxtex = new FXVariable(FX,"parallaxtex");
+	FXAmbienttex = new FXVariable(FX,"ambienttex");
+	FXShadowtex = new FXVariable(FX,"shadowtex");
+
 	// Screenspacequad
-	screenspacequad = models->Add();
+	screenspacequad = Globals::models->Add();
 	screenspacequad->Load2DQuad(-1.0f,-1.0f,1.0f,1.0f);
 	screenspacequad->SendToGPU();
+
+	// Yay!
+	valid = true;
 }
 Renderer::~Renderer() {
-
-	// Stateonthouders
+	delete frameclock;
 	delete cullmodestate;
 	delete fillmodestate;
 	delete alphateststate;
 	delete alphablendstate;
-
-	// Frameclock
-	delete frameclock;
-
-	// Gooi render targets helemaal weg (niet alleen clearen)
+	delete alpharefstate;
+	delete alphafuncstate;
+	delete alphasrcblendstate;
+	delete alphadestblendstate;
+	delete zenablestate;
+	delete zwriteenablestate;
 	delete AmbientDataTex;
 	delete AmbientFactorTex;
 	delete FloatTex1;
 	delete FloatTex2;
 	delete HalfFloatTex1;
 	delete HalfFloatTex2;
-
-	// quad gooit zichzelf weg uit buffers
-
-	// Gooi alle shaders weg
-	for(unsigned int i = 0; i < shaders.size(); i++) {
-		delete shaders[i];
-	}
-	shaders.clear();
-	SafeRelease(FX);
-	// TODO: FXVariable clearen?
-
-	// Gooi de fonts e.d. weg
-	SafeRelease(tooltipfontwhite);
-	SafeRelease(tooltipfontshadow);
-	SafeRelease(interfacefont);
-	SafeRelease(interfacesprite);
-	SafeRelease(tooltipfontsprite);
-
-	// Multievent
+	// FXVariable does not need to be freed
+	// TODO: FXShader does not need to be freed?
+	Utils::SafeRelease(standard);
+	Utils::SafeRelease(normalmap);
+	Utils::SafeRelease(tooltipfontwhite);
+	Utils::SafeRelease(tooltipfontshadow);
+	Utils::SafeRelease(interfacefont);
+	Utils::SafeRelease(interfacesprite);
+	Utils::SafeRelease(tooltipfontsprite);
+	Utils::SafeRelease(backbuffercolor);
+	Utils::SafeRelease(backbufferdepth);
+	Utils::SafeRelease(FX);
+	Utils::SafeRelease(d3d);
+	Utils::SafeRelease(Globals::d3ddev); // TODO: global :(
 	delete OnRenderFrame;
-
-	// Pointers naar de backbuffer
-	SafeRelease(backbuffercolor);
-	SafeRelease(backbufferdepth);
-
-	// Vertexdeclaraties
-	SafeRelease(standard);
-	SafeRelease(normalmap);
-
-	// Device pointers
-	SafeRelease(d3ddev);
-	SafeRelease(d3d);
 }
 void Renderer::OnLostDevice() {
-
-	// Hieronder stellen we presentparameters in, omdat die voor het resetten moeten worden ingesteld...
-
-	// Anti aliasing
+	// Update present parameters to conform to options
 	presentparameters.MultiSampleType = (D3DMULTISAMPLE_TYPE)options->aasamples;
 	if(presentparameters.MultiSampleType > 0) {
 		presentparameters.MultiSampleQuality = options->aaquality;
 	} else {
 		presentparameters.MultiSampleQuality = 0;
 	}
-
-	// Only support vsync when using fullscreen
 	if(!presentparameters.Windowed) {
 		presentparameters.BackBufferWidth = options->backbufferwidth;
 		presentparameters.BackBufferHeight = options->backbufferheight;
 		presentparameters.FullScreen_RefreshRateInHz = options->refreshrate;
 	} else {
-		presentparameters.FullScreen_RefreshRateInHz = 0;
+		presentparameters.FullScreen_RefreshRateInHz = 0; // no limit
 	}
-
-	// V-sync
 	if(options->enablevsync) {
 		presentparameters.PresentationInterval = D3DPRESENT_INTERVAL_ONE;
 	} else {
 		presentparameters.PresentationInterval = D3DPRESENT_INTERVAL_IMMEDIATE;
 	}
 
-	// Redbare resources
+	// Save saveable D3D resources (saves time)
 	tooltipfontwhite->OnLostDevice();
 	tooltipfontshadow->OnLostDevice();
 	interfacefont->OnLostDevice();
 	interfacesprite->OnLostDevice();
 	tooltipfontsprite->OnLostDevice();
+
+	// Inform other parts of engine
 	FX->OnLostDevice();
-	scene->OnLostDevice(); // Delete light buffers...
+	scene->OnLostDevice();
 	ui->OnLostDevice();
 
-	// Gooi alle zooi in VRAM weg
-	ReleaseResources();
+	// Remove render targets in VRAM
+	AmbientDataTex->Clear();
+	AmbientFactorTex->Clear();
+	FloatTex1->Clear();
+	FloatTex2->Clear();
+	HalfFloatTex1->Clear();
+	HalfFloatTex2->Clear();
 
-	// En we beginnen opnieuw
+	// Delete unsavable stuff :(
+	SafeRelease(backbuffercolor);
+	SafeRelease(backbufferdepth);
+	SafeRelease(standard);
+	SafeRelease(normalmap);
+
+	// Apply settings and start over
 	d3ddev->Reset(&presentparameters);
 
-	// Al het redbare redden
+	// Recover saveable D3D resources (saves time)
 	tooltipfontwhite->OnResetDevice();
 	tooltipfontshadow->OnResetDevice();
 	interfacefont->OnResetDevice();
 	interfacesprite->OnResetDevice();
 	tooltipfontsprite->OnResetDevice();
-	FX->OnResetDevice();
-	scene->OnResetDevice(); // Recreate light buffers
-	ui->OnResetDevice(); // check if it exists?
 
-	// Maak eigen buffers opnieuw en reset states
+	// Inform other parts of engine
+	FX->OnResetDevice();
+	scene->OnResetDevice();
+	ui->OnResetDevice();
+
+	// Recreate resources
 	OnResetDevice();
 }
 void Renderer::OnResetDevice() {
+	// Reset static options.
+	alpharefstate->Set(30);
+	alphafuncstate->Set(D3DCMP_GREATER);
+	alphasrcblendstate->Set(D3DBLEND_SRCALPHA);
+	alphadestblendstate->Set(D3DBLEND_INVSRCALPHA);
 
-	// Statische opties setten
-	d3ddev->SetRenderState(D3DRS_ALPHAREF,30);
-	d3ddev->SetRenderState(D3DRS_ALPHAFUNC,D3DCMP_GREATER);
-	d3ddev->SetRenderState(D3DRS_SRCBLEND,D3DBLEND_SRCALPHA);
-	d3ddev->SetRenderState(D3DRS_DESTBLEND,D3DBLEND_INVSRCALPHA);
-
-	// Backbuffer krijgen
+	// Recreate unsavable stuff :)
 	d3ddev->GetBackBuffer(0,0,D3DBACKBUFFER_TYPE_MONO,&backbuffercolor);
 	d3ddev->GetDepthStencilSurface(&backbufferdepth);
-
 	D3DVERTEXELEMENT9 standarddeclare[] = {
 		{0, 0,  D3DDECLTYPE_FLOAT3, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_POSITION, 0},
 		{0, 12, D3DDECLTYPE_FLOAT2, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_TEXCOORD, 0},
@@ -310,101 +360,92 @@ void Renderer::OnResetDevice() {
 		{0, 44, D3DDECLTYPE_FLOAT3, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_BINORMAL, 0},
 		D3DDECL_END()
 	};
-
-	// Bandbreedtebesparing
 	d3ddev->CreateVertexDeclaration(standarddeclare,&standard);
 	d3ddev->CreateVertexDeclaration(normalmapdeclare,&normalmap);
 
-	// SSAO-spulletjes
+	// Recreate render targets in VRAM
 	if(options->ssaosamples > 0) {
-		AmbientDataTex->Create(presentparameters.BackBufferWidth,presentparameters.BackBufferHeight,D3DFMT_A32B32G32R32F,false); // Data, zoals normalen en diepte
-		AmbientFactorTex->Create(presentparameters.BackBufferWidth,presentparameters.BackBufferHeight,D3DFMT_R32F,false); // Factor, zonder blur
+		AmbientDataTex->Create(presentparameters.BackBufferWidth,
+		                       presentparameters.BackBufferHeight,
+		                       D3DFMT_A32B32G32R32F,
+		                       false); // Data, zoals normalen en diepte
+		AmbientFactorTex->Create(presentparameters.BackBufferWidth,
+		                         presentparameters.BackBufferHeight,
+		                         D3DFMT_R32F,
+		                         false); // Factor, zonder blur
 	}
-
-	// HDR-spulletjes
 	if(options->enablehdr) {
-		FloatTex1->Create(presentparameters.BackBufferWidth,presentparameters.BackBufferHeight,D3DFMT_A16B16G16R16F,false);
-		FloatTex2->Create(presentparameters.BackBufferWidth,presentparameters.BackBufferHeight,D3DFMT_A16B16G16R16F,false);
-		HalfFloatTex1->Create(presentparameters.BackBufferWidth/2,presentparameters.BackBufferHeight/2,D3DFMT_A16B16G16R16F,false);
-		HalfFloatTex2->Create(presentparameters.BackBufferWidth/2,presentparameters.BackBufferHeight/2,D3DFMT_A16B16G16R16F,false);
+		FloatTex1->Create(presentparameters.BackBufferWidth,
+		                  presentparameters.BackBufferHeight,
+		                  D3DFMT_A16B16G16R16F,
+		                  false);
+		FloatTex2->Create(presentparameters.BackBufferWidth,
+		                  presentparameters.BackBufferHeight,
+		                  D3DFMT_A16B16G16R16F,
+		                  false);
+		HalfFloatTex1->Create(presentparameters.BackBufferWidth/2,
+		                      presentparameters.BackBufferHeight/2,
+		                      D3DFMT_A16B16G16R16F,
+		                      false);
+		HalfFloatTex2->Create(presentparameters.BackBufferWidth/2,
+		                      presentparameters.BackBufferHeight/2,
+		                      D3DFMT_A16B16G16R16F,
+		                      false);
 	}
 
-	// Stel het filter in
+	// Reset FX constants
 	const char* option = options->texturefilter; // scheelt getyp
 	if(!strcmp(option,"Bilinear")) {
-		FX->SetInt("filter",D3DTEXF_POINT); // D3DSAMP_MAXANISOTROPY
+		FXFilter->Set((unsigned int)D3DTEXF_POINT); // D3DSAMP_MAXANISOTROPY
 	} else if(!strcmp(option,"Trilinear")) {
-		FX->SetInt("filter",D3DTEXF_LINEAR);
+		FXFilter->Set((unsigned int)D3DTEXF_LINEAR);
 	} else if(!strcmp(option,"Anisotropic")) {
-		FX->SetInt("filter",D3DTEXF_ANISOTROPIC);
+		FXFilter->Set((unsigned int)D3DTEXF_ANISOTROPIC);
 	}
-	FX->SetInt("numaniso",options->afsamples);
+	FXNumaniso->Set((unsigned int)options->afsamples);
 
-	// Afmetingen van het beeld
+	// Back buffer dimensions
 	FXWidth->Set(presentparameters.BackBufferWidth);
 	FXHeight->Set(presentparameters.BackBufferHeight);
-
-	// 1/ dat van hierboven
 	FXInvwidth->Set(1.0f/(float)presentparameters.BackBufferWidth);
 	FXInvheight->Set(1.0f/(float)presentparameters.BackBufferHeight);
 
-	// Schaduwen
+	// Shadow parameters
 	float offset = 0.5f + (0.5f/(float)options->shadowmapsize);
 	D3DXMATRIX ShadowOffset = D3DXMATRIX(0.5f,     0.0f,     0.0f,     0.0f,
 	                                     0.0f,    -0.5f,     0.0f,     0.0f,
 	                                     0.0f,     0.0f,     1.0f,     0.0f,
 	                                     offset, offset,     0.0f,     1.0f);
-
 	FX->SetMatrix("ShadowOffset",&ShadowOffset);
 	FX->SetFloat("invshadowmapsize",1.0f/(float)options->shadowmapsize);
 	FX->SetBool("enableshadows",options->shadowmapsize > 0);
 	FX->SetFloat("shadowbias",options->shadowbias);
 	FX->SetFloat("shadowcoeff",0.1f);
 
-	// SSAO
+	// Shadow parameters
 	FX->SetInt("ssaosamples",options->ssaosamples);
 	FX->SetFloat("ssaomultiplier",options->ssaomultiplier);
 	FX->SetFloat("ssaodepthbias",options->ssaodepthbias);
 	FX->SetFloat("ssaodepthmultiplier",options->ssaodepthmultiplier);
 	FX->SetFloat("ssaoradius",options->ssaoradius);
 
-	// HDR
+	// HDR parameters
 	FX->SetFloat("hdrexposure",options->hdrexposure);
 	FX->SetFloat("hdrbloomthreshold",options->hdrbloomthreshold);
 	FX->SetFloat("hdrbloommultiplier",options->hdrbloommultiplier);
 
-	// Misc.
+	// Misc. parameters
 	FX->SetFloat("minviewdistance",options->minviewdistance);
 	FX->SetFloat("maxviewdistance",options->maxviewdistance);
 
-	// Stel de Camera in op de nieuwe resolutie
+	// Inform camera of back buffer change
 	if(camera) {
-		camera->SetMinViewDistance(options->minviewdistance); // TODO: beginupdate?
+		camera->BeginUpdate();
+		camera->SetMinViewDistance(options->minviewdistance);
 		camera->SetMaxViewDistance(options->maxviewdistance);
 		camera->SetRatio((float)presentparameters.BackBufferWidth/(float)presentparameters.BackBufferHeight);
+		camera->EndUpdate();
 	}
-}
-void Renderer::ReleaseResources() {
-
-	// Texture voor SSAO (diepte)
-	AmbientDataTex->Clear();
-	AmbientFactorTex->Clear();
-
-	// HDR-texture, pingpong, 100%
-	FloatTex1->Clear();
-	FloatTex2->Clear();
-
-	// HDR-texture, pingpong, 50%
-	HalfFloatTex1->Clear();
-	HalfFloatTex2->Clear();
-
-	// Pointers naar de backbuffer
-	SafeRelease(backbuffercolor);
-	SafeRelease(backbufferdepth);
-
-	// Vertexdeclaraties
-	SafeRelease(standard);
-	SafeRelease(normalmap);
 }
 void Renderer::PrintTooltip() {
 	switch(tooltipmode) {
@@ -415,7 +456,7 @@ void Renderer::PrintTooltip() {
 			snprintf(tooltip,
 			         sizeof(tooltip),
 			         "Framerate: %.1f\n",
-			         framerate);
+			         currentframe.framerate);
 			break;
 		}
 		case ttmTiming: {
@@ -424,10 +465,10 @@ void Renderer::PrintTooltip() {
 			         "Framerate: %.1f\n",
 			         "Frametime: %.3fms (%.3fms .. %.3fms)\n"
 			         "Time: %02d:%02d",
-			         framerate,
-			         frametimes[0],
-			         lotime,
-			         hitime,
+			         currentframe.framerate,
+			         currentframe.frametime,
+			         currentframe.frametimelow,
+			         currentframe.frametimehigh,
 			         GetClockTimeHours(),
 			         GetClockTimeMins());
 			break;
@@ -441,11 +482,11 @@ void Renderer::PrintTooltip() {
 			         "Frametime: %.3fms (%.3fms .. %.3fms)\n"
 			         "Time: %02d:%02d",
 			         properties.Description,
-			         framecount,
-			         framerate,
-			         frametimes[0],
-			         lotime,
-			         hitime,
+			         currentframe.index,
+			         currentframe.framerate,
+			         currentframe.frametime,
+			         currentframe.frametimelow,
+			         currentframe.frametimehigh,
 			         GetClockTimeHours(),
 			         GetClockTimeMins());
 			break;
@@ -468,14 +509,14 @@ void Renderer::PrintTooltip() {
 			         camera->GetPos().z,
 			         RadToDeg(camera->GetAngleH()),
 			         RadToDeg(camera->GetAngleV()),
-			         framecount,
-			         framerate,
-			         frametimes[0],
-			         lotime,
-			         hitime,
-			         drawnfaces,
-			         drawnvertices,
-			         drawcalls,
+			         currentframe.index,
+			         currentframe.framerate,
+			         currentframe.frametime,
+			         currentframe.frametimelow,
+			         currentframe.frametimehigh,
+			         currentframe.facecount,
+			         currentframe.vertexcount,
+			         currentframe.callcount,
 			         GetClockTimeHours(),
 			         GetClockTimeMins(),
 			         timemulti);
@@ -514,192 +555,145 @@ void Renderer::AddTime(int hours,int mins) {
 	time += hours*3600 + mins*60;
 }
 void Renderer::UpdateTime() {
+	// Get length of last frame
+	double frametime = frameclock->Reset();
+	double gametime = frametime * timemulti;
 
-	double frametimesec = frameclock->Reset();
-	double frametimems = frametimesec * 1000.0;
-	double gametimesec = frametimesec * timemulti;
+	// Store frametime
+	currentframe.frametime = frametime;
+
+	// Store framerate averaged over 0.5sec
+	if(frameinfo.size() > 0) {
+		int sumcount = 0;
+		double frametimesum = 0;
+
+		// Only average the frames inside the check time (prefer newest)
+		for(int i = (int)frameinfo.size() - 1; i >= 0; i--) {
+			sumcount++;
+			frametimesum += frameinfo[i].frametime;
+			if(frametimesum > 0.5) {
+				break;
+			}
+		}
+
+		// Get average FPS
+		currentframe.framerate = 1.0/(frametimesum/sumcount);
+	} else {
+		currentframe.framerate = 0;
+	}
+
+	// Store frametime lows
+	currentframe.frametimelow = DBL_MAX; // always exists
+	for(unsigned int i = 1; i < frameinfo.size(); i++) {
+		currentframe.frametimelow = std::min(currentframe.frametimelow,frameinfo[i].frametime);
+	}
+
+	// Store frametime highs
+	currentframe.frametimehigh = 0; // always exists
+	for(unsigned int i = 1; i < frameinfo.size(); i++) {
+		currentframe.frametimehigh = std::max(currentframe.frametimehigh,frameinfo[i].frametime);
+	}
+
+	// Store frame index
+	if(frameinfo.size() > 0) {
+		currentframe.index = GetLastFrame()->index + 1;
+	} else {
+		currentframe.index = 0;
+	}
+
+	// Add to big list
+	frameinfo.insert(frameinfo.begin(),currentframe);
+	if(frameinfo.size() > 100) { // keep only 100 items
+		frameinfo.pop_back(); // remove last
+	}
 
 	// Update game time
-	time += gametimesec;
-
-	// Add frame to begin, remove last, keep maximum of 100
-	frametimes.insert(frametimes.begin(),frametimems);
-	if(frametimes.size() > 100) {
-		if(saveframetimes) {
-			SaveFrameTimes();
-		}
-		frametimes.pop_back(); // remove last
-	}
-
-	// Keep average, update every half a second
-	frameratechecktime += frametimems;
-	if(frameratechecktime > 500.0) {
-
-		double avgframetime = 0.0;
-
-		// Calculate average based on frametimes array of past 500 ms
-		if(frametimes.size() > 0) {
-
-			int samplecount = 0;
-
-			// Only average the frames inside the check time (prefer newest)
-			for(unsigned int i = 0; i < frametimes.size(); i++) {
-				samplecount++;
-				avgframetime += frametimes[i];
-				if(avgframetime > frameratechecktime) {
-					break;
-				}
-			}
-
-			// Get average frametime
-			avgframetime /= samplecount;
-
-			// Get average FPS (in seconds)
-			framerate = 1000.0/avgframetime;
-		}
-
-		frameratechecktime = 0.0;
-	}
-
-	// Keep lows
-	lotime = frametimes[0]; // always exists
-	for(unsigned int i = 1; i < frametimes.size(); i++) {
-		lotime = std::min(lotime,frametimes[i]);
-	}
-
-	// Keep highs
-	hitime = frametimes[0]; // always exists
-	for(unsigned int i = 1; i < frametimes.size(); i++) {
-		hitime = std::max(hitime,frametimes[i]);
-	}
-
-	drawnfaces = 0;
-	drawnvertices = 0;
-	drawcalls = 0;
-	framecount++;
-
+	time += gametime;
 	FXTimevar->Set((float)time);
 
 	// Inform everyone that a frame has been rendered...
-	OnRenderFrame->Execute(frametimems);
+	OnRenderFrame->Execute(frametime);
 }
 void Renderer::FlushFrames() {
-	frametimes.clear();
-	frameratechecktime = 0.0f;
+	frameinfo.clear();
 }
-void Renderer::ScheduleSaveFrameTimes() {
-	frametimes.clear();
-	saveframetimes = true;
-}
-void Renderer::SaveFrameTimes() {
-
-	// write to csv
-	char finalpath[MAX_PATH];
-	sprintf(finalpath,"%s\\%s",exepath,"Frames.csv");
-	FILE* logfile = fopen(finalpath,"wb");
-	if(logfile) {
-
-		char tmp[128];
-
-		for(unsigned int i = 0; i < frametimes.size(); i++) {
-
-			sprintf(tmp,"%g\n",frametimes[i]);
-
-			// Replace period by comma
-			char* period = strchr(tmp,'.');
-			if(period) {
-				*period = ','; // excel uses , for decimal (NL)
-			}
-
-			fputs(tmp,logfile); // excel 2010 uses ; for cells
-		}
-		fclose(logfile);
-
-		new Messagebox("Frames saved!");
+FrameInfo* Renderer::GetLastFrame() {
+	if(frameinfo.size() > 0) {
+		return &frameinfo.back();
+	} else {
+		return NULL;
 	}
-	saveframetimes = false;
 }
 float Renderer::GetFrameRate() {
-	return framerate;
+	FrameInfo* info = GetLastFrame();
+	if(info) {
+		return info->framerate;
+	} else {
+		return 0;
+	}
 }
 void Renderer::DrawTextLine(const char* text,int left,int top) {
-	RECT final = {0};
+	RECT rect = {0};
 
-	// Gebruik altijd een sprite
+	// Begin sprite usage
 	tooltipfontsprite->Begin(D3DXSPRITE_ALPHABLEND);
 
-	final.left = left+1;
-	final.top = top+1;
-	tooltipfontshadow->DrawText(tooltipfontsprite,text,-1,&final,DT_NOCLIP,D3DCOLOR_XRGB(100,100,100)); // Blur
+	// Draw shadow
+	rect.left = left+1;
+	rect.top = top+1;
+	tooltipfontshadow->DrawText(tooltipfontsprite,text,-1,&rect,DT_NOCLIP,D3DCOLOR_XRGB(100,100,100));
 
-	final.left = left;
-	final.top = top;
-	tooltipfontwhite->DrawText(tooltipfontsprite,text,-1,&final,DT_NOCLIP,D3DCOLOR_XRGB(255,255,255)); // Wit
+	// Draw text
+	rect.left = left;
+	rect.top = top;
+	tooltipfontwhite->DrawText(tooltipfontsprite,text,-1,&rect,DT_NOCLIP,D3DCOLOR_XRGB(255,255,255));
 
+	// End sprite usage
 	tooltipfontsprite->End();
 }
 void Renderer::DrawTextBlock(const char* text,int left,int top,int right,int bottom) {
-	RECT final = {0};
+	RECT rect = {0};
 
-	// Gebruik altijd een sprite
+	// Begin sprite usage
 	tooltipfontsprite->Begin(D3DXSPRITE_ALPHABLEND);
 
-	final.left = left+1;
-	final.top = top+1;
-	final.right = right+1;
-	final.bottom = bottom+1;
-	tooltipfontshadow->DrawText(tooltipfontsprite,text,-1,&final,DT_WORDBREAK,D3DCOLOR_XRGB(100,100,100));
+	// Draw shadow
+	rect.left = left+1;
+	rect.top = top+1;
+	rect.right = right+1;
+	rect.bottom = bottom+1;
+	tooltipfontshadow->DrawText(tooltipfontsprite,text,-1,&rect,DT_WORDBREAK,D3DCOLOR_XRGB(100,100,100));
 
-	final.left = left;
-	final.top = top;
-	final.right = right;
-	final.bottom = bottom;
-	tooltipfontwhite->DrawText(tooltipfontsprite,text,-1,&final,DT_WORDBREAK,D3DCOLOR_XRGB(255,255,255));
+	// Draw text
+	rect.left = left;
+	rect.top = top;
+	rect.right = right;
+	rect.bottom = bottom;
+	tooltipfontwhite->DrawText(tooltipfontsprite,text,-1,&rect,DT_WORDBREAK,D3DCOLOR_XRGB(255,255,255));
 
+	// End sprite usage
 	tooltipfontsprite->End();
 }
-void Renderer::DrawTexture(Texture* texture,float left,float top,float right,float bottom) {
-	DrawTexture(texture->pointer,left,top,right,bottom);
-}
-void Renderer::DrawTexture(LPDIRECT3DTEXTURE9 texture,float left,float top,float right,float bottom) {
-
-	// Maak quad met hoeken left/top/right/bottom
-	Model* quad = models->Add();
-	quad->Load2DQuad(left,top,right,bottom);
-	quad->SendToGPU();
-
-	// Zet deze texture voorop de Camera
-	FXScreentex1->SetTexture(texture);
-
-	// En teken het vierkant recht voor de Camera
-	BeginTechnique(TechStock->handle);
-	DrawModel(quad);
-	EndTechnique();
-
-	models->Delete(quad);
-}
 void Renderer::DrawTextureFullScreen(LPDIRECT3DTEXTURE9 texture) {
-
-	// Zet deze texture voorop de Camera
+	// Apply this texture to the objects to be drawn
 	FXScreentex1->SetTexture(texture);
 
-	// En teken het vierkant recht voor de Camera
+	// Draw a square right in front of the camera
 	BeginTechnique(TechStock);
 	DrawModel(screenspacequad);
 	EndTechnique();
 }
-float2 Renderer::GetCenteringCorner(float2 windowsize) {
+float2 Renderer::GetCenteringCorner(float2 windowsize) { // TODO: move to interface or utils?
 	float2 result;
 	result.x = presentparameters.BackBufferWidth/2 - windowsize.x/2;
 	result.y = presentparameters.BackBufferHeight/2 - windowsize.y/2;
 	return result;
 }
 void Renderer::DrawComponent(Component* component) {
+	// Apply transform directly
+	FXMatWorldViewProj->Set(component->GetWorldTransform());
 
-	// Verschuif met matrix, niet met bufferrecreate
-	FXMatWorldViewProj->Set(component->matWorld);
-
-	// Kleur en tekst kiezen
+	// Choose color
 	switch(component->type) {
 		case ctLabel:
 		case ctDropdown:
@@ -710,10 +704,7 @@ void Renderer::DrawComponent(Component* component) {
 			break;
 		}
 		case ctButton: {
-
-			// Da's wel zo handig
 			Button* button = (Button*)component;
-
 			if(button->down) {
 				FXPurecolor->Set(button->downcolor);
 			} else if(button->hot) {
@@ -724,10 +715,7 @@ void Renderer::DrawComponent(Component* component) {
 			break;
 		}
 		case ctEdit: {
-
-			// Da's wel zo handig
 			Edit* edit = (Edit*)component;
-
 			if(edit->focused) {
 				FXPurecolor->Set(edit->focuscolor);
 			} else {
@@ -738,28 +726,28 @@ void Renderer::DrawComponent(Component* component) {
 	}
 	FX->CommitChanges();
 
-	// En teken het vlak
+	// Draw base plane
 	DrawModel(component->plane);
 
-	// Label tekenen
+	// Draw label
 	switch(component->type) {
-		case ctDropdown: { // teken een hele boel items
+		case ctDropdown: { // draw list
 			((Dropdown*)component)->DrawText(interfacefont,interfacesprite);
 			break;
 		}
-		case ctWindow: { // centreren in titelbalk
+		case ctWindow: { // draw centered
 			((Window*)component)->DrawText(interfacefont,interfacesprite);
 			break;
 		}
-		case ctLabel: { // ietsjes inset toevoegen
+		case ctLabel: { // draw simple label
 			((Label*)component)->DrawText(interfacefont,interfacesprite);
 			break;
 		}
-		case ctEdit: { // top left
+		case ctEdit: { // draw simple label
 			((Edit*)component)->DrawText(interfacefont,interfacesprite);
 			break;
 		}
-		case ctButton: { // centreren
+		case ctButton: { // draw centered
 			((Button*)component)->DrawText(interfacefont,interfacesprite);
 			break;
 		}
@@ -767,17 +755,12 @@ void Renderer::DrawComponent(Component* component) {
 		} // disable compiler warning
 	}
 
-	// Dan de children ervan
+	// Then draw children
 	for(int i = component->children.size() - 1; i >= 0; i--) {
-
 		Component* child = component->children[i];
-
-		if(!child->IsVisible()) {
-			continue;
+		if(child->IsVisible()) {
+			DrawComponent(child);
 		}
-
-		// Teken eerst de component zelf...
-		DrawComponent(child);
 	}
 }
 void Renderer::DrawInterface(Interface* thisinterface) {
@@ -785,28 +768,21 @@ void Renderer::DrawInterface(Interface* thisinterface) {
 		return;
 	}
 
+	// Draw transparent fonts
 	alphablendstate->Set(true);
 
+	// Draw all top level components
 	BeginTechnique(shaders[1]); // TODO: remove hardcoded 1
-
 	for(int i = thisinterface->componentlist.size() - 1; i >= 0; i--) {
-
 		Component* thiscomponent = thisinterface->componentlist[i];
-
-		// Eerst component zelf, dan children erbovenop
 		if(thiscomponent->IsVisible()) {
 			DrawComponent(thiscomponent);
 		}
 	}
-
 	EndTechnique();
 
+	// Disable alpha blend again (really slow if used everywhere)
 	alphablendstate->Set(false);
-}
-float2 Renderer::GetBufferSize() {
-	return float2(
-	           presentparameters.BackBufferWidth,
-	           presentparameters.BackBufferHeight);
 }
 void Renderer::GetResolutions(std::vector<D3DDISPLAYMODE>& list) {
 	unsigned int count = d3d->GetAdapterModeCount(D3DADAPTER_DEFAULT,D3DFMT_X8R8G8B8);
@@ -847,9 +823,6 @@ void Renderer::Begin(bool clear) {
 }
 void Renderer::End() {
 	d3ddev->EndScene();
-	if(schedulesave) {
-		SaveBuffers();
-	}
 	d3ddev->Present(NULL,NULL,NULL,NULL);
 }
 void Renderer::EndScene() {
@@ -864,8 +837,8 @@ void Renderer::BeginTechnique(D3DXHANDLE tech) {
 	FX->BeginPass(0);
 }
 void Renderer::BeginTechnique(FXShader* shader) {
-	FX->SetTechnique(shader->handle);
-	FX->Begin(0,D3DXFX_DONOTSAVESTATE);
+	FX->SetTechnique(shader->GetD3DXHandle());
+	FX->Begin(0,D3DXFX_DONOTSAVESTATE); // pure device, much faster
 	FX->BeginPass(0);
 }
 void Renderer::EndTechnique() {
@@ -873,47 +846,40 @@ void Renderer::EndTechnique() {
 	FX->End();
 }
 void Renderer::ScheduleSaveBuffers() {
-	schedulesave = true;
+	saveframes = true;
 }
 void Renderer::SaveBuffers() {
+	char buffer[1024];
 
-	char buf[512];
-
+	// Save all frames next to the executable
 	if(scene->lights->castshadows) {
-		snprintf(buf,512,"%s\\Shadowmap.png",exepath);
-		D3DXSaveSurfaceToFile(buf,D3DXIFF_PNG,scene->lights->ShadowTex->GetTopSurface(),NULL,NULL);
+		snprintf(buffer,sizeof(buffer),"%s\\Shadowmap.png",exepath);
+		D3DXSaveSurfaceToFile(buffer,D3DXIFF_PNG,scene->lights->ShadowTex->GetTopSurface(),NULL,NULL);
 	}
-
 	if(options->ssaosamples > 0) {
-		snprintf(buf,512,"%s\\AmbientData.png",exepath);
-		D3DXSaveSurfaceToFile(buf,D3DXIFF_PNG,AmbientDataTex->GetTopSurface(),NULL,NULL);
-
-		snprintf(buf,512,"%s\\AmbientFactor.png",exepath);
-		D3DXSaveSurfaceToFile(buf,D3DXIFF_PNG,AmbientFactorTex->GetTopSurface(),NULL,NULL);
+		snprintf(buffer,sizeof(buffer),"%s\\AmbientData.png",exepath);
+		D3DXSaveSurfaceToFile(buffer,D3DXIFF_PNG,AmbientDataTex->GetTopSurface(),NULL,NULL);
+		snprintf(buffer,sizeof(buffer),"%s\\AmbientFactor.png",exepath);
+		D3DXSaveSurfaceToFile(buffer,D3DXIFF_PNG,AmbientFactorTex->GetTopSurface(),NULL,NULL);
 	}
-
 	if(options->enablehdr) {
-		snprintf(buf,512,"%s\\FullPingPong1.png",exepath);
-		D3DXSaveSurfaceToFile(buf,D3DXIFF_PNG,FloatTex1->GetTopSurface(),NULL,NULL);
-
-		snprintf(buf,512,"%s\\FullPingPong2.png",exepath);
-		D3DXSaveSurfaceToFile(buf,D3DXIFF_PNG,FloatTex2->GetTopSurface(),NULL,NULL);
-
-		snprintf(buf,512,"%s\\HalfPingPong1.png",exepath);
-		D3DXSaveSurfaceToFile(buf,D3DXIFF_PNG,HalfFloatTex1->GetTopSurface(),NULL,NULL);
-
-		snprintf(buf,512,"%s\\HalfPingPong2.png",exepath);
-		D3DXSaveSurfaceToFile(buf,D3DXIFF_PNG,HalfFloatTex2->GetTopSurface(),NULL,NULL);
+		snprintf(buffer,sizeof(buffer),"%s\\FullPingPong1.png",exepath);
+		D3DXSaveSurfaceToFile(buffer,D3DXIFF_PNG,FloatTex1->GetTopSurface(),NULL,NULL);
+		snprintf(buffer,sizeof(buffer),"%s\\FullPingPong2.png",exepath);
+		D3DXSaveSurfaceToFile(buffer,D3DXIFF_PNG,FloatTex2->GetTopSurface(),NULL,NULL);
+		snprintf(buffer,sizeof(buffer),"%s\\HalfPingPong1.png",exepath);
+		D3DXSaveSurfaceToFile(buffer,D3DXIFF_PNG,HalfFloatTex1->GetTopSurface(),NULL,NULL);
+		snprintf(buffer,sizeof(buffer),"%s\\HalfPingPong2.png",exepath);
+		D3DXSaveSurfaceToFile(buffer,D3DXIFF_PNG,HalfFloatTex2->GetTopSurface(),NULL,NULL);
 	}
+	snprintf(buffer,sizeof(buffer),"%s\\FinalFrame.png",exepath);
+	D3DXSaveSurfaceToFile(buffer,D3DXIFF_PNG,backbuffercolor,NULL,NULL);
 
-	snprintf(buf,512,"%s\\FinalFrame.png",exepath);
-	D3DXSaveSurfaceToFile(buf,D3DXIFF_PNG,backbuffercolor,NULL,NULL);
+	// Tell the world we are done
+	Globals::console->Write("INFO: saved all buffers to '%s'",exepath);
 
-	// Laat met nieuwe UI zien dat we klaar zijn
-	snprintf(buf,512,"Saved buffers to %s",exepath);
-	new Messagebox(buf);
-
-	schedulesave = false;
+	// Don't repeat
+	saveframes = false;
 }
 float2 Renderer::GetUITextExtent(const char* text) {
 	RECT textrect = {0};
@@ -927,29 +893,25 @@ float2 Renderer::GetTooltipTextExtent(const char* text) {
 }
 void Renderer::UpdateBufferSize() {
 	if(d3ddev) {
-
-		// Negeer als we fullscreen gebruiken...
+		// Only respond when windowed
 		if(presentparameters.Windowed) {
 
+			// Get new buffer size
 			RECT rcClient;
 			GetClientRect(hwnd,&rcClient);
 
 			// Are we not minimizing?
 			if(rcClient.right > 0) {
 
-				// Fix de resolutie, update de renderer
+				// Apply new buffer size
 				presentparameters.BackBufferWidth = rcClient.right;
 				presentparameters.BackBufferHeight = rcClient.bottom;
-				renderer->paused = false;
-
-				// Alleen resetten en zooi opnieuw maken als de buffer > 0, anders crasht de boel
-				renderer->OnLostDevice();
-
-				// Minimizing...
+				paused = false; // kick start
+				OnLostDevice();
 			} else {
 
-				// En pauzeer het zaakje
-				renderer->paused = true;
+				// Pause when minimizing
+				paused = true;
 			}
 		}
 	}
@@ -1026,7 +988,6 @@ void Renderer::SetLightTransforms(Object* object,float4x4 lightprojection) {
 	FXMatLightWorldViewProj->Set(matLightWorldViewProj);
 }
 void Renderer::SetMaterial(Object* object) {
-
 	Material* material = object->material;
 
 	// Diffuse, only apply when texture is used
@@ -1060,17 +1021,20 @@ void Renderer::SetMaterial(Object* object) {
 	if(material->ambienttex) {
 		FXAmbienttex->SetTexture(material->ambienttex);
 	}
+	FX->CommitChanges();
 
-	// TODO: zorg ervoor dat we deze calls niet te vaak maken
+	// Set generic D3D render states
+	// TODO: make sure we don't make these calls too often
 	cullmodestate->Set(material->cullmode);
 	fillmodestate->Set(material->fillmode);
 	alphateststate->Set(material->alphatest);
 	alphablendstate->Set(material->alphablend);
-
-	// blendsoort per object instellen?
+//	State* alpharefstate;
+//	State* alphafuncstate;
+//	State* alphasrcblend;
+//	State* alphadestblend;
 }
 void Renderer::SetSSAOVariables(Object* thisobject) {
-
 	// Transformation matrices
 	SetCameraTransforms(thisobject);
 
@@ -1078,11 +1042,9 @@ void Renderer::SetSSAOVariables(Object* thisobject) {
 	if(thisobject->material->diffusetex) {
 		FXDiffusetex->SetTexture(thisobject->material->diffusetex);
 	}
-
 	FX->CommitChanges();
 }
 void Renderer::SetShadowMapVariables(Object* object,float4x4 lightprojection) {
-
 	// Transformeren vanaf lichtbron X
 	SetLightTransforms(object,lightprojection);
 
@@ -1109,42 +1071,38 @@ void Renderer::SetGenericVariables(Object* object,float4x4 lightprojection) {
 }
 void Renderer::DrawModel(Model* model) {
 	// Add to stats
-	drawnfaces += model->numfaces;
-	drawnvertices += model->numvertices;
-	drawcalls++;
+	currentframe.facecount += model->numfaces;
+	currentframe.vertexcount += model->numvertices;
+	currentframe.callcount++;
 
+	// Prepare state machine
 	d3ddev->SetStreamSource(0, model->vertexbuffer,0, sizeof(VERTEX));
 	d3ddev->SetIndices(model->indexbuffer);
 	d3ddev->DrawIndexedPrimitive(D3DPT_TRIANGLELIST, 0, 0, model->numvertices, 0, model->numfaces);
 }
 void Renderer::PassShader(FXShader* thisshader) {
-
 	// Skip empty shaders the low cost way (don't call BeginPass)
 	if(!thisshader->HasValidRange()) {
 		return;
 	}
 
-	BeginTechnique(thisshader->handle);
-
+	// Walk the provided range
+	BeginTechnique(thisshader->GetD3DXHandle());
 	for(ObjectIterator i = thisshader->GetBegin(); i != thisshader->GetEnd(); i++) {
 		Object* object = *i;
+		if(object->IsVisible()) {
+			// Get distance to nearest part of bounding sphere
+			float3 modeldir = object->GetWorldCenter() - camera->GetPos();
+			float distance = std::max(0.0f,modeldir.Length() - object->GetWorldRadius());
 
-		if(!object->IsVisible()) {
-			continue;
-		}
-
-		// Get distance to nearest part of bounding sphere
-		float3 modeldir = object->GetWorldCenter() - camera->GetPos();
-		float distance = std::max(0.0f,modeldir.Length() - object->GetWorldRadius());
-
-		// Determine which LOD we should draw
-		DetailLevel* detaillevel = object->GetDetailLevel(distance);
-		if(detaillevel) {
-			SetGenericVariables(object,scene->lights->matLightViewProj); // Sample shadows from ONE caster
-			DrawModel(detaillevel->model);
+			// Determine which LOD we should draw
+			DetailLevel* detaillevel = object->GetDetailLevel(distance);
+			if(detaillevel) {
+				SetGenericVariables(object,scene->lights->matLightViewProj); // Sample shadows from ONE caster
+				DrawModel(detaillevel->model);
+			}
 		}
 	}
-
 	EndTechnique();
 }
 void Renderer::PassEffect(FXShader* effect,LPDIRECT3DSURFACE9 target) {
@@ -1154,146 +1112,128 @@ void Renderer::PassEffect(FXShader* effect,LPDIRECT3DSURFACE9 target) {
 	EndTechnique();
 }
 void Renderer::DrawScene(Scene* scene) {
-
 	if(!scene) {
 		return;
 	}
 
 	UpdateTime();
 
-	// Zorg ervoor dat de speciale maps fatsoenlijk getekend worden
+	// Draw special effects buffers with normal maps
 	d3ddev->SetVertexDeclaration(standard);
 
-	// Deze staan vast
-	d3ddev->SetRenderState(D3DRS_ZENABLE,1);
-	d3ddev->SetRenderState(D3DRS_ZWRITEENABLE,1);
-
-	// Fix de per-objectstates
+	// Set dynamic render states for object rendering
 	fillmodestate->Set(D3DFILL_SOLID); // fill shadow/ssao map with solid colors
-	cullmodestate->Set(D3DCULL_NONE); // cull back faces (lessens load)
+	cullmodestate->Set(D3DCULL_CCW); // cull back faces (lessens load)
 	alphateststate->Set(false); // use manual alpha testing
-	alphablendstate->Set(false);
-
-	// Determine which light casts shadows (if there is any)
+	alphablendstate->Set(false); // don't use blending either
+	zenablestate->Set(1); // improve performance by culling
+	zwriteenablestate->Set(1); // improve performance by culling
+	
+	// Shadows
 	if(options->shadowmapsize > 0 && scene->lights->castshadows) {
-
-		// Hier moet FX->SetTexture(FXShadowtex,ShadowTex); unbound worden...
+		// Unbind FXShadowtex the stupid way
 		for(int i = 0; i < 16; i++) {
 			d3ddev->SetTexture(i,NULL);
 		}
 
-		// Vul de shadowmap op...
+		// Draw to shadow map
 		d3ddev->SetRenderTarget(0,scene->lights->ShadowTex->GetTopSurface());
 		d3ddev->SetDepthStencilSurface(scene->lights->ShadowTex->GetDepthTopSurface());
 		d3ddev->Clear(0, 0, D3DCLEAR_TARGET|D3DCLEAR_ZBUFFER, D3DCOLOR_ARGB(255,255,255,255), 1, 0); // TODO: clear R only?
 
+		// Draw all objects to the shadow map
 		BeginTechnique(TechShadowMap);
-
-		for(std::list<Object*>::iterator i = scene->objects->begin(); i != scene->objects->end(); i++) {
+		for(ObjectIterator i = scene->objects->begin(); i != scene->objects->end(); i++) {
 			Object* object = *i;
+			if(object->castshadows) {
+				// Get distance to nearest part of bounding sphere
+				float3 modeldir = object->GetWorldCenter() - camera->GetPos();
+				float distance = std::max(0.0f,modeldir.Length() - object->GetWorldRadius());
+				if(distance < options->shadowdistance) {
 
-			if(!object->castshadows) {
-				continue;
-			}
-
-			// Get distance to nearest part of bounding sphere
-			float3 modeldir = object->GetWorldCenter() - camera->GetPos();
-			float distance = std::max(0.0f,modeldir.Length() - object->GetWorldRadius());
-			if(distance < options->shadowdistance) {
-
-				// Determine which LOD we should draw
-				DetailLevel* detaillevel = object->GetDetailLevel(distance);
-				if(detaillevel) {
-					SetShadowMapVariables(object,scene->lights->matLightViewProj); // Sample shadows from ONE caster
-					DrawModel(detaillevel->model);
+					// Determine which LOD we should draw
+					DetailLevel* detaillevel = object->GetDetailLevel(distance);
+					if(detaillevel) {
+						SetShadowMapVariables(object,scene->lights->matLightViewProj); // Sample shadows from ONE caster
+						DrawModel(detaillevel->model);
+					}
 				}
 			}
 		}
-
 		EndTechnique();
 
 		// Use this texture as the final
 		FXShadowtex->SetTexture(scene->lights->ShadowTex); // TODO: Deze moet unbound worden???
 	}
 
-	// Vul de SSAO-map...
+	// SSAO
 	if(options->ssaosamples > 0) {
 
+		// Draw to SSAO map
 		d3ddev->SetRenderTarget(0,AmbientDataTex->GetTopSurface());
 		d3ddev->SetDepthStencilSurface(backbufferdepth);
 		d3ddev->Clear(0, 0, D3DCLEAR_TARGET|D3DCLEAR_ZBUFFER, 0.0f, 1.0f, 0);
 
 		// Render de SSAO-coefficient naar een texture ter grootte van het scherm
 		BeginTechnique(TechAmbientMap);
-
-		for(std::list<Object*>::iterator i = scene->objects->begin(); i != scene->objects->end(); i++) {
+		for(ObjectIterator i = scene->objects->begin(); i != scene->objects->end(); i++) {
 			Object* object = *i;
+			if(object->IsVisible()) {
+				// Get distance to nearest part of bounding sphere
+				float3 modeldir = object->GetWorldCenter() - camera->GetPos();
+				float distance = std::max(0.0f,modeldir.Length() - object->GetWorldRadius());
+				if(distance < options->ssaodistance) {
 
-			if(!object->IsVisible()) {
-				continue;
-			}
-
-			// Get distance to nearest part of bounding sphere
-			float3 modeldir = object->GetWorldCenter() - camera->GetPos();
-			float distance = std::max(0.0f,modeldir.Length() - object->GetWorldRadius());
-			if(distance < options->ssaodistance) {
-
-				// Determine which LOD we should draw
-				DetailLevel* detaillevel = object->GetDetailLevel(distance);
-				if(detaillevel) {
-					SetSSAOVariables(object);
-					DrawModel(detaillevel->model);
+					// Determine which LOD we should draw
+					DetailLevel* detaillevel = object->GetDetailLevel(distance);
+					if(detaillevel) {
+						SetSSAOVariables(object);
+						DrawModel(detaillevel->model);
+					}
 				}
 			}
 		}
-
 		EndTechnique();
-
-		// Texture wordt d.m.v. FXScreenTex gelezen
 	}
 
-	// Nu gaan we het beeld vullen (m.b.v. de special maps)
+	// Swt render target for initial pass and clear it
 	if(options->enablehdr) {
 		d3ddev->SetRenderTarget(0,FloatTex1->GetTopSurface());
 	} else {
 		d3ddev->SetRenderTarget(0,backbuffercolor);
 	}
 	d3ddev->SetDepthStencilSurface(backbufferdepth);
-
-	// TODO: Clear altijd?
 	d3ddev->Clear(0, 0, D3DCLEAR_TARGET|D3DCLEAR_ZBUFFER, 0, 1.0f, 0);
 
+	// Draw all objects
 	// Shaders, Per vertex
-	// vertex decl. staat al goed
-	for(unsigned int i = 0; i < 5; i++) {
+	for(unsigned int i = 0; i < 5; i++) { // TODO: fix constants
 		PassShader(shaders[i]);
 	}
 
 	// Shaders, Per pixel
-	for(unsigned int i = 5; i < 14; i++) {
+	for(unsigned int i = 5; i < 14; i++) { // TODO: fix constants
 		PassShader(shaders[i]);
 	}
 
 	// Shaders, Per pixel, tangent space
 	d3ddev->SetVertexDeclaration(normalmap);
-	for(unsigned int i = 14; i < 19; i++) {
+	for(unsigned int i = 14; i < 19; i++) { // TODO: fix constants
 		PassShader(shaders[i]);
 	}
+	
+	// Set dynamic render states for screen space drawing
+	fillmodestate->Set(D3DFILL_SOLID); // fill shadow/ssao map with solid colors
+	cullmodestate->Set(D3DCULL_CCW); // cull back faces (lessens load)
+	alphateststate->Set(false); // use manual alpha testing
+	alphablendstate->Set(false); // don't use blending either
+	zenablestate->Set(0); // improve performance by not writing to culling buffer
+	zwriteenablestate->Set(0); // improve performance by not writing to culling buffer
 
-	// Zorg ervoor dat de screen space quads snel getekend worden
+	// Screen space objects do not care about tangent space
 	d3ddev->SetVertexDeclaration(standard);
 
-	// Zorgt voor meer tempo
-	d3ddev->SetRenderState(D3DRS_ZENABLE,0);
-	d3ddev->SetRenderState(D3DRS_ZWRITEENABLE,0);
-
-	// Zet de per-objectstates vast voor screen space quads
-	fillmodestate->Set(D3DFILL_SOLID);
-	cullmodestate->Set(D3DCULL_CCW);
-	alphateststate->Set(false);
-	alphablendstate->Set(false);
-
-	// Pas tone mapping en bloom toe
+	// Apply HDR tone mapping
 	if(options->enablehdr) {
 
 		// Apply occlusion to FP buffers only

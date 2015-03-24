@@ -4,19 +4,22 @@
 #include <list>
 #include <cstdio>
 #include "FXHandle.h" // inheritance
-#include "Object.h" // iterating
-#include "Console.h" // printing
+#include "Object.h"
 
-#define ObjectIterator std::list<Object*>::iterator
+#if BUILDING_DLL
+#define DLLIMPORT __declspec(dllexport)
+#else
+#define DLLIMPORT __declspec(dllimport)
+#endif
 
-class FXShader : public FXHandle {
+class DLLIMPORT FXShader : public FXHandle {
 	private:
 		ObjectIterator begin;
 		ObjectIterator end;
 		bool beginvalid;
 		bool endvalid;
 	public:
-		FXShader(const char* name);
+		FXShader(LPD3DXEFFECT FX,const char* name);
 		~FXShader();
 		ObjectIterator GetBegin();
 		ObjectIterator GetEnd();

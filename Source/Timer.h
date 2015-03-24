@@ -3,14 +3,14 @@
 
 #include <list>
 using std::list;
-#include "TimeEvent.h" // OnTimer
-#include "Scene.h" // timers list
 
 #if BUILDING_DLL
 #define DLLIMPORT __declspec(dllexport)
 #else
 #define DLLIMPORT __declspec(dllimport)
 #endif
+
+class TimeEvent;
 
 class DLLIMPORT Timer {
 	private:
@@ -19,6 +19,7 @@ class DLLIMPORT Timer {
 		int miliseconds;
 	public:
 		Timer();
+		Timer(int miliseconds, bool start);
 		~Timer();
 		std::list<Timer*>::iterator GetBufferLocation();
 		void SetBufferLocation(std::list<Timer*>::iterator i);

@@ -1,23 +1,19 @@
-#include <cstdio>
-
 #include "Models.h"
 #include "Dialogs.h"
+using Globals::console;
 
 Models::Models() {
 }
-
 Models::~Models() {
 	Clear();
 }
-
 Model* Models::Add() {
 	return Add(new Model());
 }
 Model* Models::Add(const char* filename,bool sendtogpu) {
-	
 	// Obtain full path
 	char fullpath[MAX_PATH];
-	GetFullPath(filename,"Data\\Models",fullpath);
+	Utils::GetFullPath(filename,"Data\\Models",fullpath);
 
 	// Did we add that one already?
 	Model* search = GetByFullPath(fullpath);
@@ -37,13 +33,13 @@ Model* Models::AddPlane(unsigned int tiling,unsigned int textiling,float edgelen
 	return Add(model); // add to dump
 }
 Model* Models::Add(Model* model) {
-	list.push_back(model);
-	model->bufferlocation = --list.end();
+	models.push_back(model);
+	model->bufferlocation = --models.end();
 	return model;
 }
 
 Model* Models::GetByFileName(const char* filename) {
-	for(std::list<Model*>::iterator i = list.begin();i != list.end();i++) {
+	for(ModelIterator i = models.begin();i != models.end();i++) {
 		if((*i)->filename && !strcmp(filename,(*i)->filename)) {
 			return *i;
 		}
@@ -52,7 +48,7 @@ Model* Models::GetByFileName(const char* filename) {
 }
 
 Model* Models::GetByFullPath(const char* fullpath) {
-	for(std::list<Model*>::iterator i = list.begin();i != list.end();i++) {
+	for(ModelIterator i = models.begin();i != models.end();i++) {
 		if((*i)->fullpath && !strcmp(fullpath,(*i)->fullpath)) {
 			return *i;
 		}
@@ -62,29 +58,28 @@ Model* Models::GetByFullPath(const char* fullpath) {
 
 void Models::Delete(Model* model) {
 	if(model) {
-		list.erase(model->bufferlocation);
+		models.erase(model->bufferlocation);
 		delete model;
 	}
 }
 
 void Models::Clear() {
-	for(std::list<Model*>::iterator i = list.begin();i != list.end();i++) {
+	for(ModelIterator i = models.begin();i != models.end();i++) {
 		delete *i;
 	}
-	list.clear();
+	models.clear();
 }
 
 void Models::Print() {
-	console->WriteVar("list.size()",(int)list.size());
-	for(std::list<Model*>::iterator i = list.begin();i != list.end();i++) {
+	console->WriteVar("list.size()",(int)models.size());
+	for(ModelIterator i = models.begin();i != models.end();i++) {
 		(*i)->Print();
 	}
 }
 void Models::SaveToCSV() {
-	
 	// Save next to exe
 	char finalpath[MAX_PATH];
-	sprintf(finalpath,"%s\\%s",exepath,"Models.csv");
+	sprintf(finalpath,"%s\\%s",Globals::exepath,"Models.csv");
 
 	// Save grand total too
 	unsigned int totalvertices = 0;
@@ -94,7 +89,7 @@ void Models::SaveToCSV() {
 	FILE* file = fopen(finalpath,"wb");
 	if(file) {
 		fprintf(file,"Full path;Vertices;Faces;Size (bytes)\r\n");
-		for(std::list<Model*>::iterator i = list.begin();i != list.end();i++) {
+		for(ModelIterator i = models.begin();i != models.end();i++) {
 			Model* model = *i;
 			fprintf(file,"%s;%u;%u;%llu\r\n",
 				model->fullpath,

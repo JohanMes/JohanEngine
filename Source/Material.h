@@ -1,7 +1,8 @@
 #ifndef MATERIAL_H
 #define MATERIAL_H
 
-#include "Texture.h"
+#include <cstdio>
+#include "float3.h"
 #include "float4.h"
 
 #if BUILDING_DLL
@@ -9,6 +10,10 @@
 #else
 #define DLLIMPORT __declspec(dllimport)
 #endif
+
+class float3;
+class float4;
+class Texture;
 
 class DLLIMPORT Material {
 	public:

@@ -1,61 +1,75 @@
 #include "Texture.h"
+#include "Resource.h"
 #include "Console.h"
-#include "Textures.h"
-#include "Renderer.h"
-#include "resource.h"
 
 Texture::Texture() {
-	pointer = NULL;
+	// bufferlocation?
+	d3dinterface = NULL;
 	fullpath = NULL;
 	filename = NULL;
 }
 Texture::Texture(const char* filename) {
-
-	// Bouw volledig pad op als dat nodig is
-	this->fullpath = new char[MAX_PATH];
-	GetFullPath(filename,"Data\\Textures",fullpath);
-
-	// Verwijder pad als dat nodig is
-	this->filename = new char[MAX_PATH];
-	ExtractFileName(filename,this->filename);
-	
-	// Als faal, maak het duidelijk aan factory door pointer = NULL
-	HRESULT result = D3DXCreateTextureFromFile(d3ddev,fullpath,&pointer);
-	switch(result) {
-		case D3DERR_NOTAVAILABLE: {
-			console->Write("Error creating texture of file %s: D3DERR_NOTAVAILABLE\r\n",fullpath);
-			break;
-		}
-		case D3DERR_OUTOFVIDEOMEMORY: {
-			console->Write("Error creating texture of file %s: D3DERR_OUTOFVIDEOMEMORY\r\n",fullpath);
-			break;
-		}
-		case D3DERR_INVALIDCALL: {
-			console->Write("Error creating texture of file %s: D3DERR_INVALIDCALL\r\n",fullpath);
-			break;
-		}
-		case D3DXERR_INVALIDDATA: {
-			console->Write("Error creating texture of file %s: D3DXERR_INVALIDDATA\r\n",fullpath);
-			break;
-		}
-		case E_OUTOFMEMORY: {
-			console->Write("Error creating texture of file %s: E_OUTOFMEMORY\r\n",fullpath);
-			break;
-		}
-		default: {
-			return; // success!
-		}
-	}
-	pointer = NULL; // indicates failure
+	// bufferlocation?
+	LoadFromFile(filename);
 }
 Texture::~Texture() {
 	delete[] fullpath;
 	delete[] filename;
-	SafeRelease(pointer);
+	Utils::SafeRelease(d3dinterface);
+}
+void Texture::LoadFromFile(const char* filename) {
+	// Get full path if necessary
+	this->fullpath = new char[MAX_PATH];
+	Utils::GetFullPath(filename,"Data\\Textures",fullpath);
+
+	// Remove directory
+	this->filename = new char[MAX_PATH];
+	Utils::ExtractFileName(filename,this->filename);
+
+	// Attempt to load from disk
+	d3dinterface = NULL;
+	HRESULT result = D3DXCreateTextureFromFile(Globals::d3ddev,fullpath,&d3dinterface);
+	switch(result) {
+		case D3DERR_NOTAVAILABLE: {
+			Globals::console->Write("ERROR: cannot creat texture from file '%s': D3DERR_NOTAVAILABLE\r\n",fullpath);
+			break;
+		}
+		case D3DERR_OUTOFVIDEOMEMORY: {
+			Globals::console->Write("ERROR: cannot creat texture from file '%s': D3DERR_OUTOFVIDEOMEMORY\r\n",fullpath);
+			break;
+		}
+		case D3DERR_INVALIDCALL: {
+			Globals::console->Write("ERROR: cannot creat texture from file '%s': D3DERR_INVALIDCALL\r\n",fullpath);
+			break;
+		}
+		case D3DXERR_INVALIDDATA: {
+			Globals::console->Write("ERROR: cannot creat texture from file '%s': D3DXERR_INVALIDDATA\r\n",fullpath);
+			break;
+		}
+		case E_OUTOFMEMORY: {
+			Globals::console->Write("ERROR: cannot creat texture from file '%s': E_OUTOFMEMORY\r\n",fullpath);
+			break;
+		}
+		case D3D_OK: {
+			break; // success!
+		}
+	}
+}
+const char* Texture::GetFullPath() {
+	return fullpath;
+}
+const char* Texture::GetFileName() {
+	return filename;
+}
+LPDIRECT3DTEXTURE9 Texture::GetD3DInterface() {
+	return d3dinterface;
+}
+TextureIterator Texture::GetBufferLocation() {
+	return bufferlocation;
 }
 bool Texture::GetInfo(D3DSURFACE_DESC* result) {
-	if(pointer) {
-		if(pointer->GetLevelDesc(0,result) == D3D_OK) {
+	if(d3dinterface) {
+		if(d3dinterface->GetLevelDesc(0,result) == D3D_OK) {
 			return true;
 		} else {
 			return false;
@@ -64,7 +78,7 @@ bool Texture::GetInfo(D3DSURFACE_DESC* result) {
 		return false;
 	}
 }
-int Texture::GetHeight() {
+int Texture::GetHeightPixels() {
 	D3DSURFACE_DESC info;
 	if(GetInfo(&info)) {
 		return info.Height;
@@ -72,7 +86,7 @@ int Texture::GetHeight() {
 		return -1;
 	}
 }
-int Texture::GetWidth() {
+int Texture::GetWidthPixels() {
 	D3DSURFACE_DESC info;
 	if(GetInfo(&info)) {
 		return info.Width;
@@ -80,7 +94,7 @@ int Texture::GetWidth() {
 		return -1;
 	}
 }
-__int64 Texture::GetSize() {
+__int64 Texture::GetSizeBytes() {
 	D3DSURFACE_DESC info;
 	if(GetInfo(&info)) {
 		int bytespp;
@@ -99,12 +113,11 @@ __int64 Texture::GetSize() {
 	}
 }
 void Texture::Print() {
-	
-	console->Write("\r\n----- Info for class Texture -----\r\n\r\n");
-	
-	console->WriteVar("pointer",pointer);
-	console->WriteVar("fullpath",fullpath);
-	console->WriteVar("filename",filename);
-	console->WriteVar("GetHeight()",GetHeight());
-	console->WriteVar("GetWidth()",GetWidth());
+	Globals::console->Write("\r\n----- Info for class Texture -----\r\n\r\n");
+	Globals::console->WriteVar("d3dinterface",d3dinterface);
+	Globals::console->WriteVar("fullpath",fullpath);
+	Globals::console->WriteVar("filename",filename);
+	Globals::console->WriteVar("GetHeightPixels()",GetHeightPixels());
+	Globals::console->WriteVar("GetWidthPixels()",GetWidthPixels());
+	Globals::console->WriteVar("GetWidthPixels()",GetWidthPixels());
 }

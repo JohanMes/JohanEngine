@@ -1,14 +1,16 @@
 #include "FXVariable.h"
+#include "Texture.h"
+#include "Resource.h" // FX
+#include "RenderTarget.h"
+#include "Console.h"
 
-FXVariable::FXVariable(const char* name) : FXHandle(name) {
+FXVariable::FXVariable(LPD3DXEFFECT FX,const char* name) : FXHandle(FX,name) {
 	texturevalue = NULL;
 	floatvalue = 0.0f;
 	intvalue = 0;
 	handle = FX->GetParameterByName(NULL,name);
 	if(!handle) {
-		char buffer[1024];
-		snprintf(buffer,sizeof(buffer),"Error creating D3DXHANDLE to variable '%s'\r\n",name);
-		MessageBox(hwnd,buffer,"Error",MB_ICONERROR); // Don't use console, it might not exist yet
+		Globals::console->Write("ERROR: cannot create D3DXHANDLE to parameter '%s'\r\n",name);
 	}
 }
 FXVariable::~FXVariable() {
@@ -35,7 +37,7 @@ void FXVariable::SetTexture(LPDIRECT3DBASETEXTURE9 value) {
 	}
 }
 void FXVariable::SetTexture(Texture* value) {
-	SetTexture(value->pointer);
+	SetTexture(value->GetD3DInterface());
 }
 void FXVariable::SetTexture(RenderTarget* value) {
 	SetTexture(value->GetTexture());

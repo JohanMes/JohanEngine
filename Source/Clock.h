@@ -1,7 +1,7 @@
 #ifndef CLOCK_INCLUDE
 #define CLOCK_INCLUDE
 
-#include "Resource.h"
+#include <cstdio>
 
 #if BUILDING_DLL
 #define DLLIMPORT __declspec(dllexport)
@@ -10,15 +10,12 @@
 #endif
 
 class DLLIMPORT Clock {
-	
-	__int64 starttime;
-	double secpercount;
-	
+	private:
+		__int64 starttime;
+		double timerperiod;
 	public:
-		
 		Clock(bool start);
 		~Clock();
-		
 		void Start();
 		double GetTimeSec();
 		double Reset();

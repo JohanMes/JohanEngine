@@ -1,8 +1,9 @@
 #include "Variable.h"
-#include "Object.h" // var type union, cannot forward declare
-#include "Path.h" // var type union, cannot forward declare
-#include "float3.h" // var type union, cannot forward declare
-#include "Timer.h" // var type union, cannot forward declare
+#include "Console.h"
+#include "Object.h"
+#include "Path.h"
+#include "float3.h"
+#include "Timer.h"
 
 Var::Var(const char* type,const char* name,int level) {
 	SetTypeFromString(type);
@@ -35,7 +36,7 @@ void Var::SetTypeFromString(const char* type) {
 		this->timervalue = NULL; // function must return this
 	} else {
 		this->type = vtUnknown;
-		console->Write("Unknown type \"%s\"\r\n",type);
+		Globals::console->Write("WARNING: unknown variable typestring '%s'\r\n",type);
 	}
 }
 Var::~Var() {
